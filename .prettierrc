@@ -1,0 +1,7 @@
+{
+    "semi": false,
+    "singleQuote": true,
+    "TrailingCooma": "none",
+    "printWidth": 100,
+    "bracket-same-line": true
+}

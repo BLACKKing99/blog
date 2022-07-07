@@ -1,0 +1,23 @@
+// 初始化饿了么参数
+
+.el-popover.el-popper {
+  min-width: initial !important;
+  padding: 10px 0 !important;
+}
+
+.el-input__inner {
+  &:focus {
+    box-shadow: 0 0 0 1px $pink-color inset !important;
+  }
+}
+.el-textarea__inner {
+  &:focus {
+    box-shadow: 0 0 0 1px $pink-color inset !important;
+  }
+}
+.el-slider__bar {
+  background-color: $pink-color !important;
+}
+.el-slider__button {
+  border-color: $pink-color !important;
+}

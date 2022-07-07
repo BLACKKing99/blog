@@ -1,0 +1,184 @@
+// login 动画
+.login-enter-from,
+.login-leave-to {
+  opacity: 0;
+  transform: translateX(-100%);
+}
+.login-enter-to,
+.login-leave-from {
+  opacity: 1;
+}
+.login-enter-active,
+.login-leave-active {
+  transition: all 1s;
+}
+
+// 进入来自哪里
+.register-enter-from,
+// 离开去哪里
+.register-leave-to {
+  opacity: 0;
+  transform: translateX(100%);
+}
+// 进入去哪里
+.register-enter-to,
+// 离开来自哪里
+.register-leave-from {
+  opacity: 1;
+  transform: translateX(0);
+}
+.register-enter-active,
+.register-leave-active {
+  transition: all 1s;
+}
+
+.tips-enter-from,
+.tips-leave-to {
+  opacity: 0;
+  filter: blur(20px);
+  transform: translateX(300px) translateY(-300px) rotate(720deg) scale(2);
+}
+.tips-enter-to,
+.tips-leave-from {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+}
+.tips-enter-active,
+.tips-leave-active {
+  transition: all 1s;
+}
+.tipsregister-enter-from,
+.tipsregister-leave-to {
+  opacity: 0;
+  filter: blur(20px);
+  transform: translateX(-300px) translateY(-300px) rotate(720deg) scale(2);
+}
+.tipsregister-enter-to,
+.tipsregister-leave-from {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+}
+.tipsregister-enter-active,
+.tipsregister-leave-active {
+  transition: all 1s;
+}
+
+@keyframes bgMove {
+  0% {
+    background-position: left;
+  }
+  50% {
+    background-position: center;
+  }
+  100% {
+    background-position: right;
+  }
+}
+
+// router 动画
+.router-enter-from,
+.router-leave-to {
+  opacity: 0;
+}
+.router-enter-to,
+.router-leave-from {
+  opacity: 1;
+}
+.router-enter-active,
+.router-leave-active {
+  transition: all 1s;
+}
+// dialog 动画
+.dialog-enter-from,
+.dialog-leave-to {
+  opacity: 0;
+  transform: translateY(100%) translate(-50%, -50%) !important;
+}
+.dialog-enter-to,
+.dialog-leave-from {
+  opacity: 1;
+}
+.dialog-enter-active,
+.dialog-leave-active {
+  transition: all 0.5s;
+}
+
+// 关于我的 左侧 动画
+.about-left-enter-from {
+  opacity: 0;
+  transform: rotateY(90deg) translateX(100%) !important;
+  transform-origin: right;
+}
+.about-left-enter-to {
+  opacity: 1;
+  transform: rotateY(0deg) !important;
+  transform-origin: left;
+}
+.about-left-leave-to {
+  opacity: 0;
+  transform: rotateY(-90deg) translateX(-100%) !important;
+  transform-origin: left;
+}
+.about-left-leave-from {
+  opacity: 1;
+  transform: rotateY(0deg) !important;
+  transform-origin: right;
+}
+.about-left-enter-active,
+.about-left-leave-active {
+  transition: all 1s;
+}
+
+// 关于我的 右侧侧 动画
+.about-right-enter-from {
+  opacity: 0;
+  transform: translateY(150%) !important;
+}
+.about-right-enter-to {
+  opacity: 1;
+}
+.about-right-leave-to {
+  opacity: 0;
+  transform: translateY(-150%) !important;
+}
+.about-right-leave-from {
+  opacity: 1;
+}
+.about-right-enter-active,
+.about-right-leave-active {
+  transition: all 1s;
+}
+
+// 音乐播放器 动画
+.audio-play-enter-from,
+.audio-play-leave-to {
+  opacity: 0;
+  transform: translateY(100%) !important;
+}
+.audio-play-enter-to,
+.audio-play-leave-from {
+  opacity: 1;
+}
+.audio-play-enter-active,
+.audio-play-leave-active {
+  transition: all 0.5s;
+}
+
+// 声音滑块 动画
+.slider-enter-from,
+.slider-leave-to {
+  opacity: 0;
+  // transform: translateY(100%) !important;
+  height: 0 !important;
+}
+.slider-enter-to,
+.slider-leave-from {
+  opacity: 1;
+  height: 100px !important;
+}
+.slider-enter-active,
+.slider-leave-active {
+  transition: all 0.5s;
+}

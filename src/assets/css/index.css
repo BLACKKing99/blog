@@ -1,0 +1,29 @@
+@import './preview/Index.css';
+@import './iconfont/iconfont.css';
+
+html,
+body,
+#app {
+    width: 100%;
+    height: 100%;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+
+ul {
+    list-style: none;
+}
+
+ol {
+    padding-left: 2em;
+    list-style: auto !important;
+}
+
+a {
+    text-decoration: none;
+    color: #333;
+}
