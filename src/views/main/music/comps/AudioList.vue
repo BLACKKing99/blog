@@ -11,63 +11,60 @@
         >
           <div
             class="content-tabbar-title"
-            :class="activeTab === tab.id?'active-tab':''"
+            :class="activeTab === tab.id ? 'active-tab' : ''"
           >
             {{ tab.title }}
-            <span
-              class="content-tabbar-nav"
-            />
+            <span class="content-tabbar-nav" />
           </div>
         </li>
       </ul>
-      <template
-        v-for="(item,index) in 3"
-        :key="index"
+      <div
+        class="flex content-tabcontainer"
       >
-        <transition :name="aniPosition">
-          <div
-            class="content-container"
-            v-if="item === activeTab"
-          >
+        <template
+          v-for="(item, index) in 3"
+          :key="index"
+        >
+          <transition :name="aniPosition">
             <div
-              class="content-container-item"
-              v-for="(tab,j) in tabList[item]"
-              :key="j"
+              class="content-container"
+              v-if="item === activeTab"
             >
-              <div class="content-container-item-cover">
-                <el-image
-                  lazy
-                  :src="tab.cover"
-                >
-                  <template #placeholder>
-                    <img
-                      src="@/assets/img/photos/img-loading.png"
-                    >
-                  </template>
-                </el-image>
-              </div>
-              <div class="content-container-item-title">
-                {{ tab.name }}
-              </div>
-              <div class="content-container-item-desc">
-                {{ tab.description }}
+              <div
+                class="content-container-item"
+                v-for="(tab, j) in tabList[item]"
+                @click="openMusicList(tab.id)"
+                :key="j"
+              >
+                <div class="content-container-item-cover">
+                  <img
+                    :src="tab.cover"
+                  >
+                </div>
+                <div class="content-container-item-title">
+                  {{ tab.name }}
+                </div>
+                <div class="content-container-item-desc">
+                  {{ tab.description }}
+                </div>
               </div>
             </div>
-          </div>
-        </transition>
-      </template>
+          </transition>
+        </template>
+      </div>
     </div>
   </div>
 </template>
 
-<script lang='ts' setup>
+<script lang="ts" setup>
 import { getBoutique, getHotType, getVocalist } from '@/api2/module/song'
 import type { IHotType, IVocalist, IBoutique } from '@/api2/module/song'
 interface ITabList {
-    id:number
-    name:string
-    description?:string
-    cover:string
+  id: number
+  name: string
+  description?: string
+  cover: string,
+  updateTime?:number
 }
 const tabbar = [
   {
@@ -87,7 +84,9 @@ const tabbar = [
 const activeTab = ref(1)
 
 // 控制该显示什么时候的动画
-const aniPosition = ref('')
+const aniPosition = ref('music-list-left')
+
+const emit = defineEmits(['open-music-list'])
 
 // tabList储存这些从接口获取的数据
 const tabList = reactive<Record<number, ITabList[]>>({
@@ -95,16 +94,24 @@ const tabList = reactive<Record<number, ITabList[]>>({
   2: [],
   3: []
 })
+
 onMounted(() => {
+  // 挂载前请求数据
   getHotTypeData({
     limit: 10,
     offset: 0
   })
 })
 
-const handleTabClick = (data:number) => {
+const handleTabClick = (data: number) => {
+  // 处理动画
+  if (activeTab.value < data) {
+    aniPosition.value = 'music-list-left'
+  } else {
+    aniPosition.value = 'music-list-right'
+  }
   activeTab.value = data
-  console.log(data, '222')
+  // 如果获取到的数组为0 那则重新获取请求数据获取接口，否则不需要请求数据获取接口
   if (data === 2 && tabList[data].length === 0) {
     getVocalistData({
       limit: 10,
@@ -118,9 +125,10 @@ const handleTabClick = (data:number) => {
   }
 }
 
-const getHotTypeData = async (params?:IHotType) => {
+// 获取热门歌单
+const getHotTypeData = async (params?: IHotType) => {
   const { data } = await getHotType(params)
-  const list = data.playlists.map((item:any) => {
+  const list = data.playlists.map((item: any) => {
     const obj = {
       name: item.name,
       description: item.description,
@@ -132,10 +140,9 @@ const getHotTypeData = async (params?:IHotType) => {
   tabList[1].push(...list)
 }
 // 获取歌手数据
-const getVocalistData = async (params?:IVocalist) => {
+const getVocalistData = async (params?: IVocalist) => {
   const { data } = await getVocalist(params)
-  console.log(data, '22222')
-  const list = data.artists.map((item:any) => {
+  const list = data.artists.map((item: any) => {
     const obj = {
       name: item.name,
       description: item.description,
@@ -147,135 +154,150 @@ const getVocalistData = async (params?:IVocalist) => {
   tabList[2].push(...list)
 }
 // 获取精品歌单数据
-const getBoutiqueData = async (params?:IBoutique) => {
+const getBoutiqueData = async (params?: IBoutique) => {
   const { data } = await getBoutique(params)
-  console.log(data)
-
-  const list = data.playlists.map((item:any) => {
+  const list = data.playlists.map((item: any) => {
     const obj = {
       name: item.name,
       description: item.description,
       id: item.id,
-      cover: item.coverImgUrl
+      cover: item.coverImgUrl,
+      updateTime: item.updateTime
     }
     return obj
   })
   tabList[3].push(...list)
 }
 
+const openMusicList = (id:number) => {
+  // id 每一个歌单或者歌手的ID
+  emit('open-music-list', {
+    id,
+    activeTab: activeTab.value
+  })
+}
 </script>
 
-<style scoped lang='scss'>
+<style scoped lang="scss">
+@import '@/styles/animations.scss';
 .music-recommend-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    background-color: #fff;
-    padding: 0 40px;
-    box-sizing: border-box;
-    height: 40vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  padding: 0 40px;
+  box-sizing: border-box;
+  height: 40vh;
+  display: flex;
+  flex-direction: column;
+  .title {
+    font-size: $font-larget;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .content {
     display: flex;
-    flex-direction: column;
-    .title{
-        font-size: $font-larget;
-        font-weight: bold;
-        margin-bottom: 10px;
+    &-tabbar {
+      display: flex;
+      align-items: center;
+      padding-right: 20px;
+      height: 30px;
+      transition: 0.3s;
+      .active-tab {
+        color: $pink-color;
+        .content-tabbar-nav {
+          width: 100%;
+          left: 0;
+        }
+      }
+      &-title {
+        position: relative;
+        height: 100%;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      &-nav {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        background-color: $pink-color;
+        width: 0;
+        height: 3px;
+        transition: 0.3s;
+        transform-origin: center top;
+      }
     }
-    .content{
+    &-tabcontainer{
+      width: 100%;
+      flex: 1;
+      align-items: center;
+    }
+    &-container {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      position: relative;
+      &-item {
         display: flex;
-        &-tabbar{
-            display: flex;
-            align-items: center;
-            padding-right: 20px;
-            height: 30px;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 10px;
+        width: 150px;
+        &-cover {
+          cursor: pointer;
+          width: 100%;
+          flex: 1;
+          display: flex;
+          align-items: center;
+          border-radius: 100%;
+          margin-bottom: 10px;
+          &:hover {
+            img {
+              transform: scale(0.9);
+            }
+          }
+          // .el-image {
+          //   border-radius: 100%;
+          //   transition: 0.3s;
+          //   width: 150px;
+          //   height: 150px;
+          //   object-fit: cover;
+          // }
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 100%;
             transition: 0.3s;
-            .active-tab{
-                color: $pink-color;
-                .content-tabbar-nav{
-                    width: 100%;
-                    left: 0;
-                }
-            }
-            &-title{
-                position: relative;
-                height: 100%;
-                cursor: pointer;
-                transition: 0.3s;
-            }
-            &-nav{
-                position: absolute;
-                bottom: 0;
-                left: 50%;
-                background-color: $pink-color;
-                width: 0;
-                height: 3px;
-                transition: 0.3s;
-                transform-origin: center top;
-            }
+          }
         }
-        &-container{
-            display: flex;
-            align-items: center;
-            flex: 1;
-            &-item{
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                padding: 0 10px;
-                width: 150px;
-                &-cover{
-                    cursor: pointer;
-                    width: 100%;
-                    flex: 1;
-                    display: flex;
-                    align-items: center;
-                    border-radius: 100%;
-                    margin-bottom: 10px;
-                    &:hover{
-                        .el-image{
-                            transform: scale(0.9);
-                        }
-                    }
-                    .el-image{
-                        border-radius: 100%;
-                        transition: 0.3s;
-                        width: 150px;
-                        height: 150px;
-                        object-fit: cover;
-                    }
-                    img{
-                        width: 100%;
-                        height: 100%;
-                        object-fit: cover;
-                    }
-                }
-                &-title{
-                    text-align: center;
-                    font-size: 22px;
-                    font-weight: bold;
-                    margin-bottom: 10px;
-                    width: 100%;
-                    height: 33px;
-                    line-height: 33px;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                }
-                &-desc{
-                    text-align: center;
-                    font-size: 14px;
-                    width: 100%;
-                    height: 38px;
-                    // color: #fff9;
-                    color: #d8d8d8;
-                    display: -webkit-box;
-                    -webkit-box-orient: vertical;
-                    -webkit-line-clamp: 2;
-                    overflow: hidden;
-                }
-            }
+        &-title {
+          text-align: center;
+          font-size: 22px;
+          font-weight: bold;
+          margin-bottom: 10px;
+          width: 100%;
+          height: 33px;
+          line-height: 33px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
+        &-desc {
+          text-align: center;
+          font-size: 14px;
+          width: 100%;
+          height: 38px;
+          // color: #fff9;
+          color: #d8d8d8;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+          overflow: hidden;
+        }
+      }
     }
+  }
 }
 </style>

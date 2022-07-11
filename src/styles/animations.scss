@@ -182,3 +182,34 @@
 .slider-leave-active {
   transition: all 0.5s;
 }
+
+// tab 从左向右点
+.music-list-left-leave-to {
+  transform: translateX(-100%);
+}
+.music-list-left-enter-to {
+  transform: translateX(-100%);
+}
+.music-list-left-enter-active,
+.music-list-left-leave-active {
+  transition: all 1s cubic-bezier(0, 0, 1, 1);
+}
+
+// tab 从右向左点
+.music-list-right-enter-from {
+  transform: translateX(-100%);
+}
+.music-list-right-leave-from {
+  transform: translateX(-100%);
+}
+.music-list-right-leave-to {
+  transform: translateX(0);
+}
+.music-list-right-enter-to {
+  transform: translateX(0);
+}
+
+.music-list-right-enter-active,
+.music-list-right-leave-active {
+  transition: all 1s cubic-bezier(0, 0, 1, 1);
+}

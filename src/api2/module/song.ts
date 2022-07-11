@@ -13,6 +13,25 @@ export const getHotType = (params?:IHotType) => {
   })
 }
 
+export interface ISheetDetail {
+  id:number
+  limit?:number
+  offset?:number
+}
+export const getSheetList = (params?:ISheetDetail) => {
+  return lRequest.lrequest({
+    url: '/playlist/track/all',
+    params
+  })
+}
+
+export const getSheetDetail = (params:{id:number}) => {
+  return lRequest.lrequest({
+    url: '/playlist/detail',
+    params
+  })
+}
+
 export interface IVocalist{
   limit?:number
   offset?:number
@@ -29,7 +48,7 @@ export const getVocalist = (params?:IVocalist) => {
 
 export interface IBoutique{
   limit?:number
-  before?:number
+  before?:number | undefined
   cat?:string
 }
 

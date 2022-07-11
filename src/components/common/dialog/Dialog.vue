@@ -24,6 +24,9 @@
 </template>
 
 <script lang="ts" setup>
+// 控制弹窗显示隐藏
+const dialogVisiable = ref(false)
+const emit = defineEmits(['update:visiable'])
 const props = defineProps({
   visiable: {
     type: Boolean,
@@ -45,10 +48,6 @@ const props = defineProps({
     default: true
   }
 })
-
-const emit = defineEmits(['update:visiable'])
-
-const dialogVisiable = ref(false)
 watch(
   () => props.visiable,
   (val) => {
