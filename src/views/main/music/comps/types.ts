@@ -5,9 +5,11 @@ export interface ISheetDetail {
   description?: string
   tags?: string[]
 }
-export interface ISingerInfo {
+export interface IMusicInfo {
   id: number
   songName: string
+  cover:string
+  totalTime:number
   singerInfo: {
     id: number
     name: string

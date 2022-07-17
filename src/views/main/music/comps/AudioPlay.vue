@@ -1,13 +1,16 @@
 <template>
   <div class="audio-play">
-    <ul class="audio-play-container">
+    <ul
+      v-if="musicStore.currentMusicInfo.url"
+      class="audio-play-container"
+    >
       <li class="audio-play-container-info">
         <div class="cover">
-          <img src="@/assets/img/music/1.jpg">
+          <img :src="musicStore.currentMusicInfo.cover">
         </div>
         <div class="info">
-          <span class="info-title">演员</span>
-          <span class="info-author">薛之谦</span>
+          <span class="info-title">{{ musicStore.currentMusicInfo.musicName }}</span>
+          <span class="info-author">{{ musicStore.currentMusicInfo.singer }}</span>
         </div>
       </li>
       <li class="audio-play-container-todo">
@@ -19,6 +22,7 @@
           <i
             title="上一首"
             class="iconfont icon-shangyishoushangyige"
+            @click="handlePrev"
           />
           <i
             title="暂停"
@@ -29,6 +33,7 @@
           <i
             title="下一首"
             class="iconfont icon-xiayigexiayishou"
+            @click="handleNext"
           />
           <i
             title="歌词"
@@ -87,12 +92,16 @@
         </div>
       </li>
     </ul>
+    <ul v-else>
+      请选择应
+    </ul>
   </div>
 </template>
 
 <script lang="ts" setup>
 import useTimeFormat from '@/hooks/useTimeFormat'
 import { PropType } from 'vue'
+import { useMusicStore } from '@/sotre/module/music'
 
 const props = defineProps({
   audioRef: {
@@ -101,8 +110,15 @@ const props = defineProps({
   }
 })
 
+const musicStore = useMusicStore()
+
+const currentIndex = ref(0)
+
 // 总共的时间
-const totalTime = ref<string>('')
+const totalTime = computed(() => {
+  const { formatTime } = useTimeFormat(musicStore.currentMusicInfo.totalTime, 'mm:ss')
+  return formatTime.value
+})
 // 更新的时间
 const updateTime = ref<string>('00:00')
 // 进度条的百分比
@@ -124,6 +140,24 @@ const handlePlay = () => {
   }
 }
 
+const handlePrev = () => {
+  if (currentIndex.value === 0) {
+    currentIndex.value = musicStore.musicList.length - 1
+  } else {
+    currentIndex.value -= 1
+  }
+  musicStore.setCurrentMusic(currentIndex.value)
+}
+
+const handleNext = () => {
+  if (currentIndex.value === musicStore.musicList.length - 1) {
+    currentIndex.value = 0
+  } else {
+    currentIndex.value += 1
+  }
+  musicStore.setCurrentMusic(currentIndex.value)
+}
+
 const handleCurrentTime = (value: number) => {
   // eslint-disable-next-line vue/no-mutating-props
   props.audioRef.currentTime = (props.audioRef.duration * value) / 100
@@ -134,23 +168,25 @@ const handleVolume = (value:number) => {
   props.audioRef.volume = value / 100
 }
 
-onMounted(() => {})
-
 watch(
   () => props.audioRef,
   (val) => {
     // 监听 audioRef 更新
     if (val) {
-      setTimeout(() => {
-        const { formatTime } = useTimeFormat(val.duration * 1000, 'mm:ss')
-        totalTime.value = formatTime.value
-      }, 300)
       val.addEventListener('timeupdate', () => {
+        // 监听音乐实时变化
         const { formatTime } = useTimeFormat(val.currentTime * 1000, 'mm:ss')
         updateTime.value = formatTime.value
         currentTime.value = (val.currentTime / val.duration) * 100
       })
+      val.addEventListener('ended', () => {
+        // 监听音乐播放结束
+        handleNext()
+      })
     }
+  },
+  {
+    deep: true
   }
 )
 </script>
@@ -169,7 +205,7 @@ watch(
   right: 0;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-
+  z-index: 99999999;
   &-container {
     height: 100px;
     width: 100%;

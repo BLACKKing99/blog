@@ -14,14 +14,15 @@
         :audio-ref="audioRef"
       />
     </transition>
+    <audio-dia
+      v-model:is-view="listData.isListShow"
+      @play-music="handlePlayMusic"
+      :list-data="listData"
+    />
   </div>
-  <audio-dia
-    v-model:is-view="listData.isListShow"
-    :list-data="listData"
-  />
   <audio
-    :src="music1"
-    loop
+    :src="MusicStore.currentMusicInfo.url"
+    autoplay
     ref="audioRef"
   />
 </template>
@@ -30,9 +31,8 @@
 import AudioPlay from './comps/AudioPlay.vue'
 import AudioList from './comps/AudioList.vue'
 import AudioDia from './comps/AudioDia.vue'
-import music1 from '@/assets/music/1.mp3'
 import { debounce } from 'lodash'
-
+import { useMusicStore } from '@/sotre/module/music'
 const audioRef = ref<HTMLAudioElement>()
 // 控制底部音乐控制器显示隐藏
 const isAudioPlay = ref(false)
@@ -42,6 +42,8 @@ const listData = reactive({
   listId: 0,
   activeTab: 1
 })
+
+const MusicStore = useMusicStore()
 // 控制音乐播放器显示隐藏
 const handleMouseMove = debounce((event: MouseEvent) => {
   if (event.clientY > 800) {
@@ -56,6 +58,11 @@ const openMusicDia = (value:{activeTab:number, id:number}) => {
   listData.activeTab = value.activeTab
   listData.listId = value.id
   listData.isListShow = true
+}
+
+// 处理音乐播放
+const handlePlayMusic = () => {
+  audioRef.value?.play()
 }
 
 </script>

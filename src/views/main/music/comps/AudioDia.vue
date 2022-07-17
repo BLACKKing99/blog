@@ -58,27 +58,40 @@
               <div class="tab-content">
                 <div
                   class="tab-content-item"
-                  v-for="item in sheetList"
+                  v-for="item in sheetList[pageInfo.currentPage]"
                   :key="item.id"
                 >
-                  <div class="tab-content-item-song">
+                  <div
+                    class="tab-content-item-song"
+                    @dblclick="handleMusicPlay(item)"
+                  >
                     {{ item.songName }}
                   </div>
                   <div class="tab-content-item-sing">
                     {{ item.singerInfo.name }}
                   </div>
-                  <div>
-                    <i />
+                  <div class="tab-content-item-todo">
+                    <div class="todo">
+                      <i class="iconfont icon-Play" />
+                    </div>
+                    <div class="todo">
+                      <i class="iconfont icon-jia" />
+                    </div>
+                    <div class="todo">
+                      <i class="iconfont icon-xiazai" />
+                    </div>
                   </div>
                 </div>
               </div>
               <div class="tab-page">
                 <el-pagination
-                  v-model:currentPage="currentPage"
-                  v-model:page-size="pageSize"
+                  v-if="isView"
+                  v-model:currentPage="pageInfo.currentPage"
+                  :page-size="pageInfo.pageSize"
                   :small="true"
                   layout="prev, pager, next, jumper"
-                  :total="1000"
+                  :total="pageInfo.pageTotal"
+                  @current-change="handleCurrentChange"
                 />
               </div>
             </div>
@@ -92,7 +105,8 @@
 <script lang="ts" setup>
 import DialogVue from '@/components/common/dialog/Dialog.vue'
 import { getSheetList, getSheetDetail } from '@/api2/module/song'
-import { ISheetDetail, ISingerInfo } from './types'
+import { ISheetDetail, IMusicInfo } from './types'
+import { useMusicStore } from '@/sotre/module/music'
 const props = defineProps({
   isView: {
     type: Boolean,
@@ -104,35 +118,58 @@ const props = defineProps({
   }
 })
 
+const musicStore = useMusicStore()
+
 const dialogVisiable = ref(false)
 // 列表詳情
 const sheetDetail = ref<ISheetDetail>({})
 // 歌单列表
-const sheetList = ref<ISingerInfo[]>()
+const sheetList = ref<Record<number, IMusicInfo[]>>({})
 // loading
 const loading = ref(false)
-// 当前页
-const currentPage = ref(1)
-// 每页多少
-const pageSize = ref(10)
-const emit = defineEmits(['update:isView'])
+const pageInfo = reactive({
+  // 当前页
+  currentPage: 1,
+  // 每页多少
+  pageSize: 10,
+  pageTotal: 0
+})
+const emit = defineEmits(['update:isView', 'play-music'])
 // 获取详情列表数据
 const getSongListData = async () => {
+  if (!loading.value) {
+    loading.value = true
+  }
   const { data } = await getSheetList({
     id: props.listData.listId,
-    limit: 10,
-    offset: 0
+    limit: pageInfo.pageSize,
+    offset: (pageInfo.currentPage - 1) * pageInfo.pageSize
   })
   const songs = data.songs.map((item: any) => {
     return {
       id: item.id,
       songName: item.name,
-      singerInfo: item.ar[0]
+      singerInfo: item.ar[0],
+      cover: item.al.picUrl,
+      totalTime: item.dt
     }
   })
-  sheetList.value = songs
+
+  sheetList.value[pageInfo.currentPage] = songs
   // 关闭loading
   loading.value = false
+}
+
+const handleMusicPlay = (value:IMusicInfo) => {
+  // 处理播放音乐
+  musicStore.currentMusicInfo.cover = value.cover
+  musicStore.currentMusicInfo.singer = value.singerInfo.name
+  musicStore.currentMusicInfo.musicName = value.songName
+  musicStore.currentMusicInfo.totalTime = value.totalTime
+  musicStore.setCurrentMusicInfo(value.id)
+  setTimeout(() => {
+    emit('play-music')
+  }, 300)
 }
 
 // 获取歌单详情
@@ -146,9 +183,19 @@ const getSheetDetailData = async () => {
     description: data.playlist.description,
     tags: data.playlist.tags
   }
+  pageInfo.pageTotal = data.playlist.trackCount
   sheetDetail.value = detail
   getSongListData()
 }
+// 点击切页
+const handleCurrentChange = (value:number) => {
+  pageInfo.currentPage = value
+  if (!sheetList.value[value]) {
+    // 由于如果说每次切页的时候都要请求一次接口，这样子不太好，因此储存结构换下
+    getSongListData()
+  }
+}
+
 watch(
   () => props.isView,
   (val) => {
@@ -163,6 +210,8 @@ watch(
   () => dialogVisiable.value,
   (val) => {
     if (!val) {
+      sheetList.value = {}
+      pageInfo.currentPage = 1
       emit('update:isView', false)
     }
   }
@@ -252,6 +301,7 @@ watch(
           display: grid;
           grid-template-columns: 2fr 2fr 1fr;
           grid-auto-rows: 30px;
+          padding: 0 10px;
           color: #909399;
           font-weight: bold;
           font-size: 12px;
@@ -261,7 +311,7 @@ watch(
             display: grid;
             grid-template-columns: 2fr 2fr 1fr;
             grid-auto-rows: 40px;
-            padding-right: 10px;
+            padding:0 10px;
             line-height: 40px;
             border-top: solid 1px #dedede;
             box-sizing: border-box;
@@ -283,6 +333,26 @@ watch(
               text-overflow: ellipsis;
               white-space: nowrap;
               max-width: 460px;
+            }
+            &-todo{
+              display: flex;
+              align-items: center;
+              .todo{
+                width: 30px;
+                height: 30px;
+                margin-right: 10px;
+                box-sizing: border-box;
+                border: solid 1px #dedede;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                .iconfont{
+                  font-size: 12px;
+                  color: #909399;
+                  transform: scale(.9);
+                }
+              }
             }
             &:last-of-type{
               border-bottom: solid 1px #dedede;

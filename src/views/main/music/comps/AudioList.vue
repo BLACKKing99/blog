@@ -33,10 +33,12 @@
               <div
                 class="content-container-item"
                 v-for="(tab, j) in tabList[item]"
-                @click="openMusicList(tab.id)"
                 :key="j"
               >
-                <div class="content-container-item-cover">
+                <div
+                  class="content-container-item-cover"
+                  @click="openMusicList(tab.id)"
+                >
                   <img
                     :src="tab.cover"
                   >
@@ -185,12 +187,12 @@ const openMusicList = (id:number) => {
   top: 0;
   left: 0;
   right: 0;
-  background-color: #fff;
   padding: 0 40px;
   box-sizing: border-box;
   height: 40vh;
   display: flex;
   flex-direction: column;
+  min-width: calc(100vw - 150px);
   .title {
     font-size: $font-larget;
     font-weight: bold;
@@ -236,7 +238,7 @@ const openMusicList = (id:number) => {
     &-container {
       display: flex;
       align-items: center;
-      width: 100%;
+      // width: 100%;
       position: relative;
       &-item {
         display: flex;

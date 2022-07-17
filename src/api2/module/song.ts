@@ -6,6 +6,8 @@ export interface IHotType {
   offset?:number,
   order?:'hot'|'new'
 }
+
+// 获取热门歌单
 export const getHotType = (params?:IHotType) => {
   return lRequest.lrequest({
     url: '/top/playlist',
@@ -18,6 +20,8 @@ export interface ISheetDetail {
   limit?:number
   offset?:number
 }
+
+// 获取每个热门歌单列表
 export const getSheetList = (params?:ISheetDetail) => {
   return lRequest.lrequest({
     url: '/playlist/track/all',
@@ -25,6 +29,7 @@ export const getSheetList = (params?:ISheetDetail) => {
   })
 }
 
+// 获取每个热门歌单详情
 export const getSheetDetail = (params:{id:number}) => {
   return lRequest.lrequest({
     url: '/playlist/detail',
@@ -39,6 +44,7 @@ export interface IVocalist{
   area?:'-1'|'7'|'96'|'8'|'16'|'0' // -1全部 7华语 96欧美 8日本 16韩国 0其他
 }
 
+// 获取歌手推荐
 export const getVocalist = (params?:IVocalist) => {
   return lRequest.lrequest({
     url: '/artist/list',
@@ -52,9 +58,23 @@ export interface IBoutique{
   cat?:string
 }
 
+// 获取精品推荐
 export const getBoutique = (params?:IBoutique) => {
   return lRequest.lrequest({
     url: '/top/playlist/highquality',
     params
+  })
+}
+
+// 获取音乐 url
+export const getMusicUrl = (id:number) => {
+  return lRequest.lrequest({
+    url: `/song/url?id=${id}`
+  })
+}
+
+export const getMusicDetail = (id:number) => {
+  return lRequest.lrequest({
+    url: `/song/detail?ids=${id}`
   })
 }
