@@ -162,16 +162,24 @@ const getSongListData = async () => {
 
 const handleMusicPlay = (value:IMusicInfo) => {
   // 处理播放音乐
-  musicStore.currentMusicInfo.cover = value.cover
-  musicStore.currentMusicInfo.singer = value.singerInfo.name
-  musicStore.currentMusicInfo.musicName = value.songName
-  musicStore.currentMusicInfo.totalTime = value.totalTime
-  musicStore.setCurrentMusicInfo(value.id)
+  const { cover, singerInfo, songName, id, totalTime } = value
+  const obj = {
+    totalTime,
+    musicName: songName,
+    singer: singerInfo.name,
+    cover,
+    id,
+    url: ''
+  }
+  musicStore.currentMusicInfo = reactive({
+    ...musicStore.currentMusicInfo,
+    ...obj
+  })
+  musicStore.setCurrentMusicInfo(value.id, obj)
   setTimeout(() => {
     emit('play-music')
-  }, 300)
+  }, 100)
 }
-
 // 获取歌单详情
 const getSheetDetailData = async () => {
   const { data } = await getSheetDetail({

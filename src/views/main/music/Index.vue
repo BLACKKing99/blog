@@ -21,7 +21,7 @@
     />
   </div>
   <audio
-    :src="MusicStore.currentMusicInfo.url"
+    :src="musicStore.currentMusicInfo?.url"
     autoplay
     ref="audioRef"
   />
@@ -43,7 +43,7 @@ const listData = reactive({
   activeTab: 1
 })
 
-const MusicStore = useMusicStore()
+const musicStore = useMusicStore()
 // 控制音乐播放器显示隐藏
 const handleMouseMove = debounce((event: MouseEvent) => {
   if (event.clientY > 800) {

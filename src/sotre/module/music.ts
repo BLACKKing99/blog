@@ -10,12 +10,12 @@ export interface ICurrentMusicInfo{
     cover:string,
     totalTime:number
 }
-
+const musicList: ICurrentMusicInfo[] = LocalCatch.getItem('musicList') || []
 export const useMusicStore = defineStore('music', {
   state: () => {
     return {
-      currentMusicInfo: LocalCatch.getItem('musicList') ? LocalCatch.getItem('musicList')[0] : {} as ICurrentMusicInfo,
-      musicList: LocalCatch.getItem('musicList') as ICurrentMusicInfo[]
+      currentMusicInfo: (musicList[0] || {}) as ICurrentMusicInfo,
+      musicList: musicList
     }
   },
   actions: {
@@ -23,35 +23,25 @@ export const useMusicStore = defineStore('music', {
       // 不请求数据 从musicList 中获取获取的信息
       this.currentMusicInfo = this.musicList[index]
     },
-    setCurrentMusicInfo (id:number) {
-      this.getMusicUrlData(id)
-      console.log('zhix', id)
+    setCurrentMusicInfo (id:number, obj:ICurrentMusicInfo) {
+      this.getMusicUrlData(id, obj)
     },
-    async getMusicUrlData (id:number) {
+    async getMusicUrlData (id:number, obj:ICurrentMusicInfo) {
+      const obj2 = { ...obj }
       const { data } = await getMusicUrl(id)
       this.currentMusicInfo.url = data.data[0].url
-      this.currentMusicInfo.id = id
-      setTimeout(() => {
-        this.setMusicList(this.currentMusicInfo)
-      }, 300)
+      obj2.url = data.data[0].url
+      this.setMusicList(id, obj2)
     },
-    setMusicList (value:ICurrentMusicInfo) {
-      if (!this.musicList) {
-        this.musicList = []
-      }
-
+    setMusicList (id:number, obj:ICurrentMusicInfo) {
       const index = this.musicList.findIndex(item => {
-        return item.id === value.id
+        return item.id === id
       })
-      console.log(value, this.musicList, index)
       if (index !== -1) {
         // 说明播放列表里面有这首音乐 并且将它放到第一首
         this.musicList.splice(index, 1)
-        this.musicList.unshift(value)
-      } else {
-        // 说明没有这首应音乐
-        this.musicList.push(value)
       }
+      this.musicList.unshift(obj)
       LocalCatch.setItem('musicList', this.musicList)
     }
   }

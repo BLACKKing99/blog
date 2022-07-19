@@ -6,11 +6,11 @@
     >
       <li class="audio-play-container-info">
         <div class="cover">
-          <img :src="musicStore.currentMusicInfo.cover">
+          <img :src="musicStore.currentMusicInfo?.cover">
         </div>
         <div class="info">
-          <span class="info-title">{{ musicStore.currentMusicInfo.musicName }}</span>
-          <span class="info-author">{{ musicStore.currentMusicInfo.singer }}</span>
+          <span class="info-title">{{ musicStore.currentMusicInfo?.musicName }}</span>
+          <span class="info-author">{{ musicStore.currentMusicInfo?.singer }}</span>
         </div>
       </li>
       <li class="audio-play-container-todo">
@@ -112,11 +112,12 @@ const props = defineProps({
 
 const musicStore = useMusicStore()
 
+// 当前播放到第几首音乐了
 const currentIndex = ref(0)
 
 // 总共的时间
 const totalTime = computed(() => {
-  const { formatTime } = useTimeFormat(musicStore.currentMusicInfo.totalTime, 'mm:ss')
+  const { formatTime } = useTimeFormat(musicStore.currentMusicInfo?.totalTime, 'mm:ss')
   return formatTime.value
 })
 // 更新的时间
@@ -147,6 +148,7 @@ const handlePrev = () => {
     currentIndex.value -= 1
   }
   musicStore.setCurrentMusic(currentIndex.value)
+  props.audioRef.play()
 }
 
 const handleNext = () => {
@@ -156,6 +158,7 @@ const handleNext = () => {
     currentIndex.value += 1
   }
   musicStore.setCurrentMusic(currentIndex.value)
+  props.audioRef.play()
 }
 
 const handleCurrentTime = (value: number) => {
