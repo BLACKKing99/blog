@@ -23,27 +23,25 @@
 </template>
 
 <script lang='ts' setup>
-import { updateUserInfo } from '@/api/module/user'
 import { useUserInfo } from '@/hooks/useUserInfo'
 
-const { userInfo, getUerInfoTodo } = useUserInfo()
+const { userInfo, updateUsersInfo } = useUserInfo()
 
+// 监听编辑器
 watch(() => userInfo.value, (val) => {
   content.value = val!.bio
 })
-
+// 内容编辑器
 const content = ref<string>('')
+
+// 编辑器是否可以编辑
 const isEdit = ref<boolean>(false)
 const handleTodo = async () => {
   isEdit.value = !isEdit.value
   if (!isEdit.value) {
-    const { data, status } = await updateUserInfo({
+    updateUsersInfo({
       bio: content.value
     })
-    if (status === 200) {
-      ElMessage.success(data.msg)
-      getUerInfoTodo()
-    }
   }
 }
 </script>

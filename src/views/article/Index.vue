@@ -8,7 +8,7 @@
       id="article"
     >
       <div class="article-bg">
-        <img :src="articleInfo?.cover">
+        <img :src="$imgUrl + articleInfo?.cover">
       </div>
       <div class="article-bottom">
         <img

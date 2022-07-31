@@ -9,10 +9,16 @@ import '@/assets/css/index.css'
 // 引入自己写的css
 import '@/styles/index.scss'
 import LocalCatch from './util/LocalCatch'
+declare module '@vue/runtime-core' {
+  export interface ComponentCustomProperties {
+    $imgUrl:string
+    AuthHeader:()=>string
+  }
+}
 
 const app = createApp(App)
 
-app.config.globalProperties.$imgUrl = 'http://127.0.0.1:3001'
+app.config.globalProperties.$imgUrl = 'http://127.0.0.1:3000'
 app.config.globalProperties.AuthHeader = () => {
   const token = LocalCatch.getItem('lzf_blog')?.token
   if (token) {

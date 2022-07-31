@@ -29,7 +29,7 @@
 
 <script lang="ts" setup>
 import AudioPlay from './comps/AudioPlay.vue'
-import AudioList from './comps/AudioList.vue'
+import AudioList from './comps/AudioTabList.vue'
 import AudioDia from './comps/AudioDia.vue'
 import { debounce } from 'lodash'
 import { useMusicStore } from '@/sotre/module/music'
@@ -77,7 +77,7 @@ const handlePlayMusic = () => {
   background-size: cover;
   position: relative;
   .music-recommend {
-    margin-top: 20vh;
+    margin-top: 30vh;
   }
 }
 ::v-deep(.el-scrollbar__view) {

@@ -13,6 +13,8 @@ export const useUserInfo = (isLogin?:boolean) => {
       getLoaclUserInfo()
     }
   })
+
+  // 获取用户信息
   const getUerInfoTodo = async () => {
     // 重新获取用户信息
     const { data, status } = await getUserInfo()
@@ -26,9 +28,16 @@ export const useUserInfo = (isLogin?:boolean) => {
     }
   }
 
+  // 调取更新接口 并且存储到本地
   const updateUsersInfo = async (data:Partial<IUserInfoType>) => {
-    const { status } = await updateUserInfo(data)
+    const { status, data: value } = await updateUserInfo(data)
     if (status === 200) {
+      userInfo.value = value.data
+      const NEW_LZF_BLOG = {
+        ...LZF_BLOG,
+        userInfo: value.data
+      }
+      LocalCatch.setItem('lzf_blog', NEW_LZF_BLOG)
       ElMessage.success('修改成功')
     }
   }

@@ -14,7 +14,7 @@
         >
           <img
             v-if="item.cover"
-            :src="item.cover"
+            :src="$imgUrl + item.cover"
             class="img"
           >
           <img

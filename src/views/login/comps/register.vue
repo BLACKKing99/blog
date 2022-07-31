@@ -40,6 +40,7 @@
       <button
         class="login-container-item-btn l-button"
         @click="handleRegister"
+        v-loading="accountSotre.isLoading"
       >
         注册
       </button>
@@ -83,6 +84,7 @@ const handleRegister = () => {
     })
     return
   }
+  accountSotre.isLoading = true
   accountSotre.loginTodo(userInfo, 'register')
 }
 

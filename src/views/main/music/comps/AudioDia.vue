@@ -71,10 +71,16 @@
                     {{ item.singerInfo.name }}
                   </div>
                   <div class="tab-content-item-todo">
-                    <div class="todo">
+                    <div
+                      class="todo"
+                      @click="handleMusicPlay(item)"
+                    >
                       <i class="iconfont icon-Play" />
                     </div>
-                    <div class="todo">
+                    <div
+                      class="todo"
+                      @click="handleMusicListAdd(item)"
+                    >
                       <i class="iconfont icon-jia" />
                     </div>
                     <div class="todo">
@@ -180,6 +186,15 @@ const handleMusicPlay = (value:IMusicInfo) => {
     emit('play-music')
   }, 100)
 }
+
+const handleMusicListAdd = (value:IMusicInfo) => {
+  ElNotification.success({
+    title: '提示',
+    message: '暂时不支持下载哦~~~',
+    showClose: false
+  })
+}
+
 // 获取歌单详情
 const getSheetDetailData = async () => {
   const { data } = await getSheetDetail({
@@ -355,10 +370,17 @@ watch(
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                &:hover{
+                  border-color: $pink-color;
+                  .iconfont{
+                    color: $pink-color;
+                  }
+                }
                 .iconfont{
                   font-size: 12px;
                   color: #909399;
                   transform: scale(.9);
+
                 }
               }
             }

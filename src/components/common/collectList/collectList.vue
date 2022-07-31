@@ -1,7 +1,7 @@
 <template>
   <div class="collect-list flex-c">
     <div class="cover">
-      <img :src="collect.cover?collect.cover:cover">
+      <img :src="collect.cover?$imgUrl + collect.cover:cover">
     </div>
     <div class="title text-ellipsis-2">
       {{ collect.title }}

@@ -91,8 +91,6 @@ const getSwiperInfo = async () => {
 const getBannerInfo = async () => {
   const { status, data } = await getBanner()
   if (status === 200) {
-    console.log(data)
-
     randomUrl.value = data.data
   }
 }

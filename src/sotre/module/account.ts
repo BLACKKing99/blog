@@ -26,7 +26,8 @@ export const useAccountStore = defineStore('account', {
   state: () => {
     return {
       userInfo: LocalCatch.getItem('lzf_blog')?.userInfo as IUserInfoType | null,
-      token: LocalCatch.getItem('lzf_blog')?.token
+      token: LocalCatch.getItem('lzf_blog')?.token,
+      isLoading: false
     }
   },
   getters: {},
@@ -48,6 +49,7 @@ export const useAccountStore = defineStore('account', {
           type: 'success',
           message: res.data.msg
         })
+        this.isLoading = false
         if (router.currentRoute.value.query.redirect) {
           router.push(router.currentRoute.value.query.redirect as string)
         } else {
@@ -55,9 +57,8 @@ export const useAccountStore = defineStore('account', {
             name: 'preview'
           })
         }
-        return new Promise((resolve) => {
-          resolve(true)
-        })
+      } else {
+        this.isLoading = false
       }
     }
   }

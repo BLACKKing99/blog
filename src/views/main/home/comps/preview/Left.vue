@@ -16,7 +16,7 @@
           @click="goArticle(item._id)"
         >
           <img
-            :src="item.cover?item.cover:cover"
+            :src="item.cover ? $imgUrl + item.cover:cover"
             class="img"
           >
           <div class="content flex">

@@ -40,7 +40,7 @@ export default defineConfig({
       // 本地开发环境通过代理实现跨域，生产环境使用 nginx 转发
       // 正则表达式写法
       '^/api': {
-        target: 'http://127.0.0.1:3000', // 后端服务实际地址
+        target: 'http://127.0.0.1:3001', // 后端服务实际地址
         changeOrigin: true, // 开启代理
         rewrite: (path) => path.replace(/^\/api/, '')
       }

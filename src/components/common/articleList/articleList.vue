@@ -3,7 +3,7 @@
     <div class="list-header flex-c">
       <img
         class="list-header-img"
-        :src="articleInfo.cover?articleInfo.cover:img"
+        :src="articleInfo.cover?$imgUrl+articleInfo.cover:img"
       >
       <div class="list-header-content flex-c">
         <span class="classify">{{ handleType(articleInfo.type) }}</span>

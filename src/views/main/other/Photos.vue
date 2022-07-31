@@ -99,7 +99,7 @@ const getPhotoInfo = async () => {
   })
   if (status === 200) {
     data.data.forEach((item:string) => {
-      previewList.value.push(`http://127.0.0.1:3001${item}`)
+      previewList.value.push(`http://127.0.0.1:3000${item}`)
       photosList.value.push(`${randomKey(200, 300)}px`)
     })
   }

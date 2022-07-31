@@ -2,7 +2,7 @@
   <div class="time flex-r">
     <div class="time-clock">
       <img
-        src="https://api.adicw.cn/uploads/StudyImg/6191d88725d2c.jpg"
+        src="@/assets/img/avatar/avatar.jpg"
         :style="{borderRadius:isRadius?'10px':'10px 10px 0 0'}"
       >
     </div>
@@ -71,6 +71,7 @@ onBeforeUnmount(() => {
     img {
       width: 100%;
       height: 100%;
+      object-fit: cover;
     }
   }
   &-tips{

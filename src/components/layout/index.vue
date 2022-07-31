@@ -8,6 +8,13 @@
         ref="elScrollRef"
         @scroll="handleScroll"
       >
+        <!-- <router-view
+          v-slot="{Component}"
+        >
+          <transition name="el-fade-in">
+            <component :is="Component" />
+          </transition>
+        </router-view> -->
         <router-view />
       </el-scrollbar>
     </el-main>

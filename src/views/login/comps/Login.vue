@@ -31,7 +31,7 @@
       <button
         class="login-container-item-btn l-button"
         @click="login"
-        v-loading="isLoading"
+        v-loading="accountSotre.isLoading"
       >
         登录
       </button>
@@ -53,7 +53,6 @@ const userInfo = reactive<{
   password: '',
   account: ''
 })
-const isLoading = ref(false)
 const accountSotre = useAccountStore()
 const login = () => {
   if (userInfo.account === '') {
@@ -69,12 +68,8 @@ const login = () => {
     })
     return
   }
-  isLoading.value = true
-  accountSotre.loginTodo(userInfo, 'login').then(res => {
-    if (res) {
-      isLoading.value = false
-    }
-  })
+  accountSotre.isLoading = true
+  accountSotre.loginTodo(userInfo, 'login')
 }
 
 </script>

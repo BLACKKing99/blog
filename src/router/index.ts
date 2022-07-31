@@ -37,7 +37,14 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/main/music/Index.vue'),
         meta: {
           keepAlive: true
-        }
+        },
+        children: [
+          {
+            path: 'list',
+            name: 'musicList',
+            component: () => import('@/views/main/music/comps/AudioDia.vue')
+          }
+        ]
       },
       {
         path: 'other',

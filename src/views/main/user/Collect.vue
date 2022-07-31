@@ -53,8 +53,6 @@ onMounted(() => {
 
 const handleCollectType = () => {
   const collectList = userInfo.value?.collectArticle
-  console.log(collectList)
-
   if (collectList) {
     collectList.forEach(item => {
       if (item.type === 'monitor') {
@@ -64,8 +62,6 @@ const handleCollectType = () => {
       }
     })
   }
-  console.log(monitorList.value, noseList.value)
-
   if (monitorList.value.length === 0) {
     const index = articleType.value.findIndex((item:any) => item.value === 'monitor')
     articleType.value.splice(index, 1)

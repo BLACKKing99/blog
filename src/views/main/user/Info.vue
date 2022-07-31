@@ -46,7 +46,7 @@ import { useUserInfo } from '@/hooks/useUserInfo'
 import { useEventBus } from '@/hooks/useEventBus'
 import useTimeFormat from '@/hooks/useTimeFormat'
 
-const { userInfo, getUerInfoTodo, updateUsersInfo } = useUserInfo()
+const { userInfo, updateUsersInfo } = useUserInfo()
 
 const { Busemit } = useEventBus()
 
@@ -85,9 +85,7 @@ const handleInfoEdit = async () => {
       (updateNewUserInfo[item.pid!] as string) = item.content
     })
     // 调用更新用户接口
-    await updateUsersInfo(updateNewUserInfo)
-    // 更新用户信息
-    getUerInfoTodo()
+    updateUsersInfo(updateNewUserInfo)
     // 发送更新用户信息事件
     Busemit('updateUserInfo')
   }
@@ -98,11 +96,9 @@ const isView = ref(false)
 // 处理弹窗相关事件
 const handleChangeAvatar = async (value:string) => {
   // 修改头像
-  await updateUsersInfo({
+  updateUsersInfo({
     avatar: value
   })
-  // 更新本地用户信息
-  getUerInfoTodo()
   // 发送更新用户信息事件
   Busemit('updateUserInfo')
 }

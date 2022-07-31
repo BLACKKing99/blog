@@ -7,7 +7,6 @@ declare module '@wangeditor/editor' {
     interface SlateText {
         text: string
     }
-
     // 扩展 Element
     // eslint-disable-next-line no-unused-vars
     interface SlateElement {
