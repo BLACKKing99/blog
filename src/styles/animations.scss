@@ -166,6 +166,21 @@
   transition: all 0.5s;
 }
 
+// 音乐菜单列表 动画
+.audio-list-enter-from,
+.audio-list-leave-to {
+  opacity: 0;
+  transform: translateX(-100%) !important;
+}
+.audio-list-enter-to,
+.audio-list-leave-from {
+  opacity: 1;
+}
+.audio-list-enter-active,
+.audio-list-leave-active {
+  transition: all 0.5s;
+}
+
 // 声音滑块 动画
 .slider-enter-from,
 .slider-leave-to {

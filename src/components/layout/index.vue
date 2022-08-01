@@ -1,24 +1,26 @@
 <template>
-  <el-container>
-    <el-aside width="150px">
-      <tabbar-aside />
-    </el-aside>
-    <el-main>
-      <el-scrollbar
-        ref="elScrollRef"
-        @scroll="handleScroll"
-      >
-        <!-- <router-view
+  <div class="layout-container">
+    <el-container>
+      <el-aside width="150px">
+        <tabbar-aside />
+      </el-aside>
+      <el-main>
+        <el-scrollbar
+          ref="elScrollRef"
+          @scroll="handleScroll"
+        >
+          <!-- <router-view
           v-slot="{Component}"
         >
           <transition name="el-fade-in">
             <component :is="Component" />
           </transition>
         </router-view> -->
-        <router-view />
-      </el-scrollbar>
-    </el-main>
-  </el-container>
+          <router-view />
+        </el-scrollbar>
+      </el-main>
+    </el-container>
+  </div>
 </template>
 
 <script lang='ts' setup>
@@ -63,17 +65,20 @@ const handleScroll = throttle((event:{ scrollLeft: number; scrollTop: number }) 
 
 <style scoped lang='scss'>
 @import '@/styles/animations.scss';
-::v-deep.el-container{
-    height: 100%;
-    .el-main{
-        background-color: #f5f5f5;
-        border-radius: 20px 0 0 0;
-        padding: 0;
+.layout-container{
+  height: 100%;
+  ::v-deep(.el-container){
+      height: 100%;
+      .el-main{
+          background-color: #f5f5f5;
+          border-radius: 20px 0 0 0;
+          padding: 0;
+      }
+  }
+  ::v-deep(.el-scrollbar){
+    .el-scrollbar__view{
+      height: 100%;
     }
-}
-::v-deep.el-scrollbar{
-  .el-scrollbar__view{
-    height: 100%;
   }
 }
 </style>

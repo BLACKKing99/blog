@@ -2,10 +2,21 @@
   <div
     class="music"
     @mousemove="handleMouseMove"
+    @click.prevent="isAudioList = false"
   >
+    <div class="music-history-list">
+      <i
+        class="iconfont icon-liebiao"
+        :class="isAudioList?'list-open':''"
+        @click.stop="openAudioList"
+      />
+    </div>
+    <transition name="audio-list">
+      <audio-list v-if="isAudioList" />
+    </transition>
     <el-scrollbar>
       <div class="music-recommend">
-        <AudioList @open-music-list="openMusicDia" />
+        <AudioTabList @open-music-list="openMusicDia" />
       </div>
     </el-scrollbar>
     <transition name="audio-play">
@@ -29,7 +40,8 @@
 
 <script lang="ts" setup>
 import AudioPlay from './comps/AudioPlay.vue'
-import AudioList from './comps/AudioTabList.vue'
+import AudioTabList from './comps/AudioTabList.vue'
+import AudioList from './comps/AudioList.vue'
 import AudioDia from './comps/AudioDia.vue'
 import { debounce } from 'lodash'
 import { useMusicStore } from '@/sotre/module/music'
@@ -42,6 +54,8 @@ const listData = reactive({
   listId: 0,
   activeTab: 1
 })
+
+const isAudioList = ref<boolean>(false)
 
 const musicStore = useMusicStore()
 // 控制音乐播放器显示隐藏
@@ -65,6 +79,12 @@ const handlePlayMusic = () => {
   audioRef.value?.play()
 }
 
+// 打开音乐列表
+const openAudioList = () => {
+  isAudioList.value = true
+  console.log(222)
+}
+
 </script>
 
 <style scoped lang="scss">
@@ -76,8 +96,28 @@ const handlePlayMusic = () => {
   background: fixed url('@/assets/img/music/bg.jpg') 0 0;
   background-size: cover;
   position: relative;
-  .music-recommend {
+  &-recommend {
     margin-top: 30vh;
+  }
+  &-history-list{
+    position: absolute;
+    width: 36px;
+    height: 50px;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    i{
+      color: #fff;
+      font-size: 36px;
+      cursor: pointer;
+      transition: 1s;
+    }
+    .list-open{
+      color: $pink-color;
+    }
   }
 }
 ::v-deep(.el-scrollbar__view) {
