@@ -2,7 +2,7 @@
   <div
     class="music"
     @mousemove="handleMouseMove"
-    @click.prevent="isAudioList = false"
+    @click="isAudioList = false"
   >
     <div class="music-history-list">
       <i
@@ -12,7 +12,11 @@
       />
     </div>
     <transition name="audio-list">
-      <audio-list v-if="isAudioList" />
+      <audio-list
+        v-show="isAudioList"
+        :audio-ref="audioRef"
+        @click.stop="isAudioList = true"
+      />
     </transition>
     <el-scrollbar>
       <div class="music-recommend">
@@ -82,7 +86,6 @@ const handlePlayMusic = () => {
 // 打开音乐列表
 const openAudioList = () => {
   isAudioList.value = true
-  console.log(222)
 }
 
 </script>

@@ -186,6 +186,12 @@ watch(
         // 监听音乐播放结束
         handleNext()
       })
+      val.addEventListener('play', () => {
+        musicStore.isPlayMusic = true
+      })
+      val.addEventListener('pause', () => {
+        musicStore.isPlayMusic = false
+      })
     }
   },
   {

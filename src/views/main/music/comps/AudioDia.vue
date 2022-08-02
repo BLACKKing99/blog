@@ -83,7 +83,10 @@
                     >
                       <i class="iconfont icon-jia" />
                     </div>
-                    <div class="todo">
+                    <div
+                      class="todo"
+                      @click="handleMusicDownLoad"
+                    >
                       <i class="iconfont icon-xiazai" />
                     </div>
                   </div>
@@ -177,17 +180,34 @@ const handleMusicPlay = (value:IMusicInfo) => {
     id,
     url: ''
   }
-  musicStore.currentMusicInfo = reactive({
-    ...musicStore.currentMusicInfo,
-    ...obj
-  })
-  musicStore.setCurrentMusicInfo(value.id, obj)
+  // musicStore.currentMusicInfo = reactive({
+  //   ...musicStore.currentMusicInfo,
+  //   ...obj
+  // })
+  musicStore.setCurrentMusicInfo(value.id, obj, 'history')
   setTimeout(() => {
     emit('play-music')
   }, 100)
 }
 
 const handleMusicListAdd = (value:IMusicInfo) => {
+  const { cover, singerInfo, songName, id, totalTime } = value
+  const obj = {
+    totalTime,
+    musicName: songName,
+    singer: singerInfo.name,
+    cover,
+    id,
+    url: ''
+  }
+  musicStore.currentMusicInfo = reactive({
+    ...musicStore.currentMusicInfo,
+    ...obj
+  })
+  musicStore.setCurrentMusicInfo(value.id, obj, 'add')
+}
+
+const handleMusicDownLoad = () => {
   ElNotification.success({
     title: '提示',
     message: '暂时不支持下载哦~~~',

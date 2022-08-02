@@ -6,6 +6,7 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     APlayer: typeof import('./../../src/components/audio/APlayer.vue')['default']
     ArticleList: typeof import('./../../src/components/common/articleList/articleList.vue')['default']
+    AudioHistoryList: typeof import('./../../src/components/common/audioList/audioHistoryList.vue')['default']
     CollectList: typeof import('./../../src/components/common/collectList/collectList.vue')['default']
     Dialog: typeof import('./../../src/components/common/dialog/Dialog.vue')['default']
     Editor: typeof import('./../../src/components/editor/Editor.vue')['default']
