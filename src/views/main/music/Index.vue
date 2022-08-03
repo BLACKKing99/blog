@@ -88,6 +88,10 @@ const openAudioList = () => {
   isAudioList.value = true
 }
 
+watch(() => audioRef.value, (val) => {
+  musicStore.audioRef = val
+})
+
 </script>
 
 <style scoped lang="scss">

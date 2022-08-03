@@ -102,6 +102,7 @@
 import useTimeFormat from '@/hooks/useTimeFormat'
 import { PropType } from 'vue'
 import { useMusicStore } from '@/sotre/module/music'
+import { cloneDeep } from 'lodash'
 
 const props = defineProps({
   audioRef: {
@@ -130,14 +131,12 @@ const voice = ref(100)
 const isShowVoice = ref(false)
 
 // 由于需要随时更新所以说需要设置一个定时器
-let timer: NodeJS.Timer
 
 const handlePlay = () => {
   if (props.audioRef.paused) {
     props.audioRef.play()
   } else {
     props.audioRef.pause()
-    clearInterval(timer)
   }
 }
 
@@ -147,7 +146,7 @@ const handlePrev = () => {
   } else {
     currentIndex.value -= 1
   }
-  musicStore.setCurrentMusic(currentIndex.value)
+  musicStore.setCurrentMusicToList(currentIndex.value)
   props.audioRef.play()
 }
 
@@ -157,7 +156,7 @@ const handleNext = () => {
   } else {
     currentIndex.value += 1
   }
-  musicStore.setCurrentMusic(currentIndex.value)
+  musicStore.setCurrentMusicToList(currentIndex.value)
   props.audioRef.play()
 }
 
@@ -188,6 +187,8 @@ watch(
       })
       val.addEventListener('play', () => {
         musicStore.isPlayMusic = true
+        const data = cloneDeep(musicStore.currentMusicInfo)
+        musicStore.setCurrentMusicInfo(data.id, data, 'history')
       })
       val.addEventListener('pause', () => {
         musicStore.isPlayMusic = false

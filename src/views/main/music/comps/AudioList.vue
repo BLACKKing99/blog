@@ -18,17 +18,43 @@
           >历史列表</span>
         </div>
       </div>
-      <div class="container">
-        <div
-          v-for="item in audioList"
-          :key="item.id"
-          class="container-item"
-        >
-          <audio-history-list
-            @play-music="handlePlayMusic"
-            :info="item"
-          />
-        </div>
+      <div class="container-content">
+        <template v-if="true">
+          <transition name="audio-add-list">
+            <div
+              class="container"
+              v-if="tabActive === 'list'"
+            >
+              <div
+                v-for="item in musicStore.musicList"
+                :key="item.id"
+                class="container-item"
+              >
+                <audio-history-list
+                  @play-music="handlePlayMusic"
+                  :info="item"
+                />
+              </div>
+            </div>
+          </transition>
+          <transition name="audio-history-list">
+            <div
+              class="container"
+              v-if="tabActive === 'history'"
+            >
+              <div
+                v-for="item in musicStore.musicHistoryList"
+                :key="item.id"
+                class="container-item"
+              >
+                <audio-history-list
+                  @play-music="handlePlayMusic"
+                  :info="item"
+                />
+              </div>
+            </div>
+          </transition>
+        </template>
       </div>
     </div>
   </div>
@@ -48,16 +74,6 @@ const handleSearch = (event:any) => {
   }
 }
 
-const audioList = computed(() => {
-  let list
-  if (tabActive.value === 'list') {
-    list = musicStore.musicList
-  } else {
-    list = musicStore.musicHistoryList
-  }
-  return list
-})
-
 const handlePlayMusic = (value:IMusicInfo) => {
 
 }
@@ -65,16 +81,18 @@ const handlePlayMusic = (value:IMusicInfo) => {
 </script>
 
 <style scoped lang='scss'>
+@import '@/styles/animations.scss';
 .audio-list{
   position: fixed;
   left: 0;
   top: 0;
   bottom: 0;
-  width: 40%;
+  width: 30%;
   z-index: 99;
   height: 100%;
   background-color: rgba(255, 255, 255, 0.7);
   border-radius: 20px 0 0;
+  overflow: hidden;
   &-container{
     padding: 20px;
     box-sizing: border-box;
@@ -101,8 +119,13 @@ const handlePlayMusic = (value:IMusicInfo) => {
         }
       }
     }
+    .container-content{
+      display: flex;
+      overflow: hidden;
+    }
     .container{
       margin-top: 20px;
+      width: 100%;
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { getMusicUrl } from '@/api2/module/song'
 import LocalCatch from '@/util/LocalCatch'
 
-export interface ICurrentMusicInfo{
+export interface IMusicInfo{
     id:number,
     url:string,
     singer:string,
@@ -10,38 +10,57 @@ export interface ICurrentMusicInfo{
     cover:string,
     totalTime:number
 }
-const musicList: ICurrentMusicInfo[] = LocalCatch.getItem('musicList') || []
-const musicHistoryList: ICurrentMusicInfo[] = LocalCatch.getItem('musicHistoryList') || []
+const musicList: IMusicInfo[] = LocalCatch.getItem('musicList') || []
+const musicHistoryList: IMusicInfo[] = LocalCatch.getItem('musicHistoryList') || []
 export const useMusicStore = defineStore('music', {
   state: () => {
     return {
+      // 音乐是否打开关闭
       isPlayMusic: false,
-      currentMusicInfo: (musicList[0] || {}) as ICurrentMusicInfo,
+      // 当前播放的音乐
+      currentMusicInfo: (musicList[0] || {}) as IMusicInfo,
+      // 音乐播放的列表
       musicList: musicList,
-      musicHistoryList: musicHistoryList
+      // 历史音乐播放列表
+      musicHistoryList: musicHistoryList,
+      audioRef: undefined as HTMLAudioElement | undefined
     }
   },
   actions: {
-    setCurrentMusic (index:number) {
+    setCurrentMusicToList (index:number) {
       // 不请求数据 从musicList 中获取获取的信息
       this.currentMusicInfo = this.musicList[index]
     },
-    setCurrentMusicInfo (id:number, obj:ICurrentMusicInfo, type:'add'|'history') {
+    setCurrentMusic (data:IMusicInfo) {
+      this.currentMusicInfo = data
+    },
+    setCurrentMusicInfo (id:number, obj:IMusicInfo, type:'add'|'history') {
       this.getMusicUrlData(id, obj, type)
     },
-    async getMusicUrlData (id:number, obj:ICurrentMusicInfo, type:'add'|'history') {
-      const obj2 = { ...obj }
-      const { data } = await getMusicUrl(id)
-      this.currentMusicInfo.url = data.data[0].url
-      obj2.url = data.data[0].url
-      if (type === 'add') {
+    async getMusicUrlData (id:number, obj:IMusicInfo, type:'add'|'history') {
+      try {
+        // 从历史列表中查找 是否有缓存 如果说有缓存就没必要请求数据了
+        const index = this.musicHistoryList.findIndex(item => item.id === id)
+        const obj2 = { ...obj }
+        if (index === -1) {
+        // 说明列表里面没有 再去请求数据
+          const { data } = await getMusicUrl(id)
+          obj2.url = data.data[0].url
+          if (type === 'history') {
+            this.currentMusicInfo = obj2
+          }
+        }
+        if (type === 'add') {
         // 当点击的是添加音乐列表的时候 再去
-        this.setMusicList(id, obj2)
-      } else {
-        this.setMusicHistoryList(id, obj2)
+          this.setMusicList(id, obj2)
+        } else {
+          this.setMusicHistoryList(id, obj2)
+        }
+      } catch (error) {
+        ElMessage.error('啊哦~出错了！！')
       }
     },
-    setMusicList (id:number, obj:ICurrentMusicInfo) {
+    setMusicList (id:number, obj:IMusicInfo) {
       // 设置播放列表
       const index = this.musicList.findIndex(item => {
         return item.id === id
@@ -54,7 +73,7 @@ export const useMusicStore = defineStore('music', {
       }
       LocalCatch.setItem('musicList', this.musicList)
     },
-    setMusicHistoryList (id:number, obj:ICurrentMusicInfo) {
+    setMusicHistoryList (id:number, obj:IMusicInfo) {
       // 历史播放列表
       const index = this.musicHistoryList.findIndex(item => {
         return item.id === id

@@ -22,21 +22,27 @@
 
 <script lang='ts' setup>
 import { PropType } from 'vue'
-import { ICurrentMusicInfo, useMusicStore } from '@/sotre/module/music'
+import { IMusicInfo, useMusicStore } from '@/sotre/module/music'
 
 const musicStore = useMusicStore()
 
-const emit = defineEmits(['play-music'])
-
 const props = defineProps({
   info: {
-    type: Object as PropType<ICurrentMusicInfo>,
+    type: Object as PropType<IMusicInfo>,
     default: () => ({})
   }
 })
 
 const handlePlayMusic = () => {
-  emit('play-music', props.info)
+  if (props.info.id === musicStore.currentMusicInfo.id) {
+    if (musicStore.audioRef?.paused) {
+      musicStore.audioRef.play()
+    } else {
+      musicStore.audioRef?.pause()
+    }
+    return
+  }
+  musicStore.setCurrentMusic(props.info)
 }
 </script>
 
@@ -67,6 +73,11 @@ const handlePlayMusic = () => {
           height: 100%;
           border-radius: 5px;
           display: inline-block;
+          cursor: pointer;
+          transition: 0.3s;
+          &:hover{
+            filter: blur(3px);
+          }
         }
         .audio-active{
           animation: 6s linear listCover 1s infinite;
@@ -79,6 +90,7 @@ const handlePlayMusic = () => {
             color: #fff;
             font-size: 30px;
             cursor: pointer;
+            transition: 0.3s;
             &:hover{
               color: $pink-color;
             }

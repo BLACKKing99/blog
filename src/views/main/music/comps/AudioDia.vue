@@ -180,10 +180,7 @@ const handleMusicPlay = (value:IMusicInfo) => {
     id,
     url: ''
   }
-  // musicStore.currentMusicInfo = reactive({
-  //   ...musicStore.currentMusicInfo,
-  //   ...obj
-  // })
+
   musicStore.setCurrentMusicInfo(value.id, obj, 'history')
   setTimeout(() => {
     emit('play-music')

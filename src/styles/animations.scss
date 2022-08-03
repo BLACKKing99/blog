@@ -228,3 +228,26 @@
 .music-list-right-leave-active {
   transition: all 1s cubic-bezier(0, 0, 1, 1);
 }
+
+// 播放列表 动画
+.audio-add-list-enter-from,
+.audio-add-list-leave-to {
+  transform: translateX(-104%);
+  position: absolute;
+}
+.audio-add-list-enter-active,
+.audio-add-list-leave-active {
+  transition: all 0.5s;
+}
+
+// 历史列表 动画
+.audio-history-list-enter-from,
+.audio-history-list-leave-to {
+  transform: translateX(104%);
+  position: absolute;
+}
+
+.audio-history-list-enter-active,
+.audio-history-list-leave-active {
+  transition: all 0.5s;
+}
