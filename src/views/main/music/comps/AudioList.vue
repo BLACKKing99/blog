@@ -20,40 +20,42 @@
       </div>
       <div class="container-content">
         <template v-if="true">
-          <transition name="audio-add-list">
-            <div
-              class="container"
-              v-if="tabActive === 'list'"
-            >
+          <el-scrollbar>
+            <transition name="audio-add-list">
               <div
-                v-for="item in musicStore.musicList"
-                :key="item.id"
-                class="container-item"
+                class="container"
+                v-if="tabActive === 'list'"
               >
-                <audio-history-list
-                  @play-music="handlePlayMusic"
-                  :info="item"
-                />
+                <div
+                  v-for="item in musicStore.musicList"
+                  :key="item.id"
+                  class="container-item"
+                >
+                  <audio-history-list
+                    @play-music="handlePlayMusic"
+                    :info="item"
+                  />
+                </div>
               </div>
-            </div>
-          </transition>
-          <transition name="audio-history-list">
-            <div
-              class="container"
-              v-if="tabActive === 'history'"
-            >
+            </transition>
+            <transition name="audio-history-list">
               <div
-                v-for="item in musicStore.musicHistoryList"
-                :key="item.id"
-                class="container-item"
+                class="container"
+                v-if="tabActive === 'history'"
               >
-                <audio-history-list
-                  @play-music="handlePlayMusic"
-                  :info="item"
-                />
+                <div
+                  v-for="item in musicStore.musicHistoryList"
+                  :key="item.id"
+                  class="container-item"
+                >
+                  <audio-history-list
+                    @play-music="handlePlayMusic"
+                    :info="item"
+                  />
+                </div>
               </div>
-            </div>
-          </transition>
+            </transition>
+          </el-scrollbar>
         </template>
       </div>
     </div>
@@ -96,6 +98,7 @@ const handlePlayMusic = (value:IMusicInfo) => {
   &-container{
     padding: 20px;
     box-sizing: border-box;
+    height: 100%;
     .header{
       height: 50px;
       display: flex;
@@ -119,12 +122,17 @@ const handlePlayMusic = (value:IMusicInfo) => {
         }
       }
     }
+    ::v-deep(.el-scrollbar){
+      width: 100%;
+    }
     .container-content{
       display: flex;
+      width: 100%;
       overflow: hidden;
+      margin-top: 20px;
+      height: calc(100% - 90px);
     }
     .container{
-      margin-top: 20px;
       width: 100%;
       display: flex;
       flex-direction: row;

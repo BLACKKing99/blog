@@ -2,7 +2,6 @@
   <div
     class="music"
     @mousemove="handleMouseMove"
-    @click="isAudioList = false"
   >
     <div class="music-history-list">
       <i
@@ -19,7 +18,13 @@
       />
     </transition>
     <el-scrollbar>
-      <div class="music-recommend">
+      <div
+        class="music-container-content"
+        @click="isAudioList = false"
+      >
+        <div class="music-detail-content">
+          <audio-detail />
+        </div>
         <AudioTabList @open-music-list="openMusicDia" />
       </div>
     </el-scrollbar>
@@ -47,6 +52,7 @@ import AudioPlay from './comps/AudioPlay.vue'
 import AudioTabList from './comps/AudioTabList.vue'
 import AudioList from './comps/AudioList.vue'
 import AudioDia from './comps/AudioDia.vue'
+import AudioDetail from './comps/AudioDetail.vue'
 import { debounce } from 'lodash'
 import { useMusicStore } from '@/sotre/module/music'
 const audioRef = ref<HTMLAudioElement>()
@@ -103,8 +109,12 @@ watch(() => audioRef.value, (val) => {
   background: fixed url('@/assets/img/music/bg.jpg') 0 0;
   background-size: cover;
   position: relative;
-  &-recommend {
-    margin-top: 30vh;
+  &-detail-content{
+    height: 60vh;
+    width: 100%;
+  }
+  &-container-content {
+    margin-top: 20vh;
   }
   &-history-list{
     position: absolute;

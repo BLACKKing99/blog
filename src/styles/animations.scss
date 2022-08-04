@@ -234,6 +234,8 @@
 .audio-add-list-leave-to {
   transform: translateX(-104%);
   position: absolute;
+  top: 0;
+  bottom: 0;
 }
 .audio-add-list-enter-active,
 .audio-add-list-leave-active {
@@ -245,6 +247,8 @@
 .audio-history-list-leave-to {
   transform: translateX(104%);
   position: absolute;
+  top: 0;
+  bottom: 0;
 }
 
 .audio-history-list-enter-active,
