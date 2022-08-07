@@ -4,7 +4,7 @@
       v-model:visiable="dialogVisiable"
       :dialog-style="{
         width: '1200px',
-        height: '750px',
+        height: '800px',
         left: '50%',
         top: '50%',
       }"

@@ -3,19 +3,32 @@
     <div class="audio-detail-lyric">
       <ul class="audio-detail-lyric-title">
         <li class="title-singer">
-          宋佳欣
+          {{ musicStore.currentMusicInfo.singer }}
         </li>
         <li class="title-song">
-          知己
+          {{ musicStore.currentMusicInfo.musicName }}
         </li>
       </ul>
-      <ul class="audio-detail-lyric-content">
-        歌词
-      </ul>
+      <div class="audio-detail-lyric-content">
+        <el-scrollbar>
+          <ul class="lyric-container">
+            <li
+              v-for="(item,index) in musicStore.currentLyric"
+              :key="index"
+              :class="[
+                item.time <= musicStore.currentMusicTime && musicStore.currentLyric[index + 1]?.time >= musicStore.currentMusicTime?'lyric-active':''
+              ]"
+              class="lyric-container-item"
+            >
+              {{ item.lrc }}
+            </li>
+          </ul>
+        </el-scrollbar>
+      </div>
     </div>
     <ul class="audio-detail-recommend">
       <li class="audio-detail-recommend-title">
-        宋佳欣
+        {{ musicStore.currentMusicInfo.singer }}
         &nbsp;
         <i class="iconfont icon-double-arrow-right-full" />
       </li>
@@ -46,7 +59,14 @@
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { useMusicStore } from '@/sotre/module/music'
+
+const musicStore = useMusicStore()
+
+musicStore.initMusicInfo()
+
+</script>
 
 <style scoped lang="scss">
 .audio-detail {
@@ -71,6 +91,22 @@
     &-content{
         margin-top: 20px;
         height: calc(100% - 90px);
+        .lyric-container{
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          color: #fff;
+          font-size: 14px;
+          &-item{
+            transition: 0.5s;
+          }
+          .lyric-active{
+            color: $pink-color;
+            font-size: 18px;
+          }
+        }
     }
   }
   &-recommend {

@@ -180,6 +180,7 @@ watch(
         const { formatTime } = useTimeFormat(val.currentTime * 1000, 'mm:ss')
         updateTime.value = formatTime.value
         currentTime.value = (val.currentTime / val.duration) * 100
+        musicStore.currentMusicTime = val.currentTime * 1000
       })
       val.addEventListener('ended', () => {
         // 监听音乐播放结束
@@ -189,6 +190,7 @@ watch(
         musicStore.isPlayMusic = true
         const data = cloneDeep(musicStore.currentMusicInfo)
         musicStore.setCurrentMusicInfo(data.id, data, 'history')
+        musicStore.getCurrentLyric(data.id)
       })
       val.addEventListener('pause', () => {
         musicStore.isPlayMusic = false

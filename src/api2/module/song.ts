@@ -78,3 +78,12 @@ export const getMusicDetail = (id:number) => {
     url: `/song/detail?ids=${id}`
   })
 }
+
+export const getMusicLyric = (id:number) => {
+  return lRequest.lrequest({
+    url: '/lyric',
+    params: {
+      id
+    }
+  })
+}
