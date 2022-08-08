@@ -9,6 +9,7 @@ export interface IMusicInfo{
     musicName:string,
     cover:string,
     totalTime:number
+    singerId:number
 }
 
 export interface IMusicLyric {
@@ -17,6 +18,7 @@ export interface IMusicLyric {
   min: string
   sec: string
   time: number
+  active:boolean
 }
 const musicList: IMusicInfo[] = LocalCatch.getItem('musicList') || []
 const musicHistoryList: IMusicInfo[] = LocalCatch.getItem('musicHistoryList') || []
@@ -46,8 +48,6 @@ export const useMusicStore = defineStore('music', {
     async getCurrentLyric (id:number) {
       const { data } = await getMusicLyric(id)
       const lyric = data.lrc.lyric as string
-      console.log(lyric)
-
       this.currentLyric = handleLyric(lyric)
     },
     setCurrentMusicToList (index:number) {
@@ -118,13 +118,14 @@ const handleLyric = (str:string) => {
     const sec = item.slice(4, 6)
     let mill = item.slice(7, 10)
     let lrc = item.slice(11, item.length)
+    const active = false
     let time = parseInt(min) * 60 * 1000 + parseInt(sec) * 1000 + parseInt(mill) // 把分钟变成秒，秒变成毫秒
     if (isNaN(Number(mill))) { // 判断是不是数字 不是的话进行二次分割  有些还是这种格式的 53]
       mill = item.slice(7, 9)
       lrc = item.slice(10, item.length)
       time = parseInt(min) * 60 * 1000 + parseInt(sec) * 1000 + parseInt(mill) // 把分钟变成秒，秒变成毫秒
     }
-    return { min, sec, mill, lrc, time }
+    return { min, sec, mill, lrc, time, active }
   })
   arr.forEach((item, i) => { // 由于后端返回的数据中，可能会有空的歌词，会让高亮的短暂消失，这边处理下
     if (item.lrc === '' && i !== 0) {

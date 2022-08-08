@@ -5,7 +5,7 @@ export interface ISheetDetail {
   description?: string
   tags?: string[]
 }
-export interface IMusicInfo {
+export interface IMusicDetailInfo {
   id: number
   songName: string
   cover:string

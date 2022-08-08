@@ -114,8 +114,8 @@
 <script lang="ts" setup>
 import DialogVue from '@/components/common/dialog/Dialog.vue'
 import { getSheetList, getSheetDetail } from '@/api2/module/song'
-import { ISheetDetail, IMusicInfo } from './types'
-import { useMusicStore } from '@/sotre/module/music'
+import { ISheetDetail, IMusicDetailInfo } from './types'
+import { IMusicInfo, useMusicStore } from '@/sotre/module/music'
 const props = defineProps({
   isView: {
     type: Boolean,
@@ -133,7 +133,7 @@ const dialogVisiable = ref(false)
 // 列表詳情
 const sheetDetail = ref<ISheetDetail>({})
 // 歌单列表
-const sheetList = ref<Record<number, IMusicInfo[]>>({})
+const sheetList = ref<Record<number, IMusicDetailInfo[]>>({})
 // loading
 const loading = ref(false)
 const pageInfo = reactive({
@@ -169,13 +169,14 @@ const getSongListData = async () => {
   loading.value = false
 }
 
-const handleMusicPlay = (value:IMusicInfo) => {
+const handleMusicPlay = (value:IMusicDetailInfo) => {
   // 处理播放音乐
   const { cover, singerInfo, songName, id, totalTime } = value
   const obj = {
     totalTime,
     musicName: songName,
     singer: singerInfo.name,
+    singerId: singerInfo.id,
     cover,
     id,
     url: ''
@@ -187,7 +188,7 @@ const handleMusicPlay = (value:IMusicInfo) => {
   }, 100)
 }
 
-const handleMusicListAdd = (value:IMusicInfo) => {
+const handleMusicListAdd = (value:IMusicDetailInfo) => {
   const { cover, singerInfo, songName, id, totalTime } = value
   const obj = {
     totalTime,
@@ -195,8 +196,9 @@ const handleMusicListAdd = (value:IMusicInfo) => {
     singer: singerInfo.name,
     cover,
     id,
+    singerId: value.singerInfo.id,
     url: ''
-  }
+  } as IMusicInfo
   musicStore.currentMusicInfo = reactive({
     ...musicStore.currentMusicInfo,
     ...obj

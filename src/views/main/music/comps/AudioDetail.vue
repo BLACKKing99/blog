@@ -10,17 +10,34 @@
         </li>
       </ul>
       <div class="audio-detail-lyric-content">
-        <el-scrollbar>
+        <el-scrollbar ref="lyricScroll">
           <ul class="lyric-container">
             <li
               v-for="(item,index) in musicStore.currentLyric"
               :key="index"
               :class="[
-                item.time <= musicStore.currentMusicTime && musicStore.currentLyric[index + 1]?.time >= musicStore.currentMusicTime?'lyric-active':''
+                handleLrcActive(item,index)?'lyric-active':''
               ]"
               class="lyric-container-item"
+              @mouseenter="item.active = true"
+              @mouseleave="item.active = false"
             >
-              {{ item.lrc }}
+              <el-divider
+                border-style="solid"
+                :class="item.active?'divider-active':''"
+              />
+              <span class="lyric-container-item-content">{{ item.lrc }}</span>
+              <el-divider
+                content-position="center"
+                border-style="solid"
+                :class="item.active?'divider-active':''"
+              >
+                <i
+                  class="iconfont icon-Play"
+                  title="点击播放到这"
+                  @click="PlayLrcMusic(item)"
+                />
+              </el-divider>
             </li>
           </ul>
         </el-scrollbar>
@@ -60,11 +77,68 @@
 </template>
 
 <script lang="ts" setup>
-import { useMusicStore } from '@/sotre/module/music'
+import { ISingerList, getSingerList } from '@/api2/module/song'
+import { useMusicStore, IMusicLyric } from '@/sotre/module/music'
+import { ElScrollbar } from 'element-plus'
 
 const musicStore = useMusicStore()
-
+// 初始化歌词
 musicStore.initMusicInfo()
+
+// 歌手唱的歌曲列表
+
+// const singerSongList = ref<>([])
+
+// 歌词滚动的ref
+const lyricScroll = ref<InstanceType<typeof ElScrollbar> | null>(null)
+
+// const lyrPosition = ref<number>(0)
+
+// 判断是否活跃
+// const isActive = ref<boolean>(false)
+
+const PlayLrcMusic = (item:IMusicLyric) => {
+  if (musicStore.audioRef) {
+    musicStore.audioRef.currentTime = item.time / 1000
+  }
+}
+
+const handleLrcActive = (item:IMusicLyric, index:number):boolean => {
+  if (item.time <= musicStore.currentMusicTime && musicStore.currentLyric[index + 1]?.time >= musicStore.currentMusicTime) {
+    return true
+  } else {
+    return false
+  }
+}
+// 获取歌手对应的音乐
+const getSingerListData = async (value:ISingerList) => {
+  const { data } = await getSingerList(value)
+  console.log(data)
+}
+
+watch(() => musicStore.currentMusicInfo.singerId, (id) => {
+  getSingerListData({
+    id,
+    limit: 20
+  })
+}, {
+  immediate: true
+})
+
+// watch(() => musicStore.currentMusicTime, () => {
+//   if (isActive.value === true) {
+//     isActive.value = false
+//   }
+// })
+// watch(() => isActive.value, (val) => {
+//   if (val) {
+//     if (lyricScroll.value) {
+//       console.log(33333)
+
+//       lyricScroll.value.scrollTo({ top: lyrPosition.value, behavior: 'smooth' })
+//     }
+//   }
+// })
 
 </script>
 
@@ -101,6 +175,28 @@ musicStore.initMusicInfo()
           font-size: 14px;
           &-item{
             transition: 0.5s;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            ::v-deep(.el-divider){
+              margin: 0;
+              opacity: 0;
+              flex: 1;
+              transition: 0.5s;
+              .el-divider__text{
+                background-color: transparent;
+                font-size: 12px;
+                cursor: pointer;
+                color: #fff;
+              }
+            }
+            &-content{
+              margin: 0 5px;
+            }
+          }
+          .divider-active{
+            opacity: 1;
           }
           .lyric-active{
             color: $pink-color;

@@ -64,7 +64,7 @@
 
 <script lang='ts' setup>
 import { useMusicStore } from '@/sotre/module/music'
-import { IMusicInfo } from './types.js'
+import { IMusicDetailInfo } from './types.js'
 
 const musicStore = useMusicStore()
 
@@ -76,7 +76,7 @@ const handleSearch = (event:any) => {
   }
 }
 
-const handlePlayMusic = (value:IMusicInfo) => {
+const handlePlayMusic = (value:IMusicDetailInfo) => {
 
 }
 
@@ -106,7 +106,7 @@ const handlePlayMusic = (value:IMusicInfo) => {
       padding:0 0 0 60px;
       &-tab{
         width: 260px;
-        padding-left: 50px;
+        padding-left: 40px;
         &-mid{
           margin: 0 5px;
         }
