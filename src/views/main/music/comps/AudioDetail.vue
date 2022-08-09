@@ -54,19 +54,31 @@
           <ul class="list-container">
             <li
               class="list-container-item"
-              v-for="item in 10"
-              :key="item"
+              v-for="item in singerSongList"
+              :key="item.id"
             >
               <div class="list-container-item-img">
-                <img src="@/assets/img/avatar/avatar-bg.jpg">
+                <img :src="item.cover">
               </div>
               <div class="list-container-item-detail">
                 <div class="song">
-                  你所知道的
+                  {{ item.songName }}
                 </div>
                 <div class="singer">
-                  裴佳欣
+                  {{ item.singerInfo?.name }}
                 </div>
+              </div>
+              <div class="list-container-item-todo">
+                <i
+                  v-if="item.id === musicStore.currentMusicInfo.id"
+                  class="iconfont icon-bofang"
+                  @click="plausedListMusic"
+                />
+                <i
+                  v-else
+                  @click="playListMusic(item)"
+                  class="iconfont icon-bofang1"
+                />
               </div>
             </li>
           </ul>
@@ -77,9 +89,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ISingerList, getSingerList } from '@/api2/module/song'
+import { getSingerList } from '@/api2/module/song'
 import { useMusicStore, IMusicLyric } from '@/sotre/module/music'
 import { ElScrollbar } from 'element-plus'
+import { IMusicDetailInfo } from './types'
+import { dealMusicData } from './util'
 
 const musicStore = useMusicStore()
 // 初始化歌词
@@ -87,7 +101,7 @@ musicStore.initMusicInfo()
 
 // 歌手唱的歌曲列表
 
-// const singerSongList = ref<>([])
+const singerSongList = ref<IMusicDetailInfo[]>([])
 
 // 歌词滚动的ref
 const lyricScroll = ref<InstanceType<typeof ElScrollbar> | null>(null)
@@ -103,6 +117,22 @@ const PlayLrcMusic = (item:IMusicLyric) => {
   }
 }
 
+const playListMusic = (value:IMusicDetailInfo) => {
+  // 播放当前音乐
+  if (value.id === musicStore.currentMusicInfo.id) {
+    musicStore.audioRef?.play()
+    return
+  }
+  const obj = dealMusicData(value)
+
+  musicStore.setCurrentMusicInfo(value.id, obj)
+}
+
+const plausedListMusic = () => {
+  // 暂停播放
+  musicStore.audioRef?.play()
+}
+
 const handleLrcActive = (item:IMusicLyric, index:number):boolean => {
   if (item.time <= musicStore.currentMusicTime && musicStore.currentLyric[index + 1]?.time >= musicStore.currentMusicTime) {
     return true
@@ -111,16 +141,30 @@ const handleLrcActive = (item:IMusicLyric, index:number):boolean => {
   }
 }
 // 获取歌手对应的音乐
-const getSingerListData = async (value:ISingerList) => {
-  const { data } = await getSingerList(value)
-  console.log(data)
+const getSingerListData = async (id:number) => {
+  try {
+    const { data } = await getSingerList(id)
+    const arr = data.hotSongs.map((item:any) => {
+      return {
+        id: item.id,
+        songName: item.name,
+        totalTime: item.dt,
+        singerInfo: item.ar[0],
+        cover: item.al.picUrl
+      } as IMusicDetailInfo
+    }) as IMusicDetailInfo[]
+    arr.splice(0, 20)
+    singerSongList.value.push(...arr)
+  } catch (error) {
+    ElMessage({
+      type: 'error',
+      message: '出错啦~~'
+    })
+  }
 }
 
 watch(() => musicStore.currentMusicInfo.singerId, (id) => {
-  getSingerListData({
-    id,
-    limit: 20
-  })
+  getSingerListData(id)
 }, {
   immediate: true
 })
@@ -231,7 +275,6 @@ watch(() => musicStore.currentMusicInfo.singerId, (id) => {
           align-items: center;
           border-bottom: solid 1px #fff;
           background: transparent;
-          cursor: pointer;
           &:hover {
             transform: scale(.99);
             background: rgba(0, 0, 0, 0.3);
@@ -259,6 +302,25 @@ watch(() => musicStore.currentMusicInfo.singerId, (id) => {
             .singer {
               font-size: 14px;
               color: #fff9;
+            }
+          }
+          &-todo{
+            flex: 1;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: end;
+            .iconfont{
+              cursor: pointer;
+              color: #fff;
+              font-size: 24px;
+              opacity: 0;
+              transition: 0.5s;
+            }
+            &:hover{
+              .iconfont{
+                opacity: 1;
+              }
             }
           }
         }

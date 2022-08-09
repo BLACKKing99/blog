@@ -2,6 +2,7 @@
   <div
     class="music"
     @mousemove="handleMouseMove"
+    @click="isAudioList = false"
   >
     <div class="music-history-list">
       <i
@@ -20,7 +21,6 @@
     <el-scrollbar>
       <div
         class="music-container-content"
-        @click="isAudioList = false"
       >
         <div class="music-detail-content">
           <audio-detail />

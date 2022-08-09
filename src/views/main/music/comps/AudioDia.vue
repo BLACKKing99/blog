@@ -115,7 +115,8 @@
 import DialogVue from '@/components/common/dialog/Dialog.vue'
 import { getSheetList, getSheetDetail } from '@/api2/module/song'
 import { ISheetDetail, IMusicDetailInfo } from './types'
-import { IMusicInfo, useMusicStore } from '@/sotre/module/music'
+import { useMusicStore } from '@/sotre/module/music'
+import { dealMusicData } from './util'
 const props = defineProps({
   isView: {
     type: Boolean,
@@ -171,39 +172,21 @@ const getSongListData = async () => {
 
 const handleMusicPlay = (value:IMusicDetailInfo) => {
   // 处理播放音乐
-  const { cover, singerInfo, songName, id, totalTime } = value
-  const obj = {
-    totalTime,
-    musicName: songName,
-    singer: singerInfo.name,
-    singerId: singerInfo.id,
-    cover,
-    id,
-    url: ''
-  }
+  const obj = dealMusicData(value)
 
-  musicStore.setCurrentMusicInfo(value.id, obj, 'history')
+  musicStore.setCurrentMusicInfo(value.id, obj)
   setTimeout(() => {
     emit('play-music')
   }, 100)
 }
 
 const handleMusicListAdd = (value:IMusicDetailInfo) => {
-  const { cover, singerInfo, songName, id, totalTime } = value
-  const obj = {
-    totalTime,
-    musicName: songName,
-    singer: singerInfo.name,
-    cover,
-    id,
-    singerId: value.singerInfo.id,
-    url: ''
-  } as IMusicInfo
+  const obj = dealMusicData(value)
   musicStore.currentMusicInfo = reactive({
     ...musicStore.currentMusicInfo,
     ...obj
   })
-  musicStore.setCurrentMusicInfo(value.id, obj, 'add')
+  musicStore.addMusicList(value.id, obj)
 }
 
 const handleMusicDownLoad = () => {

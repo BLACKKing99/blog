@@ -142,7 +142,7 @@ const handlePlay = () => {
 
 const handlePrev = () => {
   if (currentIndex.value === 0) {
-    currentIndex.value = musicStore.musicList.length - 1
+    currentIndex.value = musicStore.musicHistoryList.length - 1
   } else {
     currentIndex.value -= 1
   }
@@ -151,7 +151,7 @@ const handlePrev = () => {
 }
 
 const handleNext = () => {
-  if (currentIndex.value === musicStore.musicList.length - 1) {
+  if (currentIndex.value === musicStore.musicHistoryList.length - 1) {
     currentIndex.value = 0
   } else {
     currentIndex.value += 1
@@ -187,12 +187,16 @@ watch(
         handleNext()
       })
       val.addEventListener('play', () => {
+        // 监听播放
         musicStore.isPlayMusic = true
         const data = cloneDeep(musicStore.currentMusicInfo)
-        musicStore.setCurrentMusicInfo(data.id, data, 'history')
+        // 设置历史播放列表 设置完成之后会直接播放音乐  因此需要 直接获取歌词
+        musicStore.setCurrentMusicInfo(data.id, data)
+        // 获取歌词
         musicStore.getCurrentLyric(data.id)
       })
       val.addEventListener('pause', () => {
+        // 监听暂停
         musicStore.isPlayMusic = false
       })
     }

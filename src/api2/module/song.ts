@@ -91,15 +91,18 @@ export const getMusicLyric = (id:number) => {
 }
 
 // 获取歌手全部歌曲
-export interface ISingerList {
-  order?:'hot'|'time',
-  limit?:number,
-  offset?:number,
-  id:number
-}
-export const getSingerList = (params:ISingerList) => {
+// 获取歌手单曲
+// export interface ISingerList {
+//   order?:'hot'|'time',
+//   limit?:number,
+//   offset?:number,
+//   id:number
+// }
+export const getSingerList = (id:number) => {
   return lRequest.lrequest({
-    url: '/artist/songs',
-    params
+    url: '/artists',
+    params: {
+      id
+    }
   })
 }
