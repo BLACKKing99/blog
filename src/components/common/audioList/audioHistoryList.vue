@@ -30,6 +30,10 @@ const props = defineProps({
   info: {
     type: Object as PropType<IMusicInfo>,
     default: () => ({})
+  },
+  type: {
+    type: String as PropType<'list'|'history'>,
+    default: 'list'
   }
 })
 
@@ -41,6 +45,11 @@ const handlePlayMusic = () => {
       musicStore.audioRef?.pause()
     }
     return
+  }
+  if (props.type === 'list') {
+    musicStore.playType = 'list'
+  } else {
+    musicStore.playType = 'history'
   }
   musicStore.setCurrentMusic(props.info)
 }

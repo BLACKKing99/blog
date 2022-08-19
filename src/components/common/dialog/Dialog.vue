@@ -48,6 +48,17 @@ const props = defineProps({
     default: true
   }
 })
+
+const keyTodo = (event:KeyboardEvent) => {
+  if (event.code === 'Escape') {
+    dialogVisiable.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('keydown', keyTodo)
+})
+
 watch(
   () => props.visiable,
   (val) => {
@@ -61,6 +72,7 @@ watch(
   (val) => {
     if (!val) {
       emit('update:visiable', false)
+      document.removeEventListener('keydown', keyTodo)
     }
   }
 )

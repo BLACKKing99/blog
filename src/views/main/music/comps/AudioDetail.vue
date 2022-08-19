@@ -12,32 +12,37 @@
       <div class="audio-detail-lyric-content">
         <el-scrollbar ref="lyricScroll">
           <ul class="lyric-container">
-            <li
-              v-for="(item,index) in musicStore.currentLyric"
-              :key="index"
-              :class="[
-                handleLrcActive(item,index)?'lyric-active':''
-              ]"
-              class="lyric-container-item"
-              @mouseenter="item.active = true"
-              @mouseleave="item.active = false"
-            >
-              <el-divider
-                border-style="solid"
-                :class="item.active?'divider-active':''"
-              />
-              <span class="lyric-container-item-content">{{ item.lrc }}</span>
-              <el-divider
-                content-position="center"
-                border-style="solid"
-                :class="item.active?'divider-active':''"
+            <template v-if="musicStore.currentLyric.length !==0">
+              <li
+                v-for="(item,index) in musicStore.currentLyric"
+                :key="index"
+                :class="[
+                  handleLrcActive(item,index)?'lyric-active':''
+                ]"
+                class="lyric-container-item"
+                @mouseenter="item.active = true"
+                @mouseleave="item.active = false"
               >
-                <i
-                  class="iconfont icon-Play"
-                  title="点击播放到这"
-                  @click="PlayLrcMusic(item)"
+                <el-divider
+                  border-style="solid"
+                  :class="item.active?'divider-active':''"
                 />
-              </el-divider>
+                <span class="lyric-container-item-content">{{ item.lrc }}</span>
+                <el-divider
+                  content-position="center"
+                  border-style="solid"
+                  :class="item.active?'divider-active':''"
+                >
+                  <i
+                    class="iconfont icon-Play"
+                    title="点击播放到这"
+                    @click="PlayLrcMusic(item)"
+                  />
+                </el-divider>
+              </li>
+            </template>
+            <li v-else>
+              暂无歌词
             </li>
           </ul>
         </el-scrollbar>
@@ -124,7 +129,6 @@ const playListMusic = (value:IMusicDetailInfo) => {
     return
   }
   const obj = dealMusicData(value)
-
   musicStore.setCurrentMusicInfo(value.id, obj)
 }
 
@@ -142,7 +146,7 @@ const handleLrcActive = (item:IMusicLyric, index:number):boolean => {
 }
 // 获取歌手对应的音乐
 const getSingerListData = async (id:number) => {
-  try {
+  if (id) {
     const { data } = await getSingerList(id)
     const arr = data.hotSongs.map((item:any) => {
       return {
@@ -155,11 +159,6 @@ const getSingerListData = async (id:number) => {
     }) as IMusicDetailInfo[]
     arr.splice(0, 20)
     singerSongList.value.push(...arr)
-  } catch (error) {
-    ElMessage({
-      type: 'error',
-      message: '出错啦~~'
-    })
   }
 }
 

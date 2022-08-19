@@ -3,17 +3,17 @@
     <div class="audio-list-container">
       <div class="header">
         <el-input
-          @keydown="handleSearch"
+          v-model="searchText"
           placeholder="请输入需要搜索的内容"
         />
         <div class="header-tab">
           <span
-            :class="tabActive === 'list' ?'tab-active':''"
+            :class="tabActive === 'list' ? 'tab-active' : ''"
             @click="tabActive = 'list'"
           >播放列表</span>
           <span class="header-tab-mid">|</span>
           <span
-            :class="tabActive === 'history' ?'tab-active':''"
+            :class="tabActive === 'history' ? 'tab-active' : ''"
             @click="tabActive = 'history'"
           >历史列表</span>
         </div>
@@ -27,12 +27,12 @@
                 v-if="tabActive === 'list'"
               >
                 <div
-                  v-for="item in musicStore.musicList"
+                  v-for="item in musicList"
                   :key="item.id"
                   class="container-item"
                 >
                   <audio-history-list
-                    @play-music="handlePlayMusic"
+                    :type="tabActive"
                     :info="item"
                   />
                 </div>
@@ -44,12 +44,12 @@
                 v-if="tabActive === 'history'"
               >
                 <div
-                  v-for="item in musicStore.musicHistoryList"
+                  v-for="item in musicHistoryList"
                   :key="item.id"
                   class="container-item"
                 >
                   <audio-history-list
-                    @play-music="handlePlayMusic"
+                    :type="tabActive"
                     :info="item"
                   />
                 </div>
@@ -64,27 +64,28 @@
 
 <script lang='ts' setup>
 import { useMusicStore } from '@/sotre/module/music'
-import { IMusicDetailInfo } from './types.js'
 
 const musicStore = useMusicStore()
 
-const tabActive = ref<'list'|'history'>('list')
+const tabActive = ref<'list' | 'history'>('list')
 
-const handleSearch = (event:any) => {
-  if (event.keyCode === 13) {
-    console.log(222)
-  }
-}
+const searchText = ref<string>('')
 
-const handlePlayMusic = (value:IMusicDetailInfo) => {
+// 动态获取播放列表
+const musicList = computed(() => {
+  return musicStore.musicList.filter(item => item.musicName.indexOf(searchText.value) !== -1)
+})
 
-}
+// 动态获取历史列表
+const musicHistoryList = computed(() => {
+  return musicStore.musicHistoryList.filter(item => item.musicName.indexOf(searchText.value) !== -1)
+})
 
 </script>
 
 <style scoped lang='scss'>
 @import '@/styles/animations.scss';
-.audio-list{
+.audio-list {
   position: fixed;
   left: 0;
   top: 0;
@@ -95,49 +96,59 @@ const handlePlayMusic = (value:IMusicDetailInfo) => {
   background-color: rgba(255, 255, 255, 0.7);
   border-radius: 20px 0 0;
   overflow: hidden;
-  &-container{
+
+  &-container {
     padding: 20px;
     box-sizing: border-box;
     height: 100%;
-    .header{
+
+    .header {
       height: 50px;
       display: flex;
       align-items: center;
-      padding:0 0 0 60px;
-      &-tab{
+      padding: 0 0 0 60px;
+
+      &-tab {
         width: 260px;
         padding-left: 40px;
-        &-mid{
+
+        &-mid {
           margin: 0 5px;
         }
-        span{
+
+        span {
           font-size: 14px;
           color: #fff;
           cursor: pointer;
           display: inline-block;
           transition: 0.3s;
         }
-        .tab-active{
-          color:$pink-color;
+
+        .tab-active {
+          color: $pink-color;
         }
       }
     }
-    ::v-deep(.el-scrollbar){
+
+    ::v-deep(.el-scrollbar) {
       width: 100%;
     }
-    .container-content{
+
+    .container-content {
       display: flex;
       width: 100%;
       overflow: hidden;
       margin-top: 20px;
       height: calc(100% - 90px);
     }
-    .container{
+
+    .container {
       width: 100%;
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
-      &-item{
+
+      &-item {
         margin-right: 1%;
         margin-bottom: 1%;
         width: 32%;

@@ -45,10 +45,6 @@
             {{ updateTime }}
           </div>
           <div class="progress-center">
-            <!-- <Progress
-              :current-time="currentTime"
-              @line-click="handleCurrentTime"
-            /> -->
             <el-slider
               v-model="currentTime"
               size="small"

@@ -47,25 +47,33 @@ export const useMusicStore = defineStore('music', {
       this.getCurrentLyric(this.currentMusicInfo.id)
     },
     async getCurrentLyric (id:number) {
-      const { data } = await getMusicLyric(id)
-      const lyric = data.lrc.lyric as string
-      this.currentLyric = handleLyric(lyric)
+      if (id) {
+        const { data } = await getMusicLyric(id)
+        const lyric = data.lrc.lyric as string
+        this.currentLyric = handleLyric(lyric)
+      }
     },
     setCurrentMusicToList (index:number) {
       // 不请求数据 从musicList 中获取获取的信息
-      this.currentMusicInfo = this.musicList[index]
+      if (this.playType === 'list') {
+        this.currentMusicInfo = this.musicList[index]
+      } else {
+        this.currentMusicInfo = this.musicHistoryList[index]
+      }
     },
     setCurrentMusic (data:IMusicInfo) {
       // 设置当前播放的音乐  大概率是用于历史播放
       this.currentMusicInfo = data
     },
-    async addMusicList (id:number, data:IMusicInfo) {
+    async addMusicList (id:number, obj:IMusicInfo) {
       // 看下历史播放列表里面是否有这首歌
       const index = this.musicHistoryList.findIndex(item => item.id === id)
-      const music = { ...data }
+      const music = { ...obj }
       if (index === -1) {
         // 没有，请求数据
         const { data } = await getMusicUrl(id)
+        console.log(data, '2222333')
+
         music.url = data.data[0].url
       } else {
         // 有，直接从历史记录中获取url
@@ -73,23 +81,20 @@ export const useMusicStore = defineStore('music', {
       }
       this.setMusicList(id, music)
     },
-    async setCurrentMusicInfo (id:number, data:IMusicInfo) {
-      try {
-        // 从历史列表中查找 是否有缓存 如果说有缓存就没必要请求数据了
-        const index = this.musicHistoryList.findIndex(item => item.id === id)
-        const music = { ...data }
-        if (index === -1) {
+    async setCurrentMusicInfo (id:number, obj:IMusicInfo) {
+      // 从历史列表中查找 是否有缓存 如果说有缓存就没必要请求数据了
+      const index = this.musicHistoryList.findIndex(item => item.id === id)
+      const music = { ...obj }
+      if (index === -1) {
         // 说明列表里面没有 再去请求数据
-          const { data } = await getMusicUrl(id)
-          music.url = data.data[0].url
-        } else {
-          // 有，直接从历史记录中获取url
-          music.url = this.musicHistoryList[index].url
-        }
-        this.setMusicHistoryList(id, music)
-      } catch (error) {
-        ElMessage.error('啊哦~出错了！！')
+        const { data } = await getMusicUrl(id)
+        music.url = data.data[0].url
+      } else {
+        // 有，直接从历史记录中获取url
+        music.url = this.musicHistoryList[index].url
       }
+      this.setCurrentMusic(music)
+      this.setMusicHistoryList(id, music)
     },
     setMusicList (id:number, obj:IMusicInfo) {
       // 设置播放列表

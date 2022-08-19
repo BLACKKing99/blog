@@ -23,9 +23,12 @@
         class="music-container-content"
       >
         <div class="music-detail-content">
-          <audio-detail />
+          <audio-detail v-if="musicStore.currentMusicInfo.id" />
         </div>
-        <AudioTabList @open-music-list="openMusicDia" />
+        <AudioTabList
+          @open-music-list="openMusicDia"
+          @change-tab="changeTab"
+        />
       </div>
     </el-scrollbar>
     <transition name="audio-play">
@@ -34,9 +37,20 @@
         :audio-ref="audioRef"
       />
     </transition>
-    <audio-dia
+    <audio-song-dia
+      v-if="listData.activeTab === 1"
       v-model:is-view="listData.isListShow"
       @play-music="handlePlayMusic"
+      :list-data="listData"
+    />
+    <audio-singer-dia
+      v-else-if="listData.activeTab === 2"
+      v-model:is-view="listData.isListShow"
+      :list-data="listData"
+    />
+    <audio-mv-dia
+      v-else
+      v-model:is-view="listData.isListShow"
       :list-data="listData"
     />
   </div>
@@ -51,13 +65,19 @@
 import AudioPlay from './comps/AudioPlay.vue'
 import AudioTabList from './comps/AudioTabList.vue'
 import AudioList from './comps/AudioList.vue'
-import AudioDia from './comps/AudioDia.vue'
+import AudioSongDia from './comps/AudioSongDia.vue'
+import AudioSingerDia from './comps/AudioSingerDia.vue'
+import AudioMvDia from './comps/AudioMvDia.vue'
 import AudioDetail from './comps/AudioDetail.vue'
 import { debounce } from 'lodash'
 import { useMusicStore } from '@/sotre/module/music'
+
+// 音乐实例
 const audioRef = ref<HTMLAudioElement>()
+
 // 控制底部音乐控制器显示隐藏
 const isAudioPlay = ref(false)
+
 // 控制弹窗显示隐藏
 const listData = reactive({
   isListShow: false,
@@ -65,9 +85,12 @@ const listData = reactive({
   activeTab: 1
 })
 
+// 是否打开音乐列表
 const isAudioList = ref<boolean>(false)
 
+// 音乐相关的pinia
 const musicStore = useMusicStore()
+
 // 控制音乐播放器显示隐藏
 const handleMouseMove = debounce((event: MouseEvent) => {
   if (event.clientY > 800) {
@@ -82,6 +105,11 @@ const openMusicDia = (value:{activeTab:number, id:number}) => {
   listData.activeTab = value.activeTab
   listData.listId = value.id
   listData.isListShow = true
+}
+
+// 改变tab
+const changeTab = (value:number) => {
+  listData.activeTab = value
 }
 
 // 处理音乐播放

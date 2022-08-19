@@ -88,7 +88,7 @@ const activeTab = ref(1)
 // 控制该显示什么时候的动画
 const aniPosition = ref('music-list-left')
 
-const emit = defineEmits(['open-music-list'])
+const emit = defineEmits(['open-music-list', 'change-tab'])
 
 // tabList储存这些从接口获取的数据
 const tabList = reactive<Record<number, ITabList[]>>({
@@ -125,6 +125,8 @@ const handleTabClick = (data: number) => {
       limit: 10
     })
   }
+
+  emit('change-tab', data)
 }
 
 // 获取热门歌单
