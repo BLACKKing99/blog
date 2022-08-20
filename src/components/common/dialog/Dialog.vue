@@ -3,15 +3,19 @@
     class="dialog-model"
     v-if="visiable && model"
   /> -->
-  <transition name="dialog">
+  <transition
+    name="dialog"
+  >
     <div
       v-if="visiable"
       class="back-comment-dialog"
       :style="dialogStyle"
+      @click="dialogVisiable = true"
     >
       <div class="back-comment-dialog-title">
         <slot name="title" />
         <span
+          v-if="showClose"
           class="close"
           @click="dialogVisiable = false"
         ><i class="iconfont icon-close" /></span>
@@ -46,6 +50,21 @@ const props = defineProps({
   model: {
     type: Boolean,
     default: true
+  },
+  // 是否显示右上角关闭按钮
+  showClose: {
+    type: Boolean,
+    default: true
+  },
+  // 是否可以通过点击 modal 关闭 Dialog
+  closeOnClickModal: {
+    type: Boolean,
+    default: true
+  },
+  // 是否可以通过按下 ESC 关闭 Dialog
+  closeOnPressEscape: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -55,15 +74,37 @@ const keyTodo = (event:KeyboardEvent) => {
   }
 }
 
-onMounted(() => {
-  document.addEventListener('keydown', keyTodo)
-})
+// const clickModel = (event:MouseEvent) => {
+//   dialogVisiable.value = false
+// }
+
+// 全都写在watch不太好看 用一个函数来写 会比较优雅一点
+const addEventListener = () => {
+  // if (props.closeOnClickModal) {
+  //   document.addEventListener('click', clickModel)
+  // }
+
+  if (props.closeOnPressEscape) {
+    document.addEventListener('keydown', keyTodo)
+  }
+}
+
+const removeEventListener = () => {
+  // if (props.closeOnClickModal) {
+  //   document.removeEventListener('click', clickModel)
+  // }
+
+  if (props.closeOnPressEscape) {
+    document.removeEventListener('keydown', keyTodo)
+  }
+}
 
 watch(
   () => props.visiable,
   (val) => {
     if (val) {
       dialogVisiable.value = val
+      addEventListener()
     }
   }
 )
@@ -72,7 +113,7 @@ watch(
   (val) => {
     if (!val) {
       emit('update:visiable', false)
-      document.removeEventListener('keydown', keyTodo)
+      removeEventListener()
     }
   }
 )
