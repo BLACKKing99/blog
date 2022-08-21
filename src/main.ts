@@ -8,6 +8,9 @@ import Store from './sotre/index'
 import '@/assets/css/index.css'
 // 引入自己写的css
 import '@/styles/index.scss'
+
+import './tailwindcss/index.css'
+
 import LocalCatch from './util/LocalCatch'
 declare module '@vue/runtime-core' {
   export interface ComponentCustomProperties {

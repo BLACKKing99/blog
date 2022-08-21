@@ -308,7 +308,7 @@ watch(() => musicStore.currentMusicInfo.singerId, (id) => {
             height: 100%;
             display: flex;
             align-items: center;
-            justify-content: end;
+            justify-content: flex-end;
             .iconfont{
               cursor: pointer;
               color: #fff;
