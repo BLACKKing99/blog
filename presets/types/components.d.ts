@@ -11,6 +11,7 @@ declare module '@vue/runtime-core' {
     Dialog: typeof import('./../../src/components/common/dialog/Dialog.vue')['default']
     Editor: typeof import('./../../src/components/editor/Editor.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
+    ElButton: typeof import('element-plus/es')['ElButton']
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElDivider: typeof import('element-plus/es')['ElDivider']
     ElInput: typeof import('element-plus/es')['ElInput']

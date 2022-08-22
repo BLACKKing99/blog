@@ -114,24 +114,47 @@
               v-if="activeTab === 2"
             >
               <el-scrollbar>
-                <ul class="flex flex-wrap">
+                <ul class="mv-content-container">
                   <li
-                    class="w-[400px] h-[300px] flex-col flex justify-center items-center"
+                    class="mv-item"
                     v-for="item in 10"
                     :key="item"
                   >
-                    <ul class="flex h-[250px]">
-                      <li class="w-[70%]">
-                        视频
+                    <ul class="flex h-[230px] w-full">
+                      <li class="w-[80%] box-border p-3 rounded-md">
+                        <img
+                          :src="singerInfo.cover"
+                          class="w-full h-full object-cover rounded-md"
+                        >
                       </li>
-                      <li class="flex-1">
-                        <div>1</div>
-                        <div>2</div>
-                        <div>3</div>
+                      <li class="flex-1 grid grid-rows-3 items-center justify-items-center">
+                        <div class="icon-item text-defalut shadow-sm">
+                          <i class="iconfont icon-bilibili text-xl" />
+                          <span class="text-xs">2222</span>
+                        </div>
+                        <div class="icon-item text-cyan-500 bg-cyan-300">
+                          <i class="iconfont icon-bilibili text-xl" />
+                          <span class="text-xs">2222</span>
+                        </div>
+                        <div class="icon-item text-theme bg-themeOcpy">
+                          <i class="iconfont icon-bilibili text-xl" />
+                          <span class="text-xs">2222</span>
+                        </div>
                       </li>
                     </ul>
-                    <div class="flex-1 flex items-center">
-                      标题
+                    <div class="h-[50px] text-sm flex flex-col items-start justify-start w-full px-3">
+                      <el-popover
+                        placement="top-start"
+                        trigger="hover"
+                      >
+                        <div class="w-full text-center overflow-hidden text-ellipsis whitespace-nowrap">
+                          标题
+                        </div>
+                        <template #reference>
+                          <span class="text-[#333] text-lg font-bold">标题</span>
+                        </template>
+                      </el-popover>
+                      <span class="text-defalut text-sm">2022年08月22日</span>
                     </div>
                   </li>
                 </ul>
@@ -169,7 +192,7 @@ const tabList = [
 ]
 
 // 活跃的tab
-const activeTab = ref<number>(0)
+const activeTab = ref<number>(2)
 
 const singerInfo = reactive({
   albumSize: 63,
@@ -278,6 +301,17 @@ watch(() => dialogVisiable.value, (val) => {
         }
         &-title{
           opacity: 0.2;
+        }
+      }
+    }
+    .mv-content{
+      .mv-content-container{
+        @apply flex flex-wrap;
+        .mv-item{
+          @apply w-[400px] h-[280px] flex-col flex justify-center items-center;
+          .icon-item{
+            @apply w-[80%] h-[80%] flex justify-center items-center flex-col rounded-sm hover:shadow-md cursor-pointer duration-300;
+          }
         }
       }
     }
