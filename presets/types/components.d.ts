@@ -11,7 +11,6 @@ declare module '@vue/runtime-core' {
     Dialog: typeof import('./../../src/components/common/dialog/Dialog.vue')['default']
     Editor: typeof import('./../../src/components/editor/Editor.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
-    ElButton: typeof import('element-plus/es')['ElButton']
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElDivider: typeof import('element-plus/es')['ElDivider']
     ElInput: typeof import('element-plus/es')['ElInput']
@@ -30,6 +29,7 @@ declare module '@vue/runtime-core' {
     RouterView: typeof import('vue-router')['RouterView']
     Tab: typeof import('./../../src/components/common/tab/Tab.vue')['default']
     TabbarAside: typeof import('./../../src/components/layout/comps/tabbarAside.vue')['default']
+    Tabs: typeof import('./../../src/components/common/tabs/Tabs.vue')['default']
     TimeComp: typeof import('./../../src/components/common/timeComp/timeComp.vue')['default']
     UserHeader: typeof import('./../../src/components/layout/users/userHeader.vue')['default']
   }

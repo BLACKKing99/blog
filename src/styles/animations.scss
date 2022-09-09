@@ -207,7 +207,7 @@
 }
 .music-list-left-enter-active,
 .music-list-left-leave-active {
-  transition: all 1s cubic-bezier(0, 0, 1, 1);
+  transition: all 0.5s cubic-bezier(0, 0, 1, 1);
 }
 
 // tab 从右向左点
@@ -226,7 +226,7 @@
 
 .music-list-right-enter-active,
 .music-list-right-leave-active {
-  transition: all 1s cubic-bezier(0, 0, 1, 1);
+  transition: all 0.5s cubic-bezier(0, 0, 1, 1);
 }
 
 // 播放列表 动画

@@ -23,7 +23,7 @@
         bulletActiveClass: 'swiper-pagination-active',
       }"
     >
-      <div class="img-pagination">
+      <div class="img-pagination flex">
         <template
           v-for="(img,index) in imgArr"
           :key="img.url"
