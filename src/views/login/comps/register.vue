@@ -9,6 +9,7 @@
         class="login-container-item-inp"
         type="text"
         placeholder="请输入邮箱"
+        @keydown="enterRegister"
         v-model="userInfo.email"
       >
     </div>
@@ -21,7 +22,8 @@
         class="login-container-item-inp"
         type="text"
         placeholder="请输入用户名"
-        v-model="userInfo.username"
+        @keydown="enterRegister"
+        v-model="userInfo.name"
       >
     </div>
     <div
@@ -33,14 +35,16 @@
         class="login-container-item-inp"
         type="text"
         placeholder="请输入密码"
+        @keydown="enterRegister"
         v-model="userInfo.password"
       >
     </div>
     <div class="login-container-item">
       <button
-        class="login-container-item-btn l-button"
+        class="login-container-item-btn l-button cursor-pointer"
         @click="handleRegister"
         v-loading="accountSotre.isLoading"
+        :disabled="accountSotre.isLoading"
       >
         注册
       </button>
@@ -59,10 +63,14 @@ import { ElMessage } from 'element-plus'
 const userInfo = reactive({
   password: '',
   email: '',
-  username: ''
+  name: ''
 })
 
 const accountSotre = useAccountStore()
+
+const enterRegister = (event:KeyboardEvent) => {
+  if (event.keyCode === 13) handleRegister()
+}
 
 const handleRegister = () => {
   if (userInfo.email === '') {
@@ -71,7 +79,7 @@ const handleRegister = () => {
       message: '邮箱不能为空'
     })
     return
-  } else if (userInfo.username === '') {
+  } else if (userInfo.name === '') {
     ElMessage({
       type: 'error',
       message: '用户名不能为空'

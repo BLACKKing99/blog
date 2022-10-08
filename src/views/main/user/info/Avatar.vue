@@ -4,7 +4,7 @@
     :dialog-style="{
       top: '50%',
       width: '500px',
-      height: '400px',
+      height: '450px',
       left: '50%',
     }"
   >
@@ -101,8 +101,8 @@ const confirm = async () => {
   const canvas = await getCroppedCanvas()
   const formData = new FormData()
   formData.append('file', canvas as Blob)
-  const { data, status } = await uploadAvatar(formData)
-  if (status === 200) {
+  const { data, code } = await uploadAvatar(formData)
+  if (code === 0) {
     imgUrl.value = data.url
     visible.value = false
     emit('changeAvatar', imgUrl.value)

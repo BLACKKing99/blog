@@ -2,13 +2,18 @@ import { IUserInfoType } from './user'
 // 文章类型的interface
 export interface IArticleType {
     id: number
-    label: string
-    value: string
+    title: string
+    createdAt?:Date
+    updatedAt?:Date
+    tips?:string
 }
 
+// 文章需要出给后端的数据结构
 export interface ICommentType {
-    id: string,
+    // 当前文章id
+    articleId: number,
     content: string,
+    pid?:number
 }
 
 // 文章信息的interface
@@ -16,27 +21,29 @@ export interface IArticle {
     [propName:string]:string
 }
 
-export interface ICommentInfoType{
-    articleId: string
-    author: IUserInfoType
-    childrenComments?:Partial<ICommentInfoType>[]
-    content: string
-    createdAt: string
-    __v: number
-    _id: string
+export interface IComment {
+    id: number;
+    content: string;
+    articleId: number;
+    pid: number;
+    createdAt: string;
+    updatedAt: string;
+    userId: number;
+    author:IUserInfoType
+}
+export interface ICommentData {
+    comment:IComment[],
+    backComment:IComment[]
 }
 
 export interface IArticleInfo {
-    author: string
-    commentStatus: boolean
-    content: string
-    createdAt: string
-    sort: string
-    cover:string
-    tips: string
-    title: string
-    totalComment: ICommentInfoType[]
-    type: string
-    __v: number
-    _id: string
+  id: number;
+  title: string;
+  content: string;
+  tips: string;
+  order: number;
+  cover: string;
+  categoryId: number;
+  createdAt: string;
+  updatedAt: string;
 }

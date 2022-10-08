@@ -4,7 +4,7 @@
       class="info-avatar"
       @click="handleOpenAvatar"
     >
-      <img :src="userInfo?.avatar">
+      <img :src="$imgUrl + userInfo?.avatar">
     </div>
     <div class="info-edit">
       <button

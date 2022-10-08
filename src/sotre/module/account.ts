@@ -1,26 +1,10 @@
 import { defineStore } from 'pinia'
 import { register, login } from '@/api/module/user'
-import { IRegisterType } from '@/api/types/user'
+import { IRegisterType, IUserBackData, IUserInfoType } from '@/api/types/user'
 import { router } from '@/router/index'
 import LocalCatch from '@/util/LocalCatch'
 import { ElMessage } from 'element-plus'
-
-export interface IUserInfoType {
-  account: number
-  collectArticle: string[]
-  bio:string
-  createdAt: string
-  email: string
-  identity: string
-  password: string
-  sex: string
-  career?:string
-  qq:string
-  weixin:string
-  username: string
-  __v?: number
-  _id: string
-}
+import { IResponse } from '@/util/axios/types'
 
 export const useAccountStore = defineStore('account', {
   state: () => {
@@ -33,31 +17,36 @@ export const useAccountStore = defineStore('account', {
   getters: {},
   actions: {
     async loginTodo (userInfo:IRegisterType, type:'login'|'register') {
-      let res:any
-      if (type === 'login') {
-        res = await login(userInfo)
-      } else {
-        res = await register(userInfo)
-      }
-      if (res.status === 200) {
-        this.$patch((state) => {
-          state.userInfo = res.data.user
-          state.token = res.data.token
-        })
-        LocalCatch.setItem('lzf_blog', { token: res.data.token, userInfo: res.data.user })
-        ElMessage({
-          type: 'success',
-          message: res.data.msg
-        })
-        this.isLoading = false
-        if (router.currentRoute.value.query.redirect) {
-          router.push(router.currentRoute.value.query.redirect as string)
+      try {
+        let res:IResponse<IUserBackData>
+        if (type === 'login') {
+          res = await login(userInfo)
         } else {
-          router.push({
-            name: 'preview'
-          })
+          res = await register(userInfo)
         }
-      } else {
+
+        if (res.code === 0) {
+          this.$patch((state) => {
+            state.userInfo = res.data.user
+            state.token = res.data.token
+          })
+          LocalCatch.setItem('lzf_blog', { token: res.data.token, userInfo: res.data.user })
+          ElMessage({
+            type: 'success',
+            message: type === 'login' ? '登录成功' : '注册成功'
+          })
+          this.isLoading = false
+          if (router.currentRoute.value.query.redirect) {
+            router.push(router.currentRoute.value.query.redirect as string)
+          } else {
+            router.push({
+              name: 'preview'
+            })
+          }
+        } else {
+          this.isLoading = false
+        }
+      } catch (error) {
         this.isLoading = false
       }
     }

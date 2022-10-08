@@ -1,31 +1,20 @@
 import { useUserInfo } from './useUserInfo'
 import { useUser } from './useUser'
-import type { IUserInfoType } from '@/api/types/user'
-import { collectArticle } from '@/api/module/article'
+import { collectArticle } from '@/api/module/user'
 // 收藏操作
-export const useCollect = (id:string) => {
-  const info = ref<IUserInfoType|null>(null)
-  const isCollect = computed(() => {
-    const value = info.value?.collectArticle.find(item => item._id === id)
-    if (value) return true
-    else return false
-  })
-  onMounted(() => {
-    if (isLogin.value) {
-      getUerInfoTodo().then(() => {
-        setUserInfo()
-      })
-    }
-  })
-
-  const router = useRouter()
-
+export const useCollect = (id:number) => {
   const { isLogin } = useUser()
 
   const { userInfo, getUerInfoTodo } = useUserInfo(isLogin.value)
-  const setUserInfo = () => {
-    info.value = userInfo.value
-  }
+
+  const router = useRouter()
+
+  const isCollect = computed(() => {
+    const value = userInfo.value?.collect?.find(item => Number(item) === id)
+    if (value && isLogin.value) return true
+    else return false
+  })
+
   const updateCollect = async (type:'1'|'2') => {
     if (!isLogin.value) {
       ElMessageBox({
@@ -46,18 +35,21 @@ export const useCollect = (id:string) => {
       })
       return
     }
-    const { data, status } = await collectArticle({
-      id,
+    const { code } = await collectArticle({
+      articleId: id,
       type
     })
-    if (status === 200) {
+    if (code === 0) {
       ElMessage({
         type: 'success',
-        message: data.msg
+        message: type === '1' ? '收藏成功' : '取消收藏成功'
       })
-      getUerInfoTodo().then(() => {
-        setUserInfo()
-      })
+      setTimeout(() => {
+        // 产生原因：由于我们请求了收藏文章的接口后 又马上请求了获取用户信息的接口 后端储存数据没那么快 所以在这边价格定时器
+
+        // 后端问题 暂时不知道怎么解决
+        getUerInfoTodo()
+      }, 300)
     }
   }
   return {

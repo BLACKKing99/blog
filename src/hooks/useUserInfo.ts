@@ -6,7 +6,7 @@ import LocalCatch from '@/util/LocalCatch'
 // 获取用户信息
 export const useUserInfo = (isLogin?:boolean) => {
   const userInfo = ref<IUserInfoType|null>(null)
-  const LZF_BLOG = LocalCatch.getItem('lzf_blog')
+  const LZF_BLOG = LocalCatch.getItem('lzf_blog') as IUserInfoType | null
   const { isLogin: isAccount } = useUser()
   onMounted(() => {
     if (isLogin || isAccount.value) {
@@ -17,8 +17,8 @@ export const useUserInfo = (isLogin?:boolean) => {
   // 获取用户信息
   const getUerInfoTodo = async () => {
     // 重新获取用户信息
-    const { data, status } = await getUserInfo()
-    if (status === 200) {
+    const { data, code } = await getUserInfo()
+    if (code === 0) {
       userInfo.value = data
       const NEW_LZF_BLOG = {
         ...LZF_BLOG,
@@ -30,12 +30,12 @@ export const useUserInfo = (isLogin?:boolean) => {
 
   // 调取更新接口 并且存储到本地
   const updateUsersInfo = async (data:Partial<IUserInfoType>) => {
-    const { status, data: value } = await updateUserInfo(data)
-    if (status === 200) {
-      userInfo.value = value.data
+    const { code, data: value } = await updateUserInfo(data)
+    if (code === 0) {
+      userInfo.value = value
       const NEW_LZF_BLOG = {
         ...LZF_BLOG,
-        userInfo: value.data
+        userInfo: value
       }
       LocalCatch.setItem('lzf_blog', NEW_LZF_BLOG)
       ElMessage.success('修改成功')

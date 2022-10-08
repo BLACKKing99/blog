@@ -6,7 +6,7 @@
         :src="articleInfo.cover?$imgUrl+articleInfo.cover:img"
       >
       <div class="list-header-content flex-c">
-        <span class="classify">{{ handleType(articleInfo.type) }}</span>
+        <span class="classify">{{ handleType(articleInfo.categoryId) }}</span>
         <p class="title">
           {{ articleInfo.title }}
         </p>
@@ -17,22 +17,22 @@
     </div>
     <div class="list-foot flex">
       <div class="flex">
-        <div class="list-foot-info flex">
+        <div class="list-foot-info flex items-center">
           <i class="iconfont icon-yanchurili" />
           <span>{{ formatTime }}</span>
         </div>
-        <div class="list-foot-info flex">
+        <div class="list-foot-info flex items-center">
           <i class="iconfont icon-pinglun1" />
-          <span>{{ articleInfo.totalComment.length }}条评论</span>
+          <span>{{ 99 }}条评论</span>
         </div>
-        <div class="list-foot-info flex">
+        <div class="list-foot-info flex items-center">
           <i class="iconfont icon-yueduliang" />
           <span>999次阅读</span>
         </div>
       </div>
       <div
         class="flex-r list-foot-read"
-        @click="goArticle(articleInfo._id)"
+        @click="goArticle(articleInfo.id)"
       >
         <i class="iconfont icon-yiyueduyoujian" />
         <span>点击阅读</span>
@@ -47,6 +47,7 @@ import { IArticleInfo } from '@/api/types/article'
 import img from '@/assets/img/photos/1.jpg'
 import { useGoArticle } from '@/hooks/useGoArticle'
 import useTimeFormat from '@/hooks/useTimeFormat'
+import { useArticleStore } from '@/sotre/module/article'
 
 const props = defineProps({
   articleInfo: {
@@ -57,14 +58,12 @@ const props = defineProps({
   }
 })
 
+const useArticle = useArticleStore()
+
 // 由于返回的字段需要处理一下，所以这里需要自己处理一下
-const handleType = (key:string) => {
-  switch (key) {
-    case 'monitor':
-      return '后端'
-    case 'nose':
-      return '前端'
-  }
+const handleType = (key:number) => {
+  const type = useArticle.getCategory.find(item => item.id === key)
+  return type?.title
 }
 const { goArticle } = useGoArticle()
 

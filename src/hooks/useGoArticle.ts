@@ -1,6 +1,6 @@
 export const useGoArticle = () => {
   const router = useRouter()
-  const goArticle = (id:string) => {
+  const goArticle = (id:number) => {
     router.push({
       name: 'article',
       params: {

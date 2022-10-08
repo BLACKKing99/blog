@@ -128,9 +128,9 @@ onMounted(() => {
 
 // 获取推荐文章
 const getRecomendArticle = async () => {
-  const { data, status } = await recomendArticle()
-  if (status === 200) {
-    recommendList.value = data.data
+  const { data, code } = await recomendArticle()
+  if (code === 0) {
+    recommendList.value = data
   }
 }
 
@@ -138,7 +138,7 @@ const getRecomendArticle = async () => {
 const { goArticle } = useGoArticle()
 
 // 处理收藏
-const { isCollect, updateCollect } = useCollect(route.params.id as string)
+const { isCollect, updateCollect } = useCollect(Number(route.params.id))
 
 </script>
 

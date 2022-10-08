@@ -81,17 +81,17 @@ onMounted(() => {
 
 // 获取轮播图数据
 const getSwiperInfo = async () => {
-  const { status, data } = await getSwiper()
-  if (status === 200) {
-    imgArr.value = data.data
+  const { code, data } = await getSwiper()
+  if (code === 0) {
+    imgArr.value = data
   }
 }
 
 // 获取移动图片数据(随机的)
 const getBannerInfo = async () => {
-  const { status, data } = await getBanner()
-  if (status === 200) {
-    randomUrl.value = data.data
+  const { code, data } = await getBanner()
+  if (code === 0) {
+    randomUrl.value = data
   }
 }
 

@@ -1,23 +1,21 @@
-import lRequest from '../index'
+import http from '../index'
+import { IPreviewPhtot, IPreviewSwiper } from '../types'
 export const getSwiper = () => {
-  return lRequest.lrequest({
+  return http.request<IPreviewSwiper[]>({
     url: '/preview/swiper',
     method: 'GET'
   })
 }
 
 export const getBanner = () => {
-  return lRequest.lrequest({
+  return http.request<string>({
     url: '/preview/banner',
     method: 'GET'
   })
 }
 
-export const getPhotos = (params?:{
-  page?: number,
-  limit?: number
-}) => {
-  return lRequest.lrequest({
+export const getPhotos = (params?:IPreviewPhtot) => {
+  return http.request<string[]>({
     url: '/preview/photos',
     method: 'GET',
     params

@@ -2,12 +2,12 @@ import { IArticleInfo } from './article'
 export interface IRegisterType {
     password?: string
     email?: string,
-    username?: string,
+    name?: string,
     account?: number | string
 }
 
 export interface IUserInfoType extends IRegisterType {
-    collectArticle: IArticleInfo[]
+    collect: IArticleInfo[]
     createdAt: string
     identity: 'member' | 'admin'
     sex: string,
@@ -15,7 +15,22 @@ export interface IUserInfoType extends IRegisterType {
     qq:string
     weixin:string
     career:string
-    __v: 0
-    _id: string,
+    id: number,
     avatar:string
+}
+
+export interface IUserBackData {
+    user:IUserInfoType,
+    token:string
+}
+export interface IUploadInfo {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  destination: string;
+  filename: string;
+  path: string;
+  size: number;
+  url: string;
 }

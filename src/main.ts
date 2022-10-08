@@ -21,6 +21,7 @@ declare module '@vue/runtime-core' {
 
 const app = createApp(App)
 
+// 挂载全局对象
 app.config.globalProperties.$imgUrl = 'http://127.0.0.1:3000'
 app.config.globalProperties.AuthHeader = () => {
   const token = LocalCatch.getItem('lzf_blog')?.token

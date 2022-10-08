@@ -65,9 +65,9 @@ const articleInfo = ref<IArticleInfo>()
 
 // 获取文章信息
 const getArticleOneInfo = async () => {
-  const { data, status } = await getArticleInfo(route.params.id as string)
-  if (status === 200) {
-    articleInfo.value = data.data
+  const { data, code } = await getArticleInfo(route.params.id as string)
+  if (code === 0) {
+    articleInfo.value = data
   }
 }
 

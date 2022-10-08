@@ -45,9 +45,11 @@ const monitorList = ref<IArticleInfo[]>([])
 const noseList = ref<IArticleInfo[]>([])
 
 onMounted(() => {
-  getArticleType().then(res => {
-    articleType.value = res.data.data
-    handleCollectType()
+  getArticleType().then((res) => {
+    if (res.code === 0) {
+      articleType.value = res.data
+      handleCollectType()
+    }
   })
 })
 

@@ -53,7 +53,7 @@ export const baseInfo = reactive<ILayout[]>([
     title: '昵称',
     content: '',
     type: 'input',
-    pid: 'username',
+    pid: 'name',
     placeholder: '请输入昵称',
     id: 1
   },

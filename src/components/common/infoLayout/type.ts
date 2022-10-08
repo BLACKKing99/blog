@@ -1,4 +1,5 @@
-import { IUserInfoType } from '@/sotre/module/account'
+import { IUserInfoType } from '@/api/types/user'
+
 export interface IOptions{
     value:string,
     label:string,

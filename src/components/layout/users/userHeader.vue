@@ -7,18 +7,20 @@
     <div class="user-header-user flex-c">
       <div class="user-content flex">
         <div class="user-avatar">
-          <img :src="userInfo?.avatar">
+          <img :src="$imgUrl + userInfo?.avatar">
         </div>
         <div class="user-info">
           <ul class="info flex-c">
             <li class="title">
-              <span>用户名:{{ userInfo?.username }}</span>
+              <span class="mr-2">用户名:</span>
+              <span>{{ userInfo?.name }}</span>
             </li>
             <li class="power">
-              <span>权限:{{ userInfo?.identity === 'member'?'普通用户':'管理员' }}</span>
+              <span class="mr-2">权 &nbsp;&nbsp;限:</span>
+              <span>{{ userInfo?.identity === 'member'?'普通用户':'管理员' }}</span>
             </li>
             <li class="sex">
-              性别:
+              <span class="mr-2">性 &nbsp;&nbsp;别:</span>
               <i :class="`iconfont ${userInfo?.sex === '0'?'icon-nan':'icon-nv'}`" />
               {{ userInfo?.sex === '0'?'男':'女' }}
             </li>
@@ -27,6 +29,7 @@
               @click=" router.push({
                 name: 'info'
               })"
+              title="点击查看个人资料"
             >
               查看个人资料
             </li>

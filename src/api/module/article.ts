@@ -1,29 +1,29 @@
-import lRequest from '../index'
-import { IArticle, ICommentType } from '../types/article'
+import http from '../index'
+import { IArticle, IArticleInfo, IArticleType, ICommentData, ICommentType } from '../types/article'
 export const getArticleType = () => {
-  return lRequest.lrequest({
-    url: 'article/type',
+  return http.request<IArticleType[]>({
+    url: 'category',
     method: 'GET'
   })
 }
 
 export const createArticle = (data:IArticle) => {
-  return lRequest.lrequest({
-    url: 'article/create',
+  return http.request({
+    url: 'article',
     method: 'POST',
     data
   })
 }
 
 export const getArticle = () => {
-  return lRequest.lrequest({
+  return http.request<IArticleInfo[]>({
     url: 'article',
     method: 'GET'
   })
 }
 
 export const getArticleInfo = (id:string) => {
-  return lRequest.lrequest({
+  return http.request<IArticleInfo>({
     url: 'article/info',
     method: 'GET',
     params: {
@@ -32,42 +32,33 @@ export const getArticleInfo = (id:string) => {
   })
 }
 
-export const createArticleComment = (data:ICommentType) => {
-  return lRequest.lrequest({
-    url: 'comment/create',
-    method: 'POST',
-    data
+export const getAllComment = (id:number) => {
+  return http.request<ICommentData>({
+    url: 'comment',
+    method: 'GET',
+    params: {
+      id
+    }
   })
 }
 
-export const createBackComment = (data:ICommentType) => {
-  return lRequest.lrequest({
-    url: 'comment/back',
-    method: 'POST',
-    data
-  })
-}
-
-export const collectArticle = (data:{
-  id:string,
-  type:'1'|'2' // 1 收藏 2 取消收藏
-}) => {
-  return lRequest.lrequest({
-    url: 'article/collect',
+export const createComment = (data:ICommentType) => {
+  return http.request({
+    url: 'comment',
     method: 'POST',
     data
   })
 }
 
 export const recomendArticle = () => {
-  return lRequest.lrequest({
+  return http.request({
     url: 'article/recommend',
     method: 'GET'
   })
 }
 
 export const populateArticle = () => {
-  return lRequest.lrequest({
+  return http.request({
     url: 'article/populate',
     method: 'GET'
   })

@@ -1,5 +1,5 @@
+import { IUserInfoType } from '@/api/types/user'
 import LocalCatch from '@/util/LocalCatch'
-import { IUserInfoType } from '@/sotre/module/account'
 
 // 判断是否登录
 const userInfo = ref<IUserInfoType | null>(null)

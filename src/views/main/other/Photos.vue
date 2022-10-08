@@ -93,12 +93,12 @@ onBeforeUnmount(() => {
 })
 
 const getPhotoInfo = async () => {
-  const { data, status } = await getPhotos({
+  const { data, code } = await getPhotos({
     page: page.value,
     limit: limit.value
   })
-  if (status === 200) {
-    data.data.forEach((item:string) => {
+  if (code === 0) {
+    data.forEach((item:string) => {
       previewList.value.push(`http://127.0.0.1:3000${item}`)
       photosList.value.push(`${randomKey(200, 300)}px`)
     })

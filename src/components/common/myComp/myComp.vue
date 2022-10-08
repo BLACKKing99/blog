@@ -3,12 +3,12 @@
     <div class="my-comps-top" />
     <div class="my-comps-bottom">
       <div class="my-comps-bottom-text">
-        {{ userInfo?.username }}
+        {{ userInfo?.name }}
       </div>
     </div>
     <div class="my-comps-avatar">
       <img
-        :src="userInfo?.avatar"
+        :src="$imgUrl + userInfo?.avatar"
       >
     </div>
   </div>

@@ -11,14 +11,14 @@
         简介 : {{ articleInfo.tips }}
       </div>
       <ul class="synopsis flex">
-        <li><i>#</i>{{ articleInfo.type === 'monitor' ? '后端' : '前端' }}</li>
+        <li><i>#</i>{{ articleStore.getCurrentCategory(articleInfo.categoryId) }}</li>
         <li><i class="iconfont icon-shijian" />{{ formatTime(articleInfo.createdAt).value }}</li>
         <li><i class="iconfont icon-yueduliang" />34次浏览</li>
         <li>
           <i class="iconfont icon-pinglun1" />{{
-            articleInfo.totalComment.length === 0
+            false
               ? '暂无评论'
-              : `${articleInfo.totalComment.length}条评论`
+              : `0条评论`
           }}
         </li>
       </ul>
@@ -46,13 +46,13 @@
         <div class="publish">
           <button
             class="l-button publish-btn"
-            @click="publishComment"
+            @click="publishComment(null)"
           >
             发表评论
           </button>
         </div>
       </div>
-      <template v-if="articleInfo.totalComment.length === 0">
+      <template v-if="commentList.length === 0">
         <div class="no-comment">
           该文章暂时还没有评论哦~~~
         </div>
@@ -61,20 +61,20 @@
         <div class="comment-list">
           <div
             class="comment-item"
-            v-for="comment in articleInfo.totalComment"
-            :key="comment._id"
+            v-for="comment in commentList"
+            :key="comment.id"
           >
             <div class="comment-item-left">
               <div class="comment-item-avatar">
                 <img
-                  src="@/assets/img/avatar/avatar.jpg"
+                  :src="$imgUrl + comment.author.avatar"
                   alt="头像"
                 >
               </div>
             </div>
             <div class="comment-item-right">
               <div class="comment-item-name">
-                {{ comment.author.username }}
+                {{ comment.author.name }}
               </div>
               <div class="comment-item-content">
                 {{ comment.content }}
@@ -82,34 +82,35 @@
               <div class="comment-item-time">
                 <span>{{ formatTime(comment.createdAt, 'YYYY-MM-DD HH:mm:ss').value }}</span>
                 <span
+                  v-if="isLogin"
                   class="back-comment"
                   @click="handleBackComment(comment)"
                 >回复</span>
               </div>
               <div
                 class="comment-item-backcomment"
-                v-if="comment.childrenComments?.length !== 0"
+                v-if="selectBack(comment.id).length !== 0"
               >
                 <div
                   class="back-comment-item"
-                  v-for="backComment in comment.childrenComments"
-                  :key="backComment._id"
+                  v-for="backComment in selectBack(comment.id)"
+                  :key="backComment.id"
                 >
                   <div class="back-comment-item-left">
                     <div class="back-comment-item-avatar">
                       <img
-                        src="@/assets/img/avatar/avatar.jpg"
+                        :src="$imgUrl + backComment.author.avatar"
                         alt="头像"
                       >
                     </div>
                     <div class="back-comment-item-name">
-                      {{ backComment!.author!.username }}
+                      {{ backComment.author.name }}
                     </div>
                     <div class="back">
                       回复
                     </div>
                     <div class="back-comment-item-backname">
-                      @{{ comment.author.username }}:
+                      @{{ comment.author.name }}:
                     </div>
                     <div class="back-comment-item-content text-ellipsis-1">
                       {{ backComment.content }}
@@ -131,7 +132,7 @@
       <template #title>
         <div class="back-comment-dialog-title">
           <span class="back">回复</span>
-          <span class="name">{{ goBackComment?.author?.username }}</span>
+          <span class="name">{{ goBackComment?.author?.name }}</span>
           <span
             class="close"
             @click="cancleBackComment"
@@ -158,7 +159,7 @@
             </button>
             <button
               class="l-button back-comment-dialog-content-btn-confirm"
-              @click="publishBackComment"
+              @click="publishComment(goBackComment)"
             >
               发布
             </button>
@@ -174,11 +175,12 @@ import { marked } from 'marked'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/base16/atlas.css'
 import useElement, { IHElementType } from '@/hooks/useElement'
-import { PropType, Ref } from 'vue'
-import { IArticleInfo, ICommentInfoType } from '@/api/types/article'
+import { PropType } from 'vue'
+import { IArticleInfo, IComment } from '@/api/types/article'
 import useTimeFormat from '@/hooks/useTimeFormat'
 import { useUser } from '@/hooks/useUser'
-import { createArticleComment, createBackComment } from '@/api/module/article'
+import { useArticleStore } from '@/sotre/module/article'
+import { useComment } from '@/hooks/useComment'
 
 // 定义高亮语法
 marked.setOptions({
@@ -196,6 +198,9 @@ marked.setOptions({
   smartypants: false,
   xhtml: false
 })
+
+const articleStore = useArticleStore()
+
 // props内容
 const props = defineProps({
   articleInfo: {
@@ -205,7 +210,19 @@ const props = defineProps({
     }
   }
 })
+
 const emit = defineEmits(['updateMenus', 'updateArticle'])
+
+// 控制回复弹窗开启关闭
+const backCommentDialogVisible = ref<boolean>(false)
+
+// 菜单初始化
+const menuContext = ref<IHElementType[]>([])
+
+const goBackComment = ref<IComment | null>(null)
+
+const { commentList, selectBack, publishComment, commentText, backCommentText } = useComment(props.articleInfo.id, backCommentDialogVisible)
+
 // 获取文章菜单对应需要的hooks
 const { contentRef, getContextMenu } = useElement()
 
@@ -217,86 +234,10 @@ const formatTime = (item: string, format: string = 'YYYY-MM-DD') => {
   return useTimeFormat(item, format).formatTime
 }
 
-// 菜单初始化
-const menuContext = ref<IHElementType[]>([])
-
-// 评论内容
-const commentText = ref<string>('')
-
-// 回复内容
-const backCommentText = ref<string>('')
-
-// 控制回复弹窗开启关闭
-const backCommentDialogVisible = ref<boolean>(false)
-
-const goBackComment = ref<ICommentInfoType | null>(null)
-
 // 初始化v-html中的内容
 const context = computed(() => {
   return marked.parse(props.articleInfo.content || '')
 })
-
-// 发表评论
-const publishComment = async () => {
-  if (!commentText.value) {
-    ElMessage({
-      message: '评论内容不能为空',
-      type: 'error'
-    })
-    return
-  }
-  if (!isLogin) {
-    ElMessage({
-      message: '请先登录后评论',
-      type: 'error'
-    })
-    return
-  }
-  const comment = {
-    content: commentText.value,
-    id: props.articleInfo._id
-  }
-  const { data, status } = await createArticleComment(comment)
-  if (status === 200) {
-    ElMessage({
-      type: 'success',
-      message: data.msg
-    })
-    commentText.value = ''
-    emit('updateArticle')
-  }
-}
-// 发表回复
-const publishBackComment = async () => {
-  if (!backCommentText.value) {
-    ElMessage({
-      message: '回复内容不能为空',
-      type: 'error'
-    })
-    return
-  }
-  if (!isLogin) {
-    ElMessage({
-      message: '请先登录后回复',
-      type: 'error'
-    })
-    return
-  }
-  const comment = {
-    content: backCommentText.value,
-    id: (goBackComment as Ref<ICommentInfoType>).value._id
-  }
-  const { data, status } = await createBackComment(comment)
-  if (status === 200) {
-    ElMessage({
-      type: 'success',
-      message: data.msg
-    })
-    backCommentText.value = ''
-    emit('updateArticle')
-  }
-  backCommentDialogVisible.value = false
-}
 
 const cancleBackComment = () => {
   backCommentDialogVisible.value = false
@@ -304,7 +245,7 @@ const cancleBackComment = () => {
 }
 
 // 打开回复弹窗
-const handleBackComment = (value: ICommentInfoType) => {
+const handleBackComment = (value: IComment) => {
   backCommentDialogVisible.value = true
   goBackComment.value = value
   backCommentText.value = ''

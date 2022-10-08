@@ -41,9 +41,9 @@ onMounted(() => {
 })
 
 const getArticleList = async () => {
-  const { data, status } = await getArticle()
-  if (status === 200) {
-    list.value = data.list
+  const { data, code } = await getArticle()
+  if (code === 0) {
+    list.value = data
   }
 }
 
