@@ -2,78 +2,37 @@
   <div class="collect">
     <div
       class="collect-container flex"
-      v-for="(item) in articleType"
-      :key="item.value"
     >
       <div class="collect-title">
-        {{ item.label }}
-        <span class="collect-title-list">{{ item.id }}</span>
+        文章·学习
+        <span class="collect-title-list">1</span>
       </div>
-      <div class="flex collect-container-item">
-        <template v-if="item.value === 'nose'">
-          <collect-list
-            v-for="(nose) in noseList"
-            :key="nose._id"
-            :collect="nose"
-            class="collect-list"
-          />
-        </template>
-        <template v-else-if="item.value === 'monitor'">
-          <collect-list
-            v-for="(monitor) in monitorList"
-            :key="monitor._id"
-            :collect="monitor"
-            class="collect-list"
-          />
-        </template>
+      <div
+        class="flex collect-container-item"
+      >
+        <collect-list
+          v-for="collect in collectInfoList"
+          :key="collect.id"
+          :collect="collect"
+          @click="goArticle(collect.id)"
+          class="collect-list"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script lang='ts' setup>
-import { useUserInfo } from '@/hooks/useUserInfo'
-import { getArticleType } from '@/api/module/article'
-import { IArticleInfo } from '@/api/types/article'
-
-const { userInfo } = useUserInfo()
-
-const articleType = ref()
-
-const monitorList = ref<IArticleInfo[]>([])
-
-const noseList = ref<IArticleInfo[]>([])
+import { useArticle } from '@/hooks/useArticle'
+import { useCollect } from '@/hooks/useCollect'
 
 onMounted(() => {
-  getArticleType().then((res) => {
-    if (res.code === 0) {
-      articleType.value = res.data
-      handleCollectType()
-    }
-  })
+  getCollectList()
 })
 
-const handleCollectType = () => {
-  const collectList = userInfo.value?.collectArticle
-  if (collectList) {
-    collectList.forEach(item => {
-      if (item.type === 'monitor') {
-        monitorList.value.push(item)
-      } else if (item.type === 'nose') {
-        noseList.value.push(item)
-      }
-    })
-  }
-  if (monitorList.value.length === 0) {
-    const index = articleType.value.findIndex((item:any) => item.value === 'monitor')
-    articleType.value.splice(index, 1)
-  }
-  if (noseList.value.length === 0) {
-    const index = articleType.value.findIndex((item:any) => item.value === 'nose')
-    articleType.value.splice(index, 1)
-  }
-}
+const { getCollectList, collectInfoList } = useCollect(0)
 
+const { goArticle } = useArticle()
 </script>
 
 <style scoped lang='scss'>
@@ -116,7 +75,7 @@ const handleCollectType = () => {
   }
   &-list{
     width: 200px;
-    height: 300px;
+    height: 320px;
   }
 }
 </style>

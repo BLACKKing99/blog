@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
-import { getMusicLyric, getMusicUrl } from '@/api2/module/song'
+import { getMusicLyric, getMusicUrl } from '@/api/module/music'
 import LocalCatch from '@/util/LocalCatch'
+import { IMusicLyric } from '@/api/types/music'
+import { handleLyric } from '@/util/music.util'
 
 export interface IMusicInfo{
     id:number,
@@ -12,14 +14,6 @@ export interface IMusicInfo{
     singerId:number
 }
 
-export interface IMusicLyric {
-  lrc: string
-  mill: string
-  min: string
-  sec: string
-  time: number
-  active:boolean
-}
 const musicList: IMusicInfo[] = LocalCatch.getItem('musicList') || []
 const musicHistoryList: IMusicInfo[] = LocalCatch.getItem('musicHistoryList') || []
 export const useMusicStore = defineStore('music', {
@@ -39,6 +33,7 @@ export const useMusicStore = defineStore('music', {
       currentLyric: [] as IMusicLyric[],
       // 当前音乐播放的时间
       currentMusicTime: 0 as number,
+      // 当前播放选择的列表
       playType: 'list' as 'list'|'history'
     }
   },
@@ -49,7 +44,7 @@ export const useMusicStore = defineStore('music', {
     async getCurrentLyric (id:number) {
       if (id) {
         const { data } = await getMusicLyric(id)
-        const lyric = data.lrc.lyric as string
+        const lyric = data.lrc.lyric
         this.currentLyric = handleLyric(lyric)
       }
     },
@@ -66,14 +61,14 @@ export const useMusicStore = defineStore('music', {
       this.currentMusicInfo = data
     },
     async addMusicList (id:number, obj:IMusicInfo) {
+      // 将储存的信息更新一下
+      this.regetLocalData()
       // 看下历史播放列表里面是否有这首歌
       const index = this.musicHistoryList.findIndex(item => item.id === id)
       const music = { ...obj }
       if (index === -1) {
         // 没有，请求数据
         const { data } = await getMusicUrl(id)
-        console.log(data, '2222333')
-
         music.url = data.data[0].url
       } else {
         // 有，直接从历史记录中获取url
@@ -82,16 +77,20 @@ export const useMusicStore = defineStore('music', {
       this.setMusicList(id, music)
     },
     async setCurrentMusicInfo (id:number, obj:IMusicInfo) {
+      console.log(22222222)
+
+      // 将储存的信息更新一下
+      this.regetLocalData()
       // 从历史列表中查找 是否有缓存 如果说有缓存就没必要请求数据了
       const index = this.musicHistoryList.findIndex(item => item.id === id)
       const music = { ...obj }
       if (index === -1) {
         // 说明列表里面没有 再去请求数据
         const { data } = await getMusicUrl(id)
-        music.url = data.data[0].url
+        music.url = data.data[0]?.url
       } else {
         // 有，直接从历史记录中获取url
-        music.url = this.musicHistoryList[index].url
+        music.url = this.musicHistoryList[index]?.url
       }
       this.setCurrentMusic(music)
       this.setMusicHistoryList(id, music)
@@ -120,36 +119,9 @@ export const useMusicStore = defineStore('music', {
       }
       this.musicHistoryList.unshift(obj)
       LocalCatch.setItem('musicHistoryList', this.musicHistoryList)
+    },
+    regetLocalData () {
+      this.musicHistoryList = LocalCatch.getItem('musicHistoryList') || []
     }
   }
 })
-
-const handleLyric = (str:string) => {
-  let arr = str.split(/[(\f\n)\r\t\v]/).map((item, i) => { // 用正则的换行符分割
-    const min = item.slice(1, 3)
-    const sec = item.slice(4, 6)
-    let mill = item.slice(7, 10)
-    let lrc = item.slice(11, item.length)
-    const active = false
-    let time = parseInt(min) * 60 * 1000 + parseInt(sec) * 1000 + parseInt(mill) // 把分钟变成秒，秒变成毫秒
-    if (isNaN(Number(mill))) { // 判断是不是数字 不是的话进行二次分割  有些还是这种格式的 53]
-      mill = item.slice(7, 9)
-      lrc = item.slice(10, item.length)
-      time = parseInt(min) * 60 * 1000 + parseInt(sec) * 1000 + parseInt(mill) // 把分钟变成秒，秒变成毫秒
-    }
-    return { min, sec, mill, lrc, time, active }
-  })
-  arr.forEach((item, i) => { // 由于后端返回的数据中，可能会有空的歌词，会让高亮的短暂消失，这边处理下
-    if (item.lrc === '' && i !== 0) {
-      arr[i - 1] = {
-        ...arr[i - 1],
-        ...item,
-        time: arr[i - 1].time,
-        lrc: arr[i - 1].lrc
-      }
-    }
-  })
-
-  arr = arr.filter(item => item.lrc)
-  return arr
-}

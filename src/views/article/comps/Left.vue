@@ -9,8 +9,8 @@
         <div
           class="article-tab-body flex"
           v-for="item in recommendList"
-          :key="item._id"
-          @click="goArticle(item._id)"
+          :key="item.id"
+          @click="goArticle(item.id)"
         >
           <img
             v-if="item.cover"
@@ -105,9 +105,7 @@
 
 <script lang="ts" setup>
 import { useCollect } from '@/hooks/useCollect'
-import { recomendArticle } from '@/api/module/article'
-import { IArticleInfo } from '@/api/types/article'
-import { useGoArticle } from '@/hooks/useGoArticle'
+import { useArticle } from '@/hooks/useArticle'
 
 const route = useRoute()
 
@@ -120,25 +118,15 @@ defineProps({
   }
 })
 
-const recommendList = ref<IArticleInfo[]>([])
+// 点击进入文章详情
+const { goArticle, recommendList, getRecomendArticle } = useArticle()
+
+// 处理收藏
+const { isCollect, updateCollect } = useCollect(Number(route.params.id))
 
 onMounted(() => {
   getRecomendArticle()
 })
-
-// 获取推荐文章
-const getRecomendArticle = async () => {
-  const { data, code } = await recomendArticle()
-  if (code === 0) {
-    recommendList.value = data
-  }
-}
-
-// 点击进入文章详情
-const { goArticle } = useGoArticle()
-
-// 处理收藏
-const { isCollect, updateCollect } = useCollect(Number(route.params.id))
 
 </script>
 

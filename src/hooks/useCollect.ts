@@ -1,11 +1,14 @@
 import { useUserInfo } from './useUserInfo'
 import { useUser } from './useUser'
-import { collectArticle } from '@/api/module/user'
+import { collectArticle, getCollect } from '@/api/module/user'
+import { IArticleInfo } from '@/api/types/article'
 // 收藏操作
 export const useCollect = (id:number) => {
   const { isLogin } = useUser()
 
   const { userInfo, getUerInfoTodo } = useUserInfo(isLogin.value)
+
+  const collectInfoList = ref<IArticleInfo[]>([])
 
   const router = useRouter()
 
@@ -52,8 +55,18 @@ export const useCollect = (id:number) => {
       }, 300)
     }
   }
+
+  const getCollectList = async () => {
+    const { code, data } = await getCollect()
+    if (code === 0) {
+      collectInfoList.value = data
+    }
+  }
+
   return {
     isCollect,
+    collectInfoList,
+    getCollectList,
     updateCollect
   }
 }

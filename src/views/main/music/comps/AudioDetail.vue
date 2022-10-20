@@ -94,8 +94,9 @@
 </template>
 
 <script lang="ts" setup>
-import { getSingerList } from '@/api2/module/song'
-import { useMusicStore, IMusicLyric } from '@/sotre/module/music'
+import { getSingerList } from '@/api/module/music'
+import { IMusicLyric } from '@/api/types/music'
+import { useMusicStore } from '@/sotre/module/music'
 import { ElScrollbar } from 'element-plus'
 import { IMusicDetailInfo } from './types'
 import { dealMusicData } from './util'
@@ -148,16 +149,15 @@ const handleLrcActive = (item:IMusicLyric, index:number):boolean => {
 const getSingerListData = async (id:number) => {
   if (id) {
     const { data } = await getSingerList(id)
-    const arr = data.hotSongs.map((item:any) => {
+    const arr = data.hotSongs.map((item) => {
       return {
         id: item.id,
         songName: item.name,
         totalTime: item.dt,
         singerInfo: item.ar[0],
         cover: item.al.picUrl
-      } as IMusicDetailInfo
+      }
     }) as IMusicDetailInfo[]
-    arr.splice(0, 20)
     singerSongList.value.push(...arr)
   }
 }
@@ -167,21 +167,6 @@ watch(() => musicStore.currentMusicInfo.singerId, (id) => {
 }, {
   immediate: true
 })
-
-// watch(() => musicStore.currentMusicTime, () => {
-//   if (isActive.value === true) {
-//     isActive.value = false
-//   }
-// })
-// watch(() => isActive.value, (val) => {
-//   if (val) {
-//     if (lyricScroll.value) {
-//       console.log(33333)
-
-//       lyricScroll.value.scrollTo({ top: lyrPosition.value, behavior: 'smooth' })
-//     }
-//   }
-// })
 
 </script>
 

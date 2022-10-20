@@ -49,6 +49,9 @@
 import { getPhotos } from '@/api/module/preview'
 import { randomKey } from '@/util/index'
 import { useEventBus } from '@/hooks/useEventBus'
+import { ComponentInternalInstance, ComponentPublicInstance } from 'vue'
+
+const { proxy } = getCurrentInstance() as ComponentInternalInstance
 
 // 预览图片列表
 const previewList = ref<string[]>([])
@@ -99,7 +102,7 @@ const getPhotoInfo = async () => {
   })
   if (code === 0) {
     data.forEach((item:string) => {
-      previewList.value.push(`http://127.0.0.1:3000${item}`)
+      previewList.value.push(`${(proxy as ComponentPublicInstance).$imgUrl}${item}`)
       photosList.value.push(`${randomKey(200, 300)}px`)
     })
   }

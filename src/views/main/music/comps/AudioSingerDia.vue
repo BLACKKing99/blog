@@ -167,8 +167,9 @@
 
 <script lang="ts" setup>
 import DialogVue from '@/components/common/dialog/Dialog.vue'
-import { getSingerDetail, getSingerList } from '@/api2/module/song'
+import { getSingerDetail, getSingerList } from '@/api/module/music'
 import { IMusicDetailInfo } from './types'
+import { Artist } from '@/api/types/music'
 // 控制弹窗开关
 const dialogVisiable = ref(false)
 
@@ -206,35 +207,20 @@ const handleCurrentChange = () => {
   // 切页是进行的动作
 }
 
-const singerInfo = reactive({
-  albumSize: 63,
-  cover: 'http://p2.music.126.net/dwbXimgQn1YnJzwSlPDk-A==/109951165911950321.jpg',
-  desc: undefined,
-  id: 3684,
-  musicSize: 529,
-  mvSize: 188,
-  name: '林俊杰'
-})
+// const singerInfo = reactive({
+//   albumSize: 63,
+//   cover: 'http://p2.music.126.net/dwbXimgQn1YnJzwSlPDk-A==/109951165911950321.jpg',
+//   desc: undefined,
+//   id: 3684,
+//   musicSize: 529,
+//   mvSize: 188,
+//   name: '林俊杰'
+// })
 
 // 歌手歌单数据
 const sheetList = ref<Record<number, IMusicDetailInfo[]>>({})
 
-// const singerInfo = reactive({
-//   // 歌手名字
-//   name: '',
-//   // 歌手封面
-//   cover: '',
-//   // 歌手id
-//   id: 0,
-//   // 歌手描述
-//   desc: '',
-//   // 歌手音乐个数
-//   musicSize: 0,
-//   // 歌手mv个数
-//   mvSize: 0,
-//   // 歌手专辑个数
-//   albumSize: 0
-// })
+const singerInfo = ref<Artist | null>(null)
 
 const emit = defineEmits(['update:isView', 'play-music'])
 
@@ -259,14 +245,10 @@ const getSingerInfo = async (id: number) => {
   const { data } = await getSingerDetail(id)
 
   // 将接口中所需要的数据放到singerInfo中
-  singerInfo.name = data.data?.artist?.name
-  singerInfo.albumSize = data.data?.artist?.albumSize
-  singerInfo.cover = data.data?.artist?.cover
-  singerInfo.desc = data.data?.artist?.desc
-  singerInfo.id = data.data?.artist?.id
-  singerInfo.musicSize = data.data?.artist?.musicSize
-  singerInfo.mvSize = data.data?.artist?.mvSize
-
+  const singer = {
+    ...data.artist
+  }
+  singerInfo.value = singer
   loading.value = false
 }
 

@@ -12,8 +12,8 @@
         <div
           class="article-tab-body flex"
           v-for="item in populateList"
-          :key="item._id"
-          @click="goArticle(item._id)"
+          :key="item.id"
+          @click="goArticle(item.id)"
         >
           <img
             :src="item.cover ? $imgUrl + item.cover:cover"
@@ -50,25 +50,14 @@
 </template>
 
 <script lang="ts" setup>
-import { populateArticle } from '@/api/module/article'
-import { IArticleInfo } from '@/api/types/article'
-import { useGoArticle } from '@/hooks/useGoArticle'
 import cover from '@/assets/img/list/1.jpg'
+import { useArticle } from '@/hooks/useArticle'
 
-const populateList = ref<IArticleInfo[]>([])
-
-const { goArticle } = useGoArticle()
+const { goArticle, getPopulateArticle, populateList } = useArticle()
 
 onMounted(() => {
   getPopulateArticle()
 })
-
-const getPopulateArticle = async () => {
-  const { data, status } = await populateArticle()
-  if (status === 200) {
-    populateList.value = data.data
-  }
-}
 
 </script>
 

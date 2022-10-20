@@ -1,13 +1,13 @@
 <template>
   <div class="collect-list flex-c">
     <div class="cover">
-      <img :src="collect.cover?$imgUrl + collect.cover:cover">
+      <img :src="$imgUrl + collect.cover">
     </div>
-    <div class="title text-ellipsis-2">
+    <div class="title text-ellipsis-2 text-sm mt-1">
       {{ collect.title }}
     </div>
     <div class="channel">
-      {{ collect.type }}
+      {{ articleStore.getCurrentCategory(collect.categoryId) }}
     </div>
   </div>
 </template>
@@ -15,13 +15,15 @@
 <script lang="ts" setup>
 import { IArticleInfo } from '@/api/types/article'
 import { PropType } from 'vue'
-import cover from '@/assets/images/cover1.jpg'
+import { useArticleStore } from '@/sotre/module/article'
 defineProps({
   collect: {
     type: Object as PropType<IArticleInfo>,
     required: true
   }
 })
+
+const articleStore = useArticleStore()
 </script>
 
 <style scoped lang="scss">

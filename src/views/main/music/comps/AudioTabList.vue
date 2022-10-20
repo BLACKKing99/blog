@@ -59,8 +59,8 @@
 </template>
 
 <script lang="ts" setup>
-import { getBoutique, getHotType, getVocalist } from '@/api2/module/song'
-import type { IHotType, IVocalist, IBoutique } from '@/api2/module/song'
+import { getBoutique, getHotType, getVocalist } from '@/api/module/music'
+import type { IRequestHotType, IRequestBoutique } from '@/api/types/music'
 interface ITabList {
   id: number
   name: string
@@ -130,7 +130,7 @@ const handleTabClick = (data: number) => {
 }
 
 // 获取热门歌单
-const getHotTypeData = async (params?: IHotType) => {
+const getHotTypeData = async (params?: IRequestHotType) => {
   const { data } = await getHotType(params)
   const list = data.playlists.map((item: any) => {
     const obj = {
@@ -144,7 +144,7 @@ const getHotTypeData = async (params?: IHotType) => {
   tabList[1].push(...list)
 }
 // 获取歌手数据
-const getVocalistData = async (params?: IVocalist) => {
+const getVocalistData = async (params?: IRequestHotType) => {
   const { data } = await getVocalist(params)
   const list = data.artists.map((item: any) => {
     const obj = {
@@ -158,7 +158,7 @@ const getVocalistData = async (params?: IVocalist) => {
   tabList[2].push(...list)
 }
 // 获取精品歌单数据
-const getBoutiqueData = async (params?: IBoutique) => {
+const getBoutiqueData = async (params?: IRequestBoutique) => {
   const { data } = await getBoutique(params)
   const list = data.playlists.map((item: any) => {
     const obj = {

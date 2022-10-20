@@ -73,12 +73,12 @@ const searchText = ref<string>('')
 
 // 动态获取播放列表
 const musicList = computed(() => {
-  return musicStore.musicList.filter(item => item.musicName.indexOf(searchText.value) !== -1)
+  return musicStore.musicList?.filter(item => item.musicName.indexOf(searchText.value) !== -1) || []
 })
 
 // 动态获取历史列表
 const musicHistoryList = computed(() => {
-  return musicStore.musicHistoryList.filter(item => item.musicName.indexOf(searchText.value) !== -1)
+  return musicStore.musicHistoryList?.filter(item => item.musicName.indexOf(searchText.value) !== -1) || []
 })
 
 </script>

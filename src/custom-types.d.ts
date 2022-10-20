@@ -1,5 +1,6 @@
-// eslint-disable-next-line no-unused-vars
+/* eslint-disable no-unused-vars */
 import { SlateDescendant, SlateElement, SlateText } from '@wangeditor/editor'
+import Vue from 'vue'
 
 declare module '@wangeditor/editor' {
     // 扩展 Text
@@ -12,5 +13,12 @@ declare module '@wangeditor/editor' {
     interface SlateElement {
         type: string
         children: SlateDescendant[]
+    }
+}
+
+declare module '@vue/runtime-core' {
+    export interface ComponentCustomProperties {
+      $imgUrl:string
+      AuthHeader:()=>string
     }
 }

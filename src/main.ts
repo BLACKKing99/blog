@@ -12,17 +12,12 @@ import '@/styles/index.scss'
 import './tailwindcss/index.css'
 
 import LocalCatch from './util/LocalCatch'
-declare module '@vue/runtime-core' {
-  export interface ComponentCustomProperties {
-    $imgUrl:string
-    AuthHeader:()=>string
-  }
-}
+import { baseURL } from './api'
 
 const app = createApp(App)
 
 // 挂载全局对象
-app.config.globalProperties.$imgUrl = 'http://127.0.0.1:3000'
+app.config.globalProperties.$imgUrl = baseURL
 app.config.globalProperties.AuthHeader = () => {
   const token = LocalCatch.getItem('lzf_blog')?.token
   if (token) {

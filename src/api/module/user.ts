@@ -1,4 +1,5 @@
 import http from '../index'
+import { IArticleInfo } from '../types/article'
 import type { IRegisterType, IUploadInfo, IUserBackData, IUserInfoType } from '../types/user'
 export const register = (data:IRegisterType) => {
   return http.request<IUserBackData>({
@@ -47,5 +48,15 @@ export const collectArticle = (data:{
     url: 'user/collect',
     method: 'POST',
     data
+  })
+}
+
+export const getCollect = (id?:number) => {
+  return http.request<IArticleInfo[]>({
+    url: 'user/collect',
+    method: 'GET',
+    params: {
+      id
+    }
   })
 }

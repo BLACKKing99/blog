@@ -113,7 +113,7 @@
 
 <script lang="ts" setup>
 import DialogVue from '@/components/common/dialog/Dialog.vue'
-import { getSheetList, getSheetDetail } from '@/api2/module/song'
+import { getSheetList, getSheetDetail } from '@/api/module/music'
 import { ISheetDetail, IMusicDetailInfo } from './types'
 import { useMusicStore } from '@/sotre/module/music'
 import { dealMusicData } from './util'
@@ -173,6 +173,7 @@ const getSongListData = async () => {
 const handleMusicPlay = (value:IMusicDetailInfo) => {
   // 处理播放音乐
   const obj = dealMusicData(value)
+  console.log(obj, value.id)
 
   musicStore.setCurrentMusicInfo(value.id, obj)
   setTimeout(() => {

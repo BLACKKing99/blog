@@ -90,7 +90,7 @@ const handleCreated = (editor:IDomEditor) => {
         height: auto;
     }
 }
-  ::v-deep.w-e-full-screen-container {
+  ::v-deep(.w-e-full-screen-container) {
     z-index: 100; /* 如有需要，可以自定义 z-index */
   }
 

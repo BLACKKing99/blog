@@ -51,14 +51,14 @@ export const createComment = (data:ICommentType) => {
 }
 
 export const recomendArticle = () => {
-  return http.request({
+  return http.request<IArticleInfo[]>({
     url: 'article/recommend',
     method: 'GET'
   })
 }
 
 export const populateArticle = () => {
-  return http.request({
+  return http.request<IArticleInfo[]>({
     url: 'article/populate',
     method: 'GET'
   })
