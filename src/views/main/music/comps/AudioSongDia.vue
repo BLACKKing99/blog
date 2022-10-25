@@ -63,7 +63,7 @@
                 >
                   <div
                     class="tab-content-item-song"
-                    @dblclick="handleMusicPlay(item)"
+                    @dblclick="musicPlay(item)"
                   >
                     {{ item.songName }}
                   </div>
@@ -73,19 +73,19 @@
                   <div class="tab-content-item-todo">
                     <div
                       class="todo"
-                      @click="handleMusicPlay(item)"
+                      @click="musicPlay(item)"
                     >
                       <i class="iconfont icon-Play" />
                     </div>
                     <div
                       class="todo"
-                      @click="handleMusicListAdd(item)"
+                      @click="musicAdd(item)"
                     >
                       <i class="iconfont icon-jia" />
                     </div>
                     <div
                       class="todo"
-                      @click="handleMusicDownLoad"
+                      @click="musicDownload"
                     >
                       <i class="iconfont icon-xiazai" />
                     </div>
@@ -115,8 +115,7 @@
 import DialogVue from '@/components/common/dialog/Dialog.vue'
 import { getSheetList, getSheetDetail } from '@/api/module/music'
 import { ISheetDetail, IMusicDetailInfo } from './types'
-import { useMusicStore } from '@/sotre/module/music'
-import { dealMusicData } from './util'
+import { useMusic } from '@/hooks/useMusic'
 const props = defineProps({
   isView: {
     type: Boolean,
@@ -128,7 +127,7 @@ const props = defineProps({
   }
 })
 
-const musicStore = useMusicStore()
+const { musicAdd, musicDownload, musicPlay } = useMusic()
 
 const dialogVisiable = ref(false)
 // 列表詳情
@@ -144,7 +143,7 @@ const pageInfo = reactive({
   pageSize: 10,
   pageTotal: 0
 })
-const emit = defineEmits(['update:isView', 'play-music'])
+const emit = defineEmits(['update:isView'])
 // 获取详情列表数据
 const getSongListData = async () => {
   if (!loading.value) {
@@ -168,34 +167,6 @@ const getSongListData = async () => {
   sheetList.value[pageInfo.currentPage] = songs
   // 关闭loading
   loading.value = false
-}
-
-const handleMusicPlay = (value:IMusicDetailInfo) => {
-  // 处理播放音乐
-  const obj = dealMusicData(value)
-  console.log(obj, value.id)
-
-  musicStore.setCurrentMusicInfo(value.id, obj)
-  setTimeout(() => {
-    emit('play-music')
-  }, 100)
-}
-
-const handleMusicListAdd = (value:IMusicDetailInfo) => {
-  const obj = dealMusicData(value)
-  musicStore.currentMusicInfo = reactive({
-    ...musicStore.currentMusicInfo,
-    ...obj
-  })
-  musicStore.addMusicList(value.id, obj)
-}
-
-const handleMusicDownLoad = () => {
-  ElNotification.success({
-    title: '提示',
-    message: '暂时不支持下载哦~~~',
-    showClose: false
-  })
 }
 
 // 获取歌单详情
@@ -373,6 +344,7 @@ watch(
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                cursor: pointer;
                 &:hover{
                   border-color: $pink-color;
                   .iconfont{

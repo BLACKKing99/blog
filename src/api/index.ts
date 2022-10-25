@@ -1,7 +1,8 @@
 import LHttp from '@/util/axios'
 import config from '@/config'
+import { apiUtil } from '@/util/api.util'
 
-export const baseURL = config.onlineURL
+export const baseURL = apiUtil()
 
 const http = new LHttp({
   baseURL: baseURL + config.noCross,

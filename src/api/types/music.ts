@@ -4,6 +4,7 @@ export interface IRequestHotType {
     cat?: string
     offset?: number
     order?: 'hot' | 'new'
+    area?: string
 }
 
 export interface IHotType {
@@ -14,10 +15,6 @@ export interface IRequestSheetList {
     id: number
     limit?: number
     offset?: number
-}
-
-export interface ISheetList {
-    songs: any[]
 }
 
 export interface ISheetDetailBack {
@@ -112,7 +109,7 @@ interface Privilege {
     chargeInfoList: ChargeInfoList[];
 }
 
-export interface IHotSong {
+export interface ISingerMusic {
     rtUrls: any[];
     ar: Ar[];
     al: Al;
@@ -172,10 +169,23 @@ export interface IArtists {
 }
 
 export interface ISingerList {
-    hotSongs: IHotSong[]
+    hotSongs: ISingerMusic[]
     code: number
     more: false
     artist: IArtists
+}
+
+export interface ISingerRequestAllList {
+    id:number,
+    limit:number,
+    offset:number,
+    order:string
+}
+
+export interface ISingerAllList {
+    songs:ISingerMusic[]
+    more:boolean,
+    total:number
 }
 
 export interface IMusicLyric {
@@ -237,13 +247,6 @@ export interface IMusicUrlInfo {
     time: number;
 }
 
-export interface IGetMusicUrl {
-    code: number,
-    data: IMusicUrlInfo[]
-}
-
-// 歌手详情开始
-
 interface SecondaryExpertIdentiy {
     expertIdentiyId: number;
     expertIdentiyName: string;
@@ -281,4 +284,67 @@ export interface ISingerDetail {
     preferShow: number;
     showPriMsg: boolean;
     secondaryExpertIdentiy: SecondaryExpertIdentiy[];
+}
+
+export interface ISheetList {
+    songs: ISingerMusic[]
+}
+
+export interface IRequestAlbum {
+    id:number
+    limit?:number
+    offset?:number
+}
+
+interface Artists {
+    img1v1Id: number;
+    topicPerson: number;
+    alias: string[];
+    picId: number;
+    musicSize: number;
+    albumSize: number;
+    briefDesc: string;
+    picUrl: string;
+    img1v1Url: string;
+    followed: boolean;
+    trans: string;
+    name: string;
+    id: number;
+    picId_str: string;
+    img1v1Id_str: string;
+}
+
+export interface IHotAlbums {
+  songs: any[];
+  paid: boolean;
+  onSale: boolean;
+  mark: number;
+  awardTags?: any;
+  blurPicUrl: string;
+  alias: any[];
+  artists: Artists[];
+  copyrightId: number;
+  picId: number;
+  artist: Artist;
+  briefDesc: string;
+  publishTime: number;
+  company: string;
+  picUrl: string;
+  commentThreadId: string;
+  pic: number;
+  companyId: number;
+  tags: string;
+  description: string;
+  status: number;
+  subType: string;
+  name: string;
+  id: number;
+  type: string;
+  size: number;
+  picId_str: string;
+}
+
+export interface IAlbumList {
+    hotAlbums:IHotAlbums[]
+    more:boolean
 }

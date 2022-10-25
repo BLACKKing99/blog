@@ -71,6 +71,7 @@ import AudioMvDia from './comps/AudioMvDia.vue'
 import AudioDetail from './comps/AudioDetail.vue'
 import { debounce } from 'lodash'
 import { useMusicStore } from '@/sotre/module/music'
+import { useEventBus } from '@/hooks/useEventBus'
 
 // 音乐实例
 const audioRef = ref<HTMLAudioElement>()
@@ -91,11 +92,16 @@ const isAudioList = ref<boolean>(false)
 // 音乐相关的pinia
 const musicStore = useMusicStore()
 
+// 事件总线
+
+const { Buson } = useEventBus()
+
 // 控制音乐播放器显示隐藏
 const handleMouseMove = debounce((event: MouseEvent) => {
-  if (event.clientY > 800) {
+  if (event.clientY > 900) {
+  // if (event.clientY > 800) {
     isAudioPlay.value = true
-  } else if (event.clientY < 800) {
+  } else if (event.clientY < 900) {
     isAudioPlay.value = false
   }
 }, 300)
@@ -106,6 +112,10 @@ const openMusicDia = (value:{activeTab:number, id:number}) => {
   listData.listId = value.id
   listData.isListShow = true
 }
+
+Buson('play-music', () => {
+  audioRef.value?.play()
+})
 
 // 改变tab
 const changeTab = (value:number) => {

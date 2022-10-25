@@ -1,5 +1,5 @@
 import http from '../index'
-import { IBoutique, IRequestHotType, ISheetDetailBack, ILyric, IVocalist, IHotType, IRequestVocalist, IRequestBoutique, IRequestSheetList, ISheetList, ISingerList, IGetMusicUrl, ISingerDetail } from '../types/music'
+import { IBoutique, IRequestHotType, ISheetDetailBack, ILyric, IVocalist, IHotType, IRequestVocalist, IRequestBoutique, IRequestSheetList, ISheetList, ISingerList, ISingerDetail, ISingerRequestAllList, ISingerAllList, IMusicUrlInfo, IRequestAlbum, IAlbumList } from '../types/music'
 
 // 获取热门歌单
 export const getHotType = (params?: IRequestHotType) => {
@@ -43,7 +43,7 @@ export const getBoutique = (params?: IRequestBoutique) => {
 
 // 获取音乐 url
 export const getMusicUrl = (id: number) => {
-  return http.request<IGetMusicUrl>({
+  return http.request<IMusicUrlInfo[]>({
     url: `/music/song/url?id=${id}`
   })
 }
@@ -83,6 +83,14 @@ export const getSingerList = (id: number) => {
   })
 }
 
+// 获取歌手所有单曲
+export const getSingerAllList = (params:ISingerRequestAllList) => {
+  return http.request<ISingerAllList>({
+    url: '/music/artist/songs',
+    params
+  })
+}
+
 // 获取歌手详情
 export const getSingerDetail = (id: number) => {
   return http.request<ISingerDetail>({
@@ -90,5 +98,13 @@ export const getSingerDetail = (id: number) => {
     params: {
       id
     }
+  })
+}
+
+// 获取歌手详情
+export const getAlbum = (params:IRequestAlbum) => {
+  return http.request<IAlbumList>({
+    url: '/music/artist/album',
+    params
   })
 }

@@ -17,26 +17,22 @@
         <div
           class="relative h-[50%] flex flex-col justify-end singer-cover bg-center bg-cover"
           :style="{
-            backgroundImage: `url(${singerInfo.cover})`,
+            backgroundImage: `url(${singerInfo?.cover})`,
           }"
         >
-          <!-- <img
-            :src="singerInfo.cover"
-            class="w-full h-full object-cover absolute left-0 right-0"
-          > -->
           <div class="flex flex-col mb-5 z-10 relative px-5">
             <div class="text-[36px] text-theme font-bold mb-5">
-              {{ singerInfo.name }}
+              {{ singerInfo?.name }}
             </div>
             <ul class="text-theme text-xs flex">
               <li class="mr-2">
-                歌曲:{{ singerInfo.musicSize }}首
+                歌曲:{{ singerInfo?.musicSize }}首
               </li>
               <li class="mr-2">
-                MV:{{ singerInfo.mvSize }}首
+                MV:{{ singerInfo?.mvSize }}首
               </li>
               <li class="mr-2">
-                专辑:{{ singerInfo.albumSize }}首
+                专辑:{{ singerInfo?.albumSize }}首
               </li>
             </ul>
           </div>
@@ -51,16 +47,48 @@
               <ul class="min-w-full flex flex-wrap">
                 <el-scrollbar class="w-full">
                   <div class="w-full px-5">
+                    <ul class="grid grid-cols-3">
+                      <li class="singer-list-title pl-1">
+                        歌名
+                      </li>
+                      <li class="singer-list-title">
+                        歌手
+                      </li>
+                      <li class="singer-list-title">
+                        操作
+                      </li>
+                    </ul>
                     <ul
-                      v-for="music in 10"
-                      :key="music"
+                      v-for="item in sheetList[pageInfo.currentPage]"
+                      :key="item.id"
                       class="grid grid-cols-3 h-10 items-center hover:bg-slate-100"
                     >
-                      <li class="pl-1">
-                        {{ music }}
+                      <li class="pl-1 singer-list-content">
+                        {{ item.songName }}
                       </li>
-                      <li>{{ music }}</li>
-                      <li>{{ music }}</li>
+                      <li class="singer-list-content">
+                        {{ item.singerInfo.name }}
+                      </li>
+                      <li class="singer-list-content flex">
+                        <div
+                          class="todo"
+                          @click="musicPlay(item)"
+                        >
+                          <i class="iconfont icon-Play" />
+                        </div>
+                        <div
+                          class="todo"
+                          @click="musicAdd(item)"
+                        >
+                          <i class="iconfont icon-jia" />
+                        </div>
+                        <div
+                          class="todo"
+                          @click="musicDownload"
+                        >
+                          <i class="iconfont icon-xiazai" />
+                        </div>
+                      </li>
                     </ul>
                     <div class="h-[60px] flex justify-end items-center">
                       <el-pagination
@@ -82,20 +110,21 @@
                   <el-scrollbar>
                     <ul class="flex flex-wrap">
                       <li
-                        v-for="item in 10"
-                        :key="item"
+                        v-for="item in ablumList"
+                        :key="item.id"
                         class="w-[300px] h-[300px] flex justify-center items-center"
                       >
                         <div
                           class="w-[85%] h-[85%] flex items-end flex-col justify-end bg-center bg-cover cursor-pointer album-content-item"
                           :style="{
-                            backgroundImage: `url(${singerInfo.cover})`,
+                            backgroundImage: `url(${item.picUrl})`,
                           }"
                         >
                           <div
-                            class="h-10 bg-[rgba(255,255,255,.8)] text-[rgba(255,255,255)] opacity-[0.2] w-full px-3 duration-300 album-content-item-title"
+                            class="album-content-item-title"
                           >
-                            林俊杰
+                            <span class="w-full text-sm overflow-hidden text-ellipsis whitespace-nowrap">{{ item.name }}</span>
+                            <span class="text-xs">{{ formatTimeTodo(item.publishTime) }}</span>
                           </div>
                         </div>
                       </li>
@@ -116,7 +145,7 @@
                       <ul class="flex h-[230px] w-full">
                         <li class="w-[80%] box-border p-3 rounded-md">
                           <img
-                            :src="singerInfo.cover"
+                            :src="singerInfo?.cover"
                             class="w-full h-full object-cover rounded-md"
                           >
                         </li>
@@ -167,11 +196,14 @@
 
 <script lang="ts" setup>
 import DialogVue from '@/components/common/dialog/Dialog.vue'
-import { getSingerDetail, getSingerList } from '@/api/module/music'
+import { getSingerDetail, getSingerAllList, getAlbum } from '@/api/module/music'
+import { Artist, IHotAlbums } from '@/api/types/music'
 import { IMusicDetailInfo } from './types'
-import { Artist } from '@/api/types/music'
+import { useMusic } from '@/hooks/useMusic'
+import useTimeFormat from '@/hooks/useTimeFormat'
+
 // 控制弹窗开关
-const dialogVisiable = ref(false)
+const dialogVisiable = ref(true)
 
 // 加载 优化交互
 const loading = ref(false)
@@ -197,14 +229,22 @@ const tabList = [
 // 活跃的tab
 const activeTab = ref<number>(0)
 
-const pageInfo = ref({
+const pageInfo = reactive({
   currentPage: 1,
   pageSize: 10,
   totalSize: 0
 })
 
-const handleCurrentChange = () => {
+const { musicAdd, musicDownload, musicPlay } = useMusic()
+
+const { formatTimeTodo } = useTimeFormat()
+
+const handleCurrentChange = (value:number) => {
   // 切页是进行的动作
+  pageInfo.currentPage = value
+  if (sheetList.value[value] === undefined) {
+    getSingerListData(value)
+  }
 }
 
 // const singerInfo = reactive({
@@ -219,8 +259,11 @@ const handleCurrentChange = () => {
 
 // 歌手歌单数据
 const sheetList = ref<Record<number, IMusicDetailInfo[]>>({})
+// 歌手专辑列表
+const ablumList = ref<IHotAlbums[] | null>(null)
 
-const singerInfo = ref<Artist | null>(null)
+// const singerInfo = ref<Artist | null>(null)
+const singerInfo = ref<Artist | null>({ id: 3684, cover: 'http://p2.music.126.net/7636PzUiFMETHU7SAr05FA==/109951167878710661.jpg', name: '林俊杰', transNames: [], identities: ['作曲'], identifyTag: null, briefDesc: 'JJ林俊杰的创作来自最深的情感，他的声音唱出灵魂的璀璨，他把音乐和梦想当做能量，一路走到无人取代的地位，他写下华语乐坛最动人的经典乐章，撼动亚洲数十亿颗心跳。他是亚洲乐坛全能唱作天王 JJ 林俊杰。\n\n2003年首发第一张个人创作专辑《乐行者》，取得不俗成绩；其杰出的创作才能又在之后2004年的凭借歌曲【江南】而成名，并于同年获得第15届金曲奖之「最佳演唱新人奖」。随后的【小酒窝】、【曹操】、【她说】等歌曲亦造成广大回响。2011年8月8日携手华纳，迈出世界。\n\n2020至2021年【幸存者·如你】双维度EP，创造全新音乐视角。由JJ 林俊杰亲自领导整张专辑的企划创意与视觉，新专辑一推出便占据大中华区各大排行榜，销售量更在一个月内突破百万。\n\n把音乐和梦想当做能量，一路走到无人取代的地位，写下华语乐坛最动人的经典乐章，他是亚洲全能唱作天王JJ林俊杰。', rank: { rank: 2, type: 1 }, albumSize: 64, musicSize: 531, mvSize: 188 })
 
 const emit = defineEmits(['update:isView', 'play-music'])
 
@@ -238,6 +281,28 @@ const props = defineProps({
 })
 
 const handleTabClick = (data: number) => {
+  switch (data) {
+    case 1:
+      if (!ablumList.value) {
+        getAlbumData()
+      }
+      break
+    case 2:
+
+      break
+  }
+}
+
+const getAlbumData = async () => {
+  const params = {
+    id: singerInfo.value?.id as number,
+    limit: 12,
+    offset: 0
+  }
+  const { code, data } = await getAlbum(params)
+  if (code === 0) {
+    ablumList.value = data.hotAlbums
+  }
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -249,14 +314,43 @@ const getSingerInfo = async (id: number) => {
     ...data.artist
   }
   singerInfo.value = singer
+  getSingerListData()
   loading.value = false
 }
+
+const getSingerListData = async (offset?:number) => {
+  const params = {
+    order: 'time',
+    limit: pageInfo.pageSize,
+    offset: offset || pageInfo.currentPage,
+    id: singerInfo.value?.id as number
+  }
+  const { data, code } = await getSingerAllList(params)
+  if (code === 0) {
+    pageInfo.totalSize = data.total
+    const songs = data.songs.map((item: any) => {
+      return {
+        id: item.id,
+        songName: item.name,
+        singerInfo: item.ar[0],
+        cover: item.al.picUrl,
+        totalTime: item.dt
+      }
+    })
+    sheetList.value[pageInfo.currentPage] = songs
+  }
+}
+
+onMounted(() => {
+  getSingerListData()
+})
 
 watch(
   () => props.isView,
   (val) => {
     if (val) {
       // getSingerInfo(props.listData.listId)
+      // getSingerListData()
       dialogVisiable.value = true
     }
   }
@@ -270,6 +364,11 @@ watch(
     }
   }
 )
+
+// 监听active的变化
+watch(() => activeTab.value, (val) => {
+})
+
 </script>
 
 <style scoped lang="scss">
@@ -277,6 +376,35 @@ watch(
   padding: 0;
   ::v-deep(.back-comment-dialog-content) {
     height: 100%;
+  }
+  .singer-list-title{
+    @apply text-sm text-zinc-400;
+  }
+  .singer-list-content{
+    @apply text-sm text-gray-500;
+    .todo{
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+      box-sizing: border-box;
+      border: solid 1px #dedede;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &:hover{
+        border-color: $pink-color;
+        .iconfont{
+          color: $pink-color;
+        }
+      }
+    }
+    .iconfont{
+      font-size: 12px;
+      color: #909399;
+      transform: scale(.9);
+
+    }
   }
   .tab-content {
     height: calc(100% - 70px);
@@ -286,6 +414,9 @@ watch(
   }
   .album-content-item {
     position: relative;
+    &-title {
+      @apply h-12 bg-[rgba(255,255,255,.8)] text-[#333] opacity-[0.2] w-full px-3 duration-300 flex flex-col justify-evenly font-bold;
+    }
     &::before {
       content: '';
       width: 80%;

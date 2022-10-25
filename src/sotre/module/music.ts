@@ -69,7 +69,7 @@ export const useMusicStore = defineStore('music', {
       if (index === -1) {
         // 没有，请求数据
         const { data } = await getMusicUrl(id)
-        music.url = data.data[0].url
+        music.url = data[0].url
       } else {
         // 有，直接从历史记录中获取url
         music.url = this.musicHistoryList[index].url
@@ -87,7 +87,7 @@ export const useMusicStore = defineStore('music', {
       if (index === -1) {
         // 说明列表里面没有 再去请求数据
         const { data } = await getMusicUrl(id)
-        music.url = data.data[0]?.url
+        music.url = data[0]?.url
       } else {
         // 有，直接从历史记录中获取url
         music.url = this.musicHistoryList[index]?.url

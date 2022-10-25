@@ -83,6 +83,12 @@ watch(
   () => props.modelValue,
   (value) => {
     activeTab.value = value
+  }
+)
+
+watch(
+  () => activeTab.value,
+  (value) => {
     emit('update:modelValue', value)
   }
 )

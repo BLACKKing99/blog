@@ -60,7 +60,7 @@
 
 <script lang="ts" setup>
 import { getBoutique, getHotType, getVocalist } from '@/api/module/music'
-import type { IRequestHotType, IRequestBoutique } from '@/api/types/music'
+import type { IRequestHotType, IRequestBoutique, IRequestVocalist } from '@/api/types/music'
 interface ITabList {
   id: number
   name: string
@@ -144,7 +144,7 @@ const getHotTypeData = async (params?: IRequestHotType) => {
   tabList[1].push(...list)
 }
 // 获取歌手数据
-const getVocalistData = async (params?: IRequestHotType) => {
+const getVocalistData = async (params?: IRequestVocalist) => {
   const { data } = await getVocalist(params)
   const list = data.artists.map((item: any) => {
     const obj = {
