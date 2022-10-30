@@ -139,28 +139,34 @@
                   <ul class="mv-content-container">
                     <li
                       class="mv-item"
-                      v-for="item in 10"
-                      :key="item"
+                      v-for="item in mvList"
+                      :key="item.id"
                     >
                       <ul class="flex h-[230px] w-full">
                         <li class="w-[80%] box-border p-3 rounded-md">
-                          <img
-                            :src="singerInfo?.cover"
-                            class="w-full h-full object-cover rounded-md"
-                          >
+                          <div class="overflow-hidden relative w-full h-full box-border">
+                            <img
+                              :src="item.imgurl"
+                              class="mv-item-img"
+                            >
+                            <div class="mv-item-icon cursor-pointer">
+                              <i class="text-white text-sm iconfont icon-Play duration-300" />
+                            </div>
+                            <span class="absolute right-2 bottom-2 z-10 text-white text-lg"> {{ bytesToSize(item.duration) }} </span>
+                          </div>
                         </li>
                         <li class="flex-1 grid grid-rows-3 items-center justify-items-center">
-                          <div class="icon-item text-defalut shadow-sm">
-                            <i class="iconfont icon-bilibili text-xl" />
-                            <span class="text-xs">2222</span>
+                          <div class="icon-item text-defalut shadow-md">
+                            <i class="iconfont icon-bofangqi-bofangxiaodianshi text-xl" />
+                            <span class="text-xs">{{ handleNumber(item.playCount) }}</span>
                           </div>
                           <div class="icon-item text-cyan-500 bg-cyan-300">
-                            <i class="iconfont icon-bilibili text-xl" />
-                            <span class="text-xs">2222</span>
+                            <i class="iconfont icon-gongzuotai04 text-xl" />
+                            <span class="text-xs">999</span>
                           </div>
                           <div class="icon-item text-theme bg-themeOcpy">
-                            <i class="iconfont icon-bilibili text-xl" />
-                            <span class="text-xs">2222</span>
+                            <i class="iconfont icon-dust text-xl" />
+                            <span class="text-xs">666</span>
                           </div>
                         </li>
                       </ul>
@@ -170,17 +176,17 @@
                         <el-popover
                           placement="top-start"
                           trigger="hover"
+                          popper-class="mv-title-popover"
+                          width="auto"
                         >
-                          <div
-                            class="w-full text-center overflow-hidden text-ellipsis whitespace-nowrap"
-                          >
-                            标题
+                          <div class="px-2">
+                            {{ item.name }}
                           </div>
                           <template #reference>
-                            <span class="text-[#333] text-lg font-bold">标题</span>
+                            <span class="text-[#333] text-lg font-bold text-ellipsis-1 w-full">{{ item.name }}</span>
                           </template>
                         </el-popover>
-                        <span class="text-defalut text-sm">2022年08月22日</span>
+                        <span class="text-defalut text-sm">{{ item.publishTime }}</span>
                       </div>
                     </li>
                   </ul>
@@ -196,14 +202,15 @@
 
 <script lang="ts" setup>
 import DialogVue from '@/components/common/dialog/Dialog.vue'
-import { getSingerDetail, getSingerAllList, getAlbum } from '@/api/module/music'
-import { Artist, IHotAlbums } from '@/api/types/music'
+import { getSingerDetail, getSingerAllList, getAlbum, getMv } from '@/api/module/music'
+import { Artist, IHotAlbums, IMvs } from '@/api/types/music'
 import { IMusicDetailInfo } from './types'
 import { useMusic } from '@/hooks/useMusic'
+import { handleNumber, bytesToSize } from '@/util/music.util'
 import useTimeFormat from '@/hooks/useTimeFormat'
 
 // 控制弹窗开关
-const dialogVisiable = ref(true)
+const dialogVisiable = ref(false)
 
 // 加载 优化交互
 const loading = ref(false)
@@ -262,6 +269,8 @@ const sheetList = ref<Record<number, IMusicDetailInfo[]>>({})
 // 歌手专辑列表
 const ablumList = ref<IHotAlbums[] | null>(null)
 
+const mvList = ref<IMvs[] | null>(null)
+
 // const singerInfo = ref<Artist | null>(null)
 const singerInfo = ref<Artist | null>({ id: 3684, cover: 'http://p2.music.126.net/7636PzUiFMETHU7SAr05FA==/109951167878710661.jpg', name: '林俊杰', transNames: [], identities: ['作曲'], identifyTag: null, briefDesc: 'JJ林俊杰的创作来自最深的情感，他的声音唱出灵魂的璀璨，他把音乐和梦想当做能量，一路走到无人取代的地位，他写下华语乐坛最动人的经典乐章，撼动亚洲数十亿颗心跳。他是亚洲乐坛全能唱作天王 JJ 林俊杰。\n\n2003年首发第一张个人创作专辑《乐行者》，取得不俗成绩；其杰出的创作才能又在之后2004年的凭借歌曲【江南】而成名，并于同年获得第15届金曲奖之「最佳演唱新人奖」。随后的【小酒窝】、【曹操】、【她说】等歌曲亦造成广大回响。2011年8月8日携手华纳，迈出世界。\n\n2020至2021年【幸存者·如你】双维度EP，创造全新音乐视角。由JJ 林俊杰亲自领导整张专辑的企划创意与视觉，新专辑一推出便占据大中华区各大排行榜，销售量更在一个月内突破百万。\n\n把音乐和梦想当做能量，一路走到无人取代的地位，写下华语乐坛最动人的经典乐章，他是亚洲全能唱作天王JJ林俊杰。', rank: { rank: 2, type: 1 }, albumSize: 64, musicSize: 531, mvSize: 188 })
 
@@ -288,20 +297,10 @@ const handleTabClick = (data: number) => {
       }
       break
     case 2:
-
+      if (!mvList.value) {
+        getMvData()
+      }
       break
-  }
-}
-
-const getAlbumData = async () => {
-  const params = {
-    id: singerInfo.value?.id as number,
-    limit: 12,
-    offset: 0
-  }
-  const { code, data } = await getAlbum(params)
-  if (code === 0) {
-    ablumList.value = data.hotAlbums
   }
 }
 
@@ -315,10 +314,37 @@ const getSingerInfo = async (id: number) => {
   }
   singerInfo.value = singer
   getSingerListData()
+  getAlbumData()
+  getMvData()
   loading.value = false
 }
 
+const getMvData = async () => {
+  // 获取mv列表数据
+  const { data, code } = await getMv(singerInfo.value?.id as number)
+
+  if (code === 0) {
+    mvList.value = data.mvs
+  } else {
+    ElMessage.error('获取mv列表失败')
+  }
+}
+
+const getAlbumData = async () => {
+  // 获取专辑列表数据
+  const params = {
+    id: singerInfo.value?.id as number,
+    limit: 12,
+    offset: 0
+  }
+  const { code, data } = await getAlbum(params)
+  if (code === 0) {
+    ablumList.value = data.hotAlbums
+  }
+}
+
 const getSingerListData = async (offset?:number) => {
+  // 获取歌手音乐列表
   const params = {
     order: 'time',
     limit: pageInfo.pageSize,
@@ -341,16 +367,11 @@ const getSingerListData = async (offset?:number) => {
   }
 }
 
-onMounted(() => {
-  getSingerListData()
-})
-
 watch(
   () => props.isView,
   (val) => {
     if (val) {
-      // getSingerInfo(props.listData.listId)
-      // getSingerListData()
+      getSingerInfo(props.listData.listId)
       dialogVisiable.value = true
     }
   }
@@ -373,7 +394,7 @@ watch(() => activeTab.value, (val) => {
 
 <style scoped lang="scss">
 .aduio-singer {
-  padding: 0;
+  padding: 0 !important;
   ::v-deep(.back-comment-dialog-content) {
     height: 100%;
   }
@@ -448,6 +469,20 @@ watch(() => activeTab.value, (val) => {
       @apply w-[400px] h-[280px] flex-col flex justify-center items-center;
       .icon-item {
         @apply w-[80%] h-[80%] flex justify-center items-center flex-col rounded-sm hover:shadow-md cursor-pointer duration-300;
+      }
+      &-img{
+        @apply w-full h-full object-cover rounded-md duration-300 ;
+        &:hover {
+          transform: scale(1.1);
+        }
+      }
+      &-icon {
+        @apply absolute left-2 bottom-2 z-10 w-8 h-8 flex items-center justify-center bg-[rgba(0,0,0,.4)] rounded-full;
+        &:hover{
+          .iconfont {
+            transform: scale(1.1);
+          }
+        }
       }
     }
   }

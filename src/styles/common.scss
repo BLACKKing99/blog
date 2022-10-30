@@ -71,3 +71,9 @@
   line-clamp: 2;
   -webkit-box-orient: vertical; //盒子中内容竖直排列
 }
+
+
+img {
+  object-fit: cover;
+  user-select: none;
+}

@@ -21,3 +21,13 @@
 .el-slider__button {
   border-color: $pink-color !important;
 }
+
+.el-popper{
+  min-width:10px;
+}
+
+.mv-title-popover{
+  padding: 10px;
+  white-space: nowrap;
+  line-height: 1.2;
+}

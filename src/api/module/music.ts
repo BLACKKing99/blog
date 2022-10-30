@@ -1,5 +1,5 @@
 import http from '../index'
-import { IBoutique, IRequestHotType, ISheetDetailBack, ILyric, IVocalist, IHotType, IRequestVocalist, IRequestBoutique, IRequestSheetList, ISheetList, ISingerList, ISingerDetail, ISingerRequestAllList, ISingerAllList, IMusicUrlInfo, IRequestAlbum, IAlbumList } from '../types/music'
+import { IBoutique, IRequestHotType, ISheetDetailBack, ILyric, IVocalist, IHotType, IRequestVocalist, IRequestBoutique, IRequestSheetList, ISheetList, ISingerList, ISingerDetail, ISingerRequestAllList, ISingerAllList, IMusicUrlInfo, IRequestAlbum, IAlbumList, IMvList, IRequestAllMv, IAllMv, IMvDetail } from '../types/music'
 
 // 获取热门歌单
 export const getHotType = (params?: IRequestHotType) => {
@@ -106,5 +106,33 @@ export const getAlbum = (params:IRequestAlbum) => {
   return http.request<IAlbumList>({
     url: '/music/artist/album',
     params
+  })
+}
+
+// 获取歌手详情
+export const getMv = (id:number) => {
+  return http.request<IMvList>({
+    url: '/music/artist/mv',
+    params: {
+      id
+    }
+  })
+}
+
+// 获取歌手详情
+export const getAllMv = (params?:IRequestAllMv) => {
+  return http.request<IAllMv[]>({
+    url: '/music/mv/all',
+    params
+  })
+}
+
+// 获取mv详情
+export const getMvDetail = (id?:number) => {
+  return http.request<IMvDetail>({
+    url: '/music/mv/detail',
+    params: {
+      id
+    }
   })
 }

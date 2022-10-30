@@ -176,16 +176,16 @@ export interface ISingerList {
 }
 
 export interface ISingerRequestAllList {
-    id:number,
-    limit:number,
-    offset:number,
-    order:string
+    id: number,
+    limit: number,
+    offset: number,
+    order: string
 }
 
 export interface ISingerAllList {
-    songs:ISingerMusic[]
-    more:boolean,
-    total:number
+    songs: ISingerMusic[]
+    more: boolean,
+    total: number
 }
 
 export interface IMusicLyric {
@@ -291,9 +291,9 @@ export interface ISheetList {
 }
 
 export interface IRequestAlbum {
-    id:number
-    limit?:number
-    offset?:number
+    id: number
+    limit?: number
+    offset?: number
 }
 
 interface Artists {
@@ -315,36 +315,109 @@ interface Artists {
 }
 
 export interface IHotAlbums {
-  songs: any[];
-  paid: boolean;
-  onSale: boolean;
-  mark: number;
-  awardTags?: any;
-  blurPicUrl: string;
-  alias: any[];
-  artists: Artists[];
-  copyrightId: number;
-  picId: number;
-  artist: Artist;
-  briefDesc: string;
-  publishTime: number;
-  company: string;
-  picUrl: string;
-  commentThreadId: string;
-  pic: number;
-  companyId: number;
-  tags: string;
-  description: string;
-  status: number;
-  subType: string;
-  name: string;
-  id: number;
-  type: string;
-  size: number;
-  picId_str: string;
+    songs: any[];
+    paid: boolean;
+    onSale: boolean;
+    mark: number;
+    awardTags?: any;
+    blurPicUrl: string;
+    alias: any[];
+    artists: Artists[];
+    copyrightId: number;
+    picId: number;
+    artist: Artist;
+    briefDesc: string;
+    publishTime: number;
+    company: string;
+    picUrl: string;
+    commentThreadId: string;
+    pic: number;
+    companyId: number;
+    tags: string;
+    description: string;
+    status: number;
+    subType: string;
+    name: string;
+    id: number;
+    type: string;
+    size: number;
+    picId_str: string;
 }
 
 export interface IAlbumList {
-    hotAlbums:IHotAlbums[]
-    more:boolean
+    hotAlbums: IHotAlbums[]
+    more: boolean
+}
+
+export interface IMvs {
+    id: number;
+    name: string;
+    status: number;
+    artist: Artist;
+    imgurl16v9: string;
+    imgurl: string;
+    artistName: string;
+    duration: number;
+    playCount: number;
+    publishTime: string;
+    subed: boolean;
+}
+
+export interface IMvList {
+    hasMore: boolean
+    mvs: IMvs[]
+    time: number
+}
+
+export interface IRequestAllMv {
+    area?: string
+    order?: number
+    type?: string
+    limit?: number
+    offset?: number
+}
+
+export interface IAllMv {
+    id: number;
+    cover: string;
+    name: string;
+    playCount: number;
+    briefDesc?: any;
+    desc?: any;
+    artistName: string;
+    artistId: number;
+    duration: number;
+    mark: number;
+    subed: boolean;
+    artists: Artist[];
+}
+
+interface Br {
+    size: number;
+    br: number;
+    point: number;
+}
+
+export interface IMvDetail {
+    id: number;
+    name: string;
+    artistId: number;
+    artistName: string;
+    briefDesc: string;
+    desc: string;
+    cover: string;
+    coverId_str: string;
+    coverId: number;
+    playCount: number;
+    subCount: number;
+    shareCount: number;
+    commentCount: number;
+    duration: number;
+    nType: number;
+    publishTime: string;
+    price?: any;
+    brs: Br[];
+    artists: Artist[];
+    commentThreadId: string;
+    videoGroup: any[];
 }

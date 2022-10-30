@@ -39,15 +39,18 @@
                   class="content-container-item-cover"
                   @click="openMusicList(tab.id)"
                 >
-                  <img
-                    :src="tab.cover"
-                  >
+                  <div class="w-full h-0 pb-[100%] relative">
+                    <img
+                      class="absolute"
+                      :src="tab.cover"
+                    >
+                  </div>
                 </div>
                 <div class="content-container-item-title">
                   {{ tab.name }}
                 </div>
                 <div class="content-container-item-desc">
-                  {{ tab.description }}
+                  {{ tab.description || tab.singer }}
                 </div>
               </div>
             </div>
@@ -59,14 +62,15 @@
 </template>
 
 <script lang="ts" setup>
-import { getBoutique, getHotType, getVocalist } from '@/api/module/music'
-import type { IRequestHotType, IRequestBoutique, IRequestVocalist } from '@/api/types/music'
+import { getAllMv, getHotType, getVocalist } from '@/api/module/music'
+import type { IRequestHotType, IRequestVocalist, IRequestAllMv } from '@/api/types/music'
 interface ITabList {
   id: number
   name: string
   description?: string
   cover: string,
   updateTime?:number
+  singer?:string
 }
 const tabbar = [
   {
@@ -79,11 +83,11 @@ const tabbar = [
   },
   {
     id: 3,
-    title: '热门推荐'
+    title: 'MV'
   }
 ]
 // 活跃的tab
-const activeTab = ref(1)
+const activeTab = ref(3)
 
 // 控制该显示什么时候的动画
 const aniPosition = ref('music-list-left')
@@ -99,10 +103,7 @@ const tabList = reactive<Record<number, ITabList[]>>({
 
 onMounted(() => {
   // 挂载前请求数据
-  getHotTypeData({
-    limit: 10,
-    offset: 0
-  })
+  handleTabClick(activeTab.value)
 })
 
 const handleTabClick = (data: number) => {
@@ -121,8 +122,14 @@ const handleTabClick = (data: number) => {
       area: '7'
     })
   } else if (data === 3 && tabList[data].length === 0) {
-    getBoutiqueData({
-      limit: 10
+    getMvData({
+      limit: 10,
+      offset: 0
+    })
+  } else if (data === 1 && tabList[data].length === 0) {
+    getHotTypeData({
+      limit: 10,
+      offset: 0
     })
   }
 
@@ -158,15 +165,14 @@ const getVocalistData = async (params?: IRequestVocalist) => {
   tabList[2].push(...list)
 }
 // 获取精品歌单数据
-const getBoutiqueData = async (params?: IRequestBoutique) => {
-  const { data } = await getBoutique(params)
-  const list = data.playlists.map((item: any) => {
+const getMvData = async (params?: IRequestAllMv) => {
+  const { data } = await getAllMv(params)
+  const list = data.map(item => {
     const obj = {
       name: item.name,
-      description: item.description,
       id: item.id,
-      cover: item.coverImgUrl,
-      updateTime: item.updateTime
+      cover: item.cover,
+      singer: item.artistName
     }
     return obj
   })

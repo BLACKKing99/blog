@@ -27,7 +27,9 @@
         class="flex relative w-full"
         v-show="tabItem?.id=== activeTab"
       >
-        <transition :name="tabAnimation">
+        <transition
+          :name="tabAnimation"
+        >
           <slot
             :tab="tabItem?.value"
             :name="tabItem?.value"
@@ -59,6 +61,10 @@ const props = defineProps({
     default: () => {
       return []
     }
+  },
+  duration: {
+    type: Number,
+    default: 300
   }
 })
 const activeTab = ref<string | number>(props.tabTitle[0].id)
