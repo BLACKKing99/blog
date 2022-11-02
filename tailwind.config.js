@@ -8,7 +8,9 @@ module.exports = {
       colors: {
         theme: '#ff2e63',
         themeOcpy: '#ff2e6330',
-        defalut: '#a9a9a8'
+        defalut: '#a9a9a8',
+        gory1: '#b2bfc5',
+        black1: '#25486e'
       }
     }
   },

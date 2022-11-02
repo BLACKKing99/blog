@@ -417,7 +417,7 @@ export interface IMvDetail {
     publishTime: string;
     price?: any;
     brs: Br[];
-    artists: Artist[];
+    artists?: Artist[];
     commentThreadId: string;
     videoGroup: any[];
 }
