@@ -63,7 +63,7 @@
                 >
                   <div
                     class="tab-content-item-song"
-                    @dblclick="musicPlay(item)"
+                    @dblclick="musicPlay(item,sheetList[pageInfo.currentPage])"
                   >
                     {{ item.songName }}
                   </div>
@@ -73,7 +73,7 @@
                   <div class="tab-content-item-todo">
                     <div
                       class="todo"
-                      @click="musicPlay(item)"
+                      @click="musicPlay(item,sheetList[pageInfo.currentPage])"
                     >
                       <i class="iconfont icon-Play" />
                     </div>

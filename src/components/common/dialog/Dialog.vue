@@ -12,6 +12,13 @@
       :style="dialogStyle"
       @click="dialogVisiable = true"
     >
+      <div
+        v-if="!showClose"
+        class="out-close"
+        @click="dialogVisiable = false"
+      >
+        <i class="iconfont icon-close" />
+      </div>
       <div class="back-comment-dialog-title">
         <slot name="title" />
         <span
@@ -142,6 +149,36 @@ watch(
   border-radius: 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   z-index: 99999;
+  .out-close{
+    position: absolute;
+    right: -15px;
+    top: -10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    z-index: -1;
+    transition: .3s;
+    &:hover{
+      right: -40px;
+      width: 40px;
+      height: 40px;
+      transform: rotate(180deg);
+      .iconfont{
+        color: $pink-color;
+        font-size: 24px;
+      }
+    }
+    .iconfont {
+      transition: .3s;
+      font-size: 18px;
+      color: #333;
+      cursor: pointer;
+    }
+  }
   &-title {
     .close {
       position: absolute;

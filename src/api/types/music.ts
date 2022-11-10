@@ -421,3 +421,18 @@ export interface IMvDetail {
     commentThreadId: string;
     videoGroup: any[];
 }
+
+export interface IMvUrl {
+  id: number;
+  url: string;
+  r: number;
+  size: number;
+  md5?: any;
+  code: number;
+  expi: number;
+  fee: number;
+  mvFee: number;
+  st: number;
+  promotionVo?: any;
+  msg?: any;
+}

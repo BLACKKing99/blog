@@ -3,10 +3,10 @@
     <div class="audio-detail-lyric">
       <ul class="audio-detail-lyric-title">
         <li class="title-singer">
-          {{ musicStore.currentMusicInfo.singer }}
+          {{ musicStore.currentMusicInfo.singerInfo.name }}
         </li>
         <li class="title-song">
-          {{ musicStore.currentMusicInfo.musicName }}
+          {{ musicStore.currentMusicInfo.songName }}
         </li>
       </ul>
       <div class="audio-detail-lyric-content">
@@ -50,7 +50,7 @@
     </div>
     <ul class="audio-detail-recommend">
       <li class="audio-detail-recommend-title">
-        {{ musicStore.currentMusicInfo.singer }}
+        {{ musicStore.currentMusicInfo.singerInfo.name }}
         &nbsp;
         <i class="iconfont icon-double-arrow-right-full" />
       </li>
@@ -96,17 +96,18 @@
 <script lang="ts" setup>
 import { getSingerList } from '@/api/module/music'
 import { IMusicLyric } from '@/api/types/music'
+import { useAudio } from '@/hooks/useAudio'
 import { useMusicStore } from '@/sotre/module/music'
 import { ElScrollbar } from 'element-plus'
 import { IMusicDetailInfo } from './types'
-import { dealMusicData } from './util'
 
 const musicStore = useMusicStore()
 // 初始化歌词
 musicStore.initMusicInfo()
 
-// 歌手唱的歌曲列表
+const { audioRef } = useAudio()
 
+// 歌手唱的歌曲列表
 const singerSongList = ref<IMusicDetailInfo[]>([])
 
 // 歌词滚动的ref
@@ -118,24 +119,23 @@ const lyricScroll = ref<InstanceType<typeof ElScrollbar> | null>(null)
 // const isActive = ref<boolean>(false)
 
 const PlayLrcMusic = (item:IMusicLyric) => {
-  if (musicStore.audioRef) {
-    musicStore.audioRef.currentTime = item.time / 1000
+  if (audioRef.value) {
+    audioRef.value.currentTime = item.time / 1000
   }
 }
 
 const playListMusic = (value:IMusicDetailInfo) => {
   // 播放当前音乐
   if (value.id === musicStore.currentMusicInfo.id) {
-    musicStore.audioRef?.play()
+    audioRef.value?.play()
     return
   }
-  const obj = dealMusicData(value)
-  musicStore.setCurrentMusicInfo(value.id, obj)
+  musicStore.playMusic(value)
 }
 
 const plausedListMusic = () => {
   // 暂停播放
-  musicStore.audioRef?.play()
+  audioRef.value?.play()
 }
 
 const handleLrcActive = (item:IMusicLyric, index:number):boolean => {
@@ -162,7 +162,7 @@ const getSingerListData = async (id:number) => {
   }
 }
 
-watch(() => musicStore.currentMusicInfo.singerId, (id) => {
+watch(() => musicStore.currentMusicInfo.singerInfo.id, (id) => {
   getSingerListData(id)
 }, {
   immediate: true

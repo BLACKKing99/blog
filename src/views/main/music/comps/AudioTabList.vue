@@ -87,7 +87,7 @@ const tabbar = [
   }
 ]
 // 活跃的tab
-const activeTab = ref(3)
+const activeTab = ref(1)
 
 // 控制该显示什么时候的动画
 const aniPosition = ref('music-list-left')

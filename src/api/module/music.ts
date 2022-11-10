@@ -1,5 +1,5 @@
 import http from '../index'
-import { IBoutique, IRequestHotType, ISheetDetailBack, ILyric, IVocalist, IHotType, IRequestVocalist, IRequestBoutique, IRequestSheetList, ISheetList, ISingerList, ISingerDetail, ISingerRequestAllList, ISingerAllList, IMusicUrlInfo, IRequestAlbum, IAlbumList, IMvList, IRequestAllMv, IAllMv, IMvDetail } from '../types/music'
+import { IBoutique, IRequestHotType, ISheetDetailBack, ILyric, IVocalist, IHotType, IRequestVocalist, IRequestBoutique, IRequestSheetList, ISheetList, ISingerList, ISingerDetail, ISingerRequestAllList, ISingerAllList, IMusicUrlInfo, IRequestAlbum, IAlbumList, IMvList, IRequestAllMv, IAllMv, IMvDetail, IMvUrl } from '../types/music'
 
 // 获取热门歌单
 export const getHotType = (params?: IRequestHotType) => {
@@ -131,6 +131,16 @@ export const getAllMv = (params?:IRequestAllMv) => {
 export const getMvDetail = (id?:number) => {
   return http.request<IMvDetail>({
     url: '/music/mv/detail',
+    params: {
+      id
+    }
+  })
+}
+
+// 获取mv链接
+export const getMvUrl = (id?:number) => {
+  return http.request<IMvUrl>({
+    url: '/music/mv/url',
     params: {
       id
     }

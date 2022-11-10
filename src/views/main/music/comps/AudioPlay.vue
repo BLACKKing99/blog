@@ -1,7 +1,7 @@
 <template>
   <div class="audio-play">
     <ul
-      v-if="musicStore.currentMusicInfo.url"
+      v-if="musicStore.currentMusicInfo"
       class="audio-play-container"
     >
       <li class="audio-play-container-info">
@@ -9,8 +9,8 @@
           <img :src="musicStore.currentMusicInfo?.cover">
         </div>
         <div class="info">
-          <span class="info-title">{{ musicStore.currentMusicInfo?.musicName }}</span>
-          <span class="info-author">{{ musicStore.currentMusicInfo?.singer }}</span>
+          <span class="info-title">{{ musicStore.currentMusicInfo?.songName }}</span>
+          <span class="info-author">{{ musicStore.currentMusicInfo?.singerInfo.name }}</span>
         </div>
       </li>
       <li class="audio-play-container-todo">
@@ -25,10 +25,10 @@
             @click="handlePrev"
           />
           <i
-            title="暂停"
+            :title="isAudioPlay?'暂停':'开始'"
             @click="handlePlay"
             class="iconfont"
-            :class="audioRef.paused ? 'icon-bofang1' : 'icon-bofang'"
+            :class="isAudioPlay ? 'icon-bofang' : 'icon-bofang1'"
           />
           <i
             title="下一首"
@@ -46,7 +46,7 @@
           </div>
           <div class="progress-center">
             <el-slider
-              v-model="currentTime"
+              v-model="audioTime"
               size="small"
               :show-tooltip="false"
               @change="handleCurrentTime"
@@ -96,111 +96,62 @@
 
 <script lang="ts" setup>
 import useTimeFormat from '@/hooks/useTimeFormat'
-import { PropType } from 'vue'
 import { useMusicStore } from '@/sotre/module/music'
-import { cloneDeep } from 'lodash'
+import { useAudio } from '@/hooks/useAudio'
+import { useMusic } from '@/hooks/useMusic'
 
-const props = defineProps({
-  audioRef: {
-    type: Object as PropType<HTMLAudioElement>,
-    default: () => ({})
-  }
-})
+const { audioRef, isAudioPlay, updateTime, audioTime } = useAudio()
+
+const { handlePlay } = useMusic()
 
 const musicStore = useMusicStore()
-
-// 当前播放到第几首音乐了
-const currentIndex = ref(0)
 
 // 总共的时间
 const totalTime = computed(() => {
   const { formatTime } = useTimeFormat(musicStore.currentMusicInfo?.totalTime, 'mm:ss')
   return formatTime.value
 })
-// 更新的时间
-const updateTime = ref<string>('00:00')
-// 进度条的百分比
-const currentTime = ref(0)
 // 声音的百分比
 const voice = ref(100)
 // 控制声音的显示隐藏
 const isShowVoice = ref(false)
 
-// 由于需要随时更新所以说需要设置一个定时器
-
-const handlePlay = () => {
-  if (props.audioRef.paused) {
-    props.audioRef.play()
-  } else {
-    props.audioRef.pause()
-  }
-}
-
 const handlePrev = () => {
-  if (currentIndex.value === 0) {
-    currentIndex.value = musicStore.musicHistoryList.length - 1
+  const currentMusic = musicStore.currentMusicInfo
+  const list = musicStore.palyList
+  let prev = list.findIndex(item => item.id === currentMusic.id)
+  if (prev === 0) {
+    prev = list.length - 1
   } else {
-    currentIndex.value -= 1
+    prev -= 1
   }
-  musicStore.setCurrentMusicToList(currentIndex.value)
-  props.audioRef.play()
+  musicStore.playMusic(list[prev])
+  audioRef.value?.play()
 }
 
 const handleNext = () => {
-  if (currentIndex.value === musicStore.musicHistoryList.length - 1) {
-    currentIndex.value = 0
+  const currentMusic = musicStore.currentMusicInfo
+  const list = musicStore.palyList
+  let prev = list.findIndex(item => item.id === currentMusic.id)
+  if (prev === list.length - 1) {
+    prev = 0
   } else {
-    currentIndex.value += 1
+    prev += 1
   }
-  musicStore.setCurrentMusicToList(currentIndex.value)
-  props.audioRef.play()
+  musicStore.playMusic(list[prev])
+  audioRef.value?.play()
 }
 
 const handleCurrentTime = (value: number) => {
   // eslint-disable-next-line vue/no-mutating-props
-  props.audioRef.currentTime = (props.audioRef.duration * value) / 100
+  audioRef.value!.currentTime = (audioRef.value!.duration * value) / 100
 }
 
 const handleVolume = (value:number) => {
   // eslint-disable-next-line vue/no-mutating-props
-  props.audioRef.volume = value / 100
+  audioRef.value!.volume = value / 100
 }
 
-watch(
-  () => props.audioRef,
-  (val) => {
-    // 监听 audioRef 更新
-    if (val) {
-      val.addEventListener('timeupdate', () => {
-        // 监听音乐实时变化
-        const { formatTime } = useTimeFormat(val.currentTime * 1000, 'mm:ss')
-        updateTime.value = formatTime.value
-        currentTime.value = (val.currentTime / val.duration) * 100
-        musicStore.currentMusicTime = val.currentTime * 1000
-      })
-      val.addEventListener('ended', () => {
-        // 监听音乐播放结束
-        handleNext()
-      })
-      val.addEventListener('play', () => {
-        // 监听播放
-        musicStore.isPlayMusic = true
-        const data = cloneDeep(musicStore.currentMusicInfo)
-        // 设置历史播放列表 设置完成之后会直接播放音乐  因此需要 直接获取歌词
-        musicStore.setCurrentMusicInfo(data.id, data)
-        // 获取歌词
-        musicStore.getCurrentLyric(data.id)
-      })
-      val.addEventListener('pause', () => {
-        // 监听暂停
-        musicStore.isPlayMusic = false
-      })
-    }
-  },
-  {
-    deep: true
-  }
-)
 </script>
 
 <style scoped lang="scss">

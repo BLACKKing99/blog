@@ -2,33 +2,40 @@
   <div class="audio-history-list">
     <div class="audio-history-list-cover">
       <img
-        :class="musicStore.isPlayMusic && info.id === musicStore.currentMusicInfo.id?'audio-active':''"
+        :class=" isPlayCurrentMusic ? 'audio-active':''"
         :src="info.cover"
       >
       <i
         class="iconfont"
-        @click="handlePlayMusic"
-        :class="musicStore.isPlayMusic && info.id === musicStore.currentMusicInfo.id ? 'icon-bofang' : 'icon-bofang1'"
+        @click="play(info)"
+        :class="isPlayCurrentMusic ? 'icon-bofang' : 'icon-bofang1'"
       />
     </div>
     <div class="audio-history-list-title">
-      {{ info.musicName }}
+      {{ info.songName }}
     </div>
     <div class="audio-history-list-name">
-      {{ info.singer }}
+      {{ info.singerInfo.name }}
     </div>
   </div>
 </template>
 
 <script lang='ts' setup>
 import { PropType } from 'vue'
-import { IMusicInfo, useMusicStore } from '@/sotre/module/music'
+import { useMusicStore } from '@/sotre/module/music'
+import { IMusicDetailInfo } from '@/views/main/music/comps/types'
+import { useAudio } from '@/hooks/useAudio'
+import { useMusic } from '@/hooks/useMusic'
 
 const musicStore = useMusicStore()
 
+const { isAudioPlay } = useAudio()
+
+const { play } = useMusic()
+
 const props = defineProps({
   info: {
-    type: Object as PropType<IMusicInfo>,
+    type: Object as PropType<IMusicDetailInfo>,
     default: () => ({})
   },
   type: {
@@ -37,22 +44,14 @@ const props = defineProps({
   }
 })
 
-const handlePlayMusic = () => {
-  if (props.info.id === musicStore.currentMusicInfo.id) {
-    if (musicStore.audioRef?.paused) {
-      musicStore.audioRef.play()
-    } else {
-      musicStore.audioRef?.pause()
-    }
-    return
-  }
-  if (props.type === 'list') {
-    musicStore.playType = 'list'
+const isPlayCurrentMusic = computed(() => {
+  const flag = musicStore.currentMusicInfo.id === props.info.id
+  if (flag && isAudioPlay.value) {
+    return true
   } else {
-    musicStore.playType = 'history'
+    return false
   }
-  musicStore.setCurrentMusic(props.info)
-}
+})
 </script>
 
 <style scoped lang='scss'>

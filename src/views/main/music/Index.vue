@@ -34,7 +34,6 @@
     <transition name="audio-play">
       <audio-play
         v-show="isAudioPlay"
-        :audio-ref="audioRef"
       />
     </transition>
     <audio-song-dia
@@ -54,11 +53,6 @@
       :list-data="listData"
     />
   </div>
-  <audio
-    :src="musicStore.currentMusicInfo?.url"
-    autoplay
-    ref="audioRef"
-  />
 </template>
 
 <script lang="ts" setup>
@@ -71,10 +65,12 @@ import AudioMvDia from './comps/AudioMvDia.vue'
 import AudioDetail from './comps/AudioDetail.vue'
 import { debounce } from 'lodash'
 import { useMusicStore } from '@/sotre/module/music'
-import { useEventBus } from '@/hooks/useEventBus'
+import { useAudio } from '@/hooks/useAudio'
 
-// 音乐实例
-const audioRef = ref<HTMLAudioElement>()
+// 音乐相关的pinia
+const musicStore = useMusicStore()
+
+const { audioRef } = useAudio()
 
 // 控制底部音乐控制器显示隐藏
 const isAudioPlay = ref(false)
@@ -88,13 +84,6 @@ const listData = reactive({
 
 // 是否打开音乐列表
 const isAudioList = ref<boolean>(false)
-
-// 音乐相关的pinia
-const musicStore = useMusicStore()
-
-// 事件总线
-
-const { Buson } = useEventBus()
 
 // 控制音乐播放器显示隐藏
 const handleMouseMove = debounce((event: MouseEvent) => {
@@ -113,10 +102,6 @@ const openMusicDia = (value:{activeTab:number, id:number}) => {
   listData.isListShow = true
 }
 
-Buson('play-music', () => {
-  audioRef.value?.play()
-})
-
 // 改变tab
 const changeTab = (value:number) => {
   listData.activeTab = value
@@ -131,10 +116,6 @@ const handlePlayMusic = () => {
 const openAudioList = () => {
   isAudioList.value = true
 }
-
-watch(() => audioRef.value, (val) => {
-  musicStore.audioRef = val
-})
 
 </script>
 

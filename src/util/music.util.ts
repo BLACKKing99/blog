@@ -28,7 +28,6 @@ export const handleLyric = (str:string) => {
   return arr
 }
 // 处理数字超过W
-
 export const handleNumber = (num:number) => {
   const number = num >= 1e3 && num < 1e4 ? (num / 1e3).toFixed(1) + 'k' : num >= 1e4 ? (num / 1e4).toFixed(1) + 'w' : num
   return number

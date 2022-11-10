@@ -20,6 +20,7 @@
             <video
               :src="videoUrl"
               loop
+              :poster="mvDetail?.cover"
               ref="videoRef"
               class="w-full h-full object-cover"
             />
@@ -39,7 +40,11 @@
               />
             </div>
             <div class="flex-1 mx-4">
-              <el-slider v-model="videoTime" />
+              <el-progress
+                :percentage="videoTime"
+                :show-text="false"
+                color="#ff2e63"
+              />
             </div>
             <span class="w-[60px] text-lg text-gory1">{{ updateTime }}</span>
             <div class="">
@@ -51,7 +56,7 @@
           </li>
           <li class="mv-dia-content-item flex justify-between">
             <ul class="mv-dia-content-item-detail">
-              <li class="text-2xl text-black1 font-bold">
+              <li class="text-2xl text-black1 font-bold text-ellipsis-1 w-[450px]">
                 {{ mvDetail?.name }}
               </li>
               <li class="text-sm text-defalut">
@@ -74,12 +79,12 @@
 </template>
 
 <script lang='ts' setup>
-import { getMvDetail } from '@/api/module/music'
+import { getMvDetail, getMvUrl } from '@/api/module/music'
 import { IMvDetail } from '@/api/types/music'
 import DialogVue from '@/components/common/dialog/Dialog.vue'
 import { useVideo } from '@/hooks/useVideo'
 // 控制弹窗开关
-const dialogVisiable = ref(true)
+const dialogVisiable = ref(false)
 
 // 加载 优化交互
 const loading = ref(false)
@@ -97,55 +102,12 @@ const props = defineProps({
   }
 })
 
-const videoUrl = 'https://vodkgeyttp8.vod.126.net/cloudmusic/5ad4/core/7246/9308cc8c00b318e641f69d14297692bf.mp4?wsSecret=cf2568aa4207151c142da3dbc75e94d2&wsTime=1667390907'
+const videoUrl = ref<string>('')
 
-const { videoRef, isVideoPlay, videoTime, updateTime, toggle } = useVideo()
+const { videoRef, isVideoPlay, videoTime, updateTime, toggle } = useVideo(videoUrl)
 
 // mv详情
-// const mvDetail = ref<IMvDetail | null>(null)
-const mvDetail = ref<IMvDetail | null>({
-  id: 10928277,
-  name: '那年初夏',
-  artistId: 9255,
-  artistName: '任然',
-  briefDesc: '',
-  desc: '毕业就像是突如其来的终止符，将一切美好生活全部打散。就业、失业、相爱、离散、痛哭、迷惘、执念、手足无措、梦想奋斗……社会有多现实，奋斗就有多少艰辛，奋斗多艰辛，梦想就有多么珍贵。',
-  cover: 'http://p1.music.126.net/MB9iRQKbhgnXANbI0QTJRA==/109951164909106319.jpg',
-  coverId_str: '109951164909106319',
-  coverId: 109951164909106320,
-  playCount: 273135,
-  subCount: 3243,
-  shareCount: 1003,
-  commentCount: 800,
-  duration: 309000,
-  nType: 0,
-  publishTime: '2020-04-20',
-  price: null,
-  brs: [
-    {
-      size: 20769834,
-      br: 240,
-      point: 0
-    },
-    {
-      size: 32745092,
-      br: 480,
-      point: 2
-    },
-    {
-      size: 51149876,
-      br: 720,
-      point: 5
-    },
-    {
-      size: 79591216,
-      br: 1080,
-      point: 10
-    }
-  ],
-  commentThreadId: 'R_MV_5_10928277',
-  videoGroup: []
-})
+const mvDetail = ref<IMvDetail | null>(null)
 
 // 视频播放时间
 const emit = defineEmits(['update:isView'])
@@ -154,10 +116,18 @@ const getMvDetailData = async (id:number) => {
   const { code, data } = await getMvDetail(id)
   if (code === 0) {
     mvDetail.value = data
+    getMvUrlData(data.id)
   } else {
     ElMessage.error('获取mv详情失败')
   }
   loading.value = false
+}
+
+const getMvUrlData = async (id:number) => {
+  const { data, code } = await getMvUrl(id)
+  if (code === 0) {
+    videoUrl.value = data.url
+  }
 }
 
 const playVideo = () => {
@@ -169,16 +139,14 @@ const playVideo = () => {
   }
 }
 
-onMounted(() => {
-  // getMvDetailData(10928277)
-})
-
 watch(
   () => props.isView,
   (val) => {
     if (val) {
       loading.value = true
-      getMvDetailData(props.listData.listId)
+      if (props.listData.listId !== mvDetail.value?.id) {
+        getMvDetailData(props.listData.listId)
+      }
       dialogVisiable.value = true
     }
   }

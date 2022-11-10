@@ -7,10 +7,18 @@
       <component :is="Component" />
     </Transition>
   </router-view>
-
-  <!-- <keep-alive>
-    <router-view />
-  </keep-alive> -->
+  <audio
+    :src="musicStore.currentUrl"
+    autoplay
+    ref="audioRef"
+  />
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { useAudio } from './hooks/useAudio'
+import { useMusicStore } from './sotre/module/music'
+
+const musicStore = useMusicStore()
+
+const { audioRef } = useAudio()
+</script>
