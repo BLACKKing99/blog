@@ -23,11 +23,11 @@
         </div>
         <div class="list-foot-info flex items-center">
           <i class="iconfont icon-pinglun1" />
-          <span>{{ 99 }}条评论</span>
+          <span>{{ articleInfo.coomentAcount }}条评论</span>
         </div>
         <div class="list-foot-info flex items-center">
           <i class="iconfont icon-yueduliang" />
-          <span>999次阅读</span>
+          <span>{{ articleInfo.priview }}次阅读</span>
         </div>
       </div>
       <div

@@ -43,9 +43,9 @@ setTimeout(() => {
         'tap face': '人家是在认真写博客哦--前端妹子'
       }
     },
-    display: { position: 'bottom', width: 200, height: 400 },
+    display: { position: 'right', width: 200, height: 400 },
     mobile: { show: true },
-    log: false
+    log: true
   })
 }, 300)
 

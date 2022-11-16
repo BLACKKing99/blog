@@ -63,3 +63,13 @@ export const populateArticle = () => {
     method: 'GET'
   })
 }
+
+export const addPreview = (id:number) => {
+  return http.request({
+    url: 'article/preview',
+    method: 'POST',
+    data: {
+      id
+    }
+  })
+}

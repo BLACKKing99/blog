@@ -9,10 +9,10 @@ const audioTime = ref<number>(0)
 // 视频播放更新的时间
 const updateTime = ref<string>('00:00')
 export const useAudio = () => {
-  const url = useMusicStore().currentUrl
+  const musicStore = useMusicStore()
 
   const { formatTimeTodo } = useTimeFormat()
-  watch(() => url, () => {
+  watch(() => musicStore.currentUrl, () => {
     // 视频播放暂停
     audioRef.value?.addEventListener('pause', () => {
       isAudioPlay.value = false
@@ -25,6 +25,7 @@ export const useAudio = () => {
     audioRef.value?.addEventListener('timeupdate', () => {
       updateTime.value = formatTimeTodo((audioRef.value?.currentTime as number) * 1000, 'mm:ss')
       audioTime.value = Number(((audioRef.value?.currentTime || 0) / (audioRef.value?.duration || 1) * 100).toFixed(2))
+      // musicStore.currentMusicTime = (audioRef.value?.currentTime as number) * 1000
     })
   })
 
@@ -39,8 +40,11 @@ export const useAudio = () => {
     })
     // 视频播放时间更新
     audioRef.value?.addEventListener('timeupdate', () => {
+      // 计算变化时间
       updateTime.value = formatTimeTodo((audioRef.value?.currentTime as number) * 1000, 'mm:ss')
+      // 计算百分比
       audioTime.value = Number(((audioRef.value?.currentTime || 0) / (audioRef.value?.duration || 1) * 100).toFixed(2))
+      // musicStore.currentMusicTime = (audioRef.value?.currentTime as number) * 1000
     })
   })
   return {

@@ -72,9 +72,16 @@
                       <li class="singer-list-content flex">
                         <div
                           class="todo"
-                          @click="musicPlay(item)"
+                          @click="play(item,sheetList[pageInfo.currentPage])"
                         >
-                          <i class="iconfont icon-Play" />
+                          <i
+                            class="iconfont icon-zanting"
+                            v-if="musicStore.currentMusicInfo.id === item.id && isAudioPlay"
+                          />
+                          <i
+                            v-else
+                            class="iconfont icon-Play"
+                          />
                         </div>
                         <div
                           class="todo"
@@ -208,9 +215,14 @@ import { IMusicDetailInfo } from './types'
 import { useMusic } from '@/hooks/useMusic'
 import { handleNumber, bytesToSize } from '@/util/music.util'
 import useTimeFormat from '@/hooks/useTimeFormat'
+import { useMusicStore } from '@/sotre/module/music'
+import { useAudio } from '@/hooks/useAudio'
 
 // 控制弹窗开关
 const dialogVisiable = ref(false)
+
+// 音乐pinia
+const musicStore = useMusicStore()
 
 // 加载 优化交互
 const loading = ref(false)
@@ -242,9 +254,11 @@ const pageInfo = reactive({
   totalSize: 0
 })
 
-const { musicAdd, musicDownload, musicPlay } = useMusic()
+const { musicAdd, musicDownload, play } = useMusic()
 
 const { formatTimeTodo } = useTimeFormat()
+
+const { isAudioPlay } = useAudio()
 
 const handleCurrentChange = (value:number) => {
   // 切页是进行的动作
@@ -253,16 +267,6 @@ const handleCurrentChange = (value:number) => {
     getSingerListData(value)
   }
 }
-
-// const singerInfo = reactive({
-//   albumSize: 63,
-//   cover: 'http://p2.music.126.net/dwbXimgQn1YnJzwSlPDk-A==/109951165911950321.jpg',
-//   desc: undefined,
-//   id: 3684,
-//   musicSize: 529,
-//   mvSize: 188,
-//   name: '林俊杰'
-// })
 
 // 歌手歌单数据
 const sheetList = ref<Record<number, IMusicDetailInfo[]>>({})
@@ -404,6 +408,7 @@ watch(() => activeTab.value, (val) => {
   .singer-list-content{
     @apply text-sm text-gray-500;
     .todo{
+      @apply cursor-pointer;
       width: 30px;
       height: 30px;
       margin-right: 10px;

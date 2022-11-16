@@ -46,4 +46,6 @@ export interface IArticleInfo {
   categoryId: number;
   createdAt: string;
   updatedAt: string;
+  coomentAcount: number
+  priview: number
 }

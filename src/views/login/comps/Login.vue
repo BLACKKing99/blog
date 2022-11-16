@@ -21,6 +21,7 @@
         class="login-container-item-inp"
         type="text"
         placeholder="请输入密码"
+        @keyup="keyLogin"
         v-model="userInfo.password"
       >
     </div>
@@ -54,6 +55,10 @@ const userInfo = reactive<{
   account: ''
 })
 const accountSotre = useAccountStore()
+const keyLogin = (e:KeyboardEvent) => {
+  if (e.keyCode === 13) login()
+}
+
 const login = () => {
   if (userInfo.account === '') {
     ElMessage({

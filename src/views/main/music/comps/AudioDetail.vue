@@ -73,15 +73,16 @@
                   {{ item.singerInfo?.name }}
                 </div>
               </div>
-              <div class="list-container-item-todo">
+              <div
+                class="list-container-item-todo"
+                @click="play(item,singerSongList)"
+              >
                 <i
-                  v-if="item.id === musicStore.currentMusicInfo.id"
+                  v-if="item.id === musicStore.currentMusicInfo.id && isAudioPlay"
                   class="iconfont icon-bofang"
-                  @click="plausedListMusic"
                 />
                 <i
                   v-else
-                  @click="playListMusic(item)"
                   class="iconfont icon-bofang1"
                 />
               </div>
@@ -97,6 +98,7 @@
 import { getSingerList } from '@/api/module/music'
 import { IMusicLyric } from '@/api/types/music'
 import { useAudio } from '@/hooks/useAudio'
+import { useMusic } from '@/hooks/useMusic'
 import { useMusicStore } from '@/sotre/module/music'
 import { ElScrollbar } from 'element-plus'
 import { IMusicDetailInfo } from './types'
@@ -105,7 +107,9 @@ const musicStore = useMusicStore()
 // 初始化歌词
 musicStore.initMusicInfo()
 
-const { audioRef } = useAudio()
+const { audioRef, isAudioPlay } = useAudio()
+
+const { play } = useMusic()
 
 // 歌手唱的歌曲列表
 const singerSongList = ref<IMusicDetailInfo[]>([])
@@ -113,29 +117,10 @@ const singerSongList = ref<IMusicDetailInfo[]>([])
 // 歌词滚动的ref
 const lyricScroll = ref<InstanceType<typeof ElScrollbar> | null>(null)
 
-// const lyrPosition = ref<number>(0)
-
-// 判断是否活跃
-// const isActive = ref<boolean>(false)
-
 const PlayLrcMusic = (item:IMusicLyric) => {
   if (audioRef.value) {
     audioRef.value.currentTime = item.time / 1000
   }
-}
-
-const playListMusic = (value:IMusicDetailInfo) => {
-  // 播放当前音乐
-  if (value.id === musicStore.currentMusicInfo.id) {
-    audioRef.value?.play()
-    return
-  }
-  musicStore.playMusic(value)
-}
-
-const plausedListMusic = () => {
-  // 暂停播放
-  audioRef.value?.play()
 }
 
 const handleLrcActive = (item:IMusicLyric, index:number):boolean => {

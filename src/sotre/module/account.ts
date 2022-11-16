@@ -35,6 +35,13 @@ export const useAccountStore = defineStore('account', {
             type: 'success',
             message: type === 'login' ? '登录成功' : '注册成功'
           })
+          if (type === 'register') {
+            ElNotification({
+              title: '账号',
+              message: `您的账号是${res.data.user.account}`,
+              type: 'success'
+            })
+          }
           this.isLoading = false
           if (router.currentRoute.value.query.redirect) {
             router.push(router.currentRoute.value.query.redirect as string)
