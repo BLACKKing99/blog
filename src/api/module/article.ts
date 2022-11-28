@@ -1,5 +1,5 @@
 import http from '../index'
-import { IArticle, IArticleInfo, IArticleType, ICommentData, ICommentType } from '../types/article'
+import { IArticle, IArticleInfo, IArticleList, IArticleType, ICommentData, ICommentType } from '../types/article'
 export const getArticleType = () => {
   return http.request<IArticleType[]>({
     url: 'category',
@@ -15,10 +15,11 @@ export const createArticle = (data:IArticle) => {
   })
 }
 
-export const getArticle = () => {
+export const getArticle = (params:IArticleList) => {
   return http.request<IArticleInfo[]>({
     url: 'article',
-    method: 'GET'
+    method: 'GET',
+    params
   })
 }
 

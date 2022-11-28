@@ -18,3 +18,7 @@ interface ImportMetaEnv {
 }
 
 declare module '@/components/particles/util/particles.js'
+
+declare module 'dynamics.js'
+
+declare module 'mavon-editor'

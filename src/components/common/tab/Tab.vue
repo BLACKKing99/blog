@@ -5,7 +5,10 @@
         <div :class="`bar-${tabPosition}`" />
       </span>
     </div>
-    <div class="tab-body">
+    <div
+      class="tab-body"
+      ref="tabBody"
+    >
       <slot name="body" />
     </div>
   </div>
@@ -13,7 +16,9 @@
 
 <script lang='ts' setup>
 import { PropType } from 'vue'
+
 type ITabPosition = 'bottom'|'left'
+
 defineProps({
   title: {
     type: String,
@@ -24,6 +29,13 @@ defineProps({
     default: 'bottom'
   }
 })
+
+const tabBody = ref<HTMLDivElement|null>(null)
+
+defineExpose({
+  tabBody
+})
+
 </script>
 
 <style scoped lang='scss'>
@@ -34,6 +46,7 @@ defineProps({
     padding: 10px 20px;
     box-sizing: border-box;
     border-radius: 5px;
+    overflow: hidden;
     &-header{
         border-bottom: 1px #f5f5f5 solid;
         padding-bottom: 10px;

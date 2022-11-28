@@ -55,6 +55,7 @@ const { Busemit } = useEventBus()
 const elScrollRef = ref<InstanceType<typeof ElScrollbar> | null>(null)
 
 const handleScroll = throttle((event:{ scrollLeft: number; scrollTop: number }) => {
+  Busemit('scroll-event', event)
   if (event.scrollTop + (elScrollRef.value?.resize$ as HTMLElement).clientHeight >= (elScrollRef.value?.resize$ as HTMLElement).scrollHeight) {
     // 到底部了
     Busemit('scroll-bottom')

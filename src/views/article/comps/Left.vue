@@ -9,6 +9,7 @@
         <div
           class="article-tab-body flex"
           v-for="item in recommendList"
+          ref="recommendRef"
           :key="item.id"
           @click="goArticle(item.id)"
         >
@@ -27,7 +28,7 @@
               {{ item.title }}
             </div>
             <div class="view">
-              9999 views
+              {{ item.priview }} views
             </div>
           </div>
         </div>
@@ -106,8 +107,11 @@
 <script lang="ts" setup>
 import { useCollect } from '@/hooks/useCollect'
 import { useArticle } from '@/hooks/useArticle'
+import { useAnimation } from '@/hooks/useAnimation'
 
 const route = useRoute()
+
+const { addClass } = useAnimation()
 
 defineProps({
   articleInfo: {
@@ -117,6 +121,8 @@ defineProps({
     }
   }
 })
+
+const recommendRef = ref<HTMLDivElement[]|null>(null)
 
 // 点击进入文章详情
 const { goArticle, recommendList, getRecomendArticle } = useArticle()
@@ -128,9 +134,18 @@ onMounted(() => {
   getRecomendArticle()
 })
 
+watch(() => recommendList.value, (value) => {
+  if (value.length !== 0) {
+    nextTick(() => {
+      addClass(recommendRef)
+    })
+  }
+})
+
 </script>
 
 <style scoped lang="scss">
+@import '@/styles/animations.scss';
 .left {
   .article-tab {
     &-body {
@@ -138,6 +153,7 @@ onMounted(() => {
       width: 100%;
       margin-bottom: 10px;
       cursor: pointer;
+      transform: translateX(150%);
       &:hover {
         .img {
           transform: translate(-10px, -10px);

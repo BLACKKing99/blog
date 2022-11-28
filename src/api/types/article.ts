@@ -49,3 +49,8 @@ export interface IArticleInfo {
   coomentAcount: number
   priview: number
 }
+
+export interface IArticleList {
+    page:number,
+    pageSize:number
+}

@@ -6,12 +6,14 @@
     />
     <Tab
       class="article-tab"
-      title="最受欢迎的文章"
+      title="受欢迎的文章"
+      ref="articleTab"
     >
       <template #body>
         <div
           class="article-tab-body flex"
           v-for="item in populateList"
+          ref="tabContent"
           :key="item.id"
           @click="goArticle(item.id)"
         >
@@ -24,7 +26,7 @@
               {{ item.title }}
             </div>
             <div class="view">
-              1302 views
+              {{ item.priview }} view
             </div>
           </div>
         </div>
@@ -52,16 +54,37 @@
 <script lang="ts" setup>
 import cover from '@/assets/img/list/1.jpg'
 import { useArticle } from '@/hooks/useArticle'
+import Tab from '@/components/common/tab/Tab.vue'
+import { useEventBus } from '@/hooks/useEventBus'
+import { useAnimation } from '@/hooks/useAnimation'
 
 const { goArticle, getPopulateArticle, populateList } = useArticle()
+
+const { Buson } = useEventBus()
+
+const { addClass } = useAnimation()
+
+const articleTab = ref<InstanceType<typeof Tab> | null>(null)
+
+const tabContent = ref<HTMLDivElement[] | null>(null)
+
+let isAddClass = false
 
 onMounted(() => {
   getPopulateArticle()
 })
 
+Buson('scroll-event', (event:any) => {
+  if (event.scrollTop >= (articleTab.value?.tabBody?.offsetTop as number) && isAddClass === false) {
+    isAddClass = true
+    addClass<HTMLDivElement>(tabContent)
+  }
+})
+
 </script>
 
 <style scoped lang="scss">
+@import '@/styles/animations.scss';
 .left {
   .time-comp {
     height: 130px;
@@ -71,8 +94,9 @@ onMounted(() => {
     &-body {
       height: 55px;
       width: 100%;
+      transform: translateX(150%);
       margin-bottom: 10px;
-        cursor: pointer;
+      cursor: pointer;
       &:hover{
           .img{
               transform: translate(-10px,-10px);

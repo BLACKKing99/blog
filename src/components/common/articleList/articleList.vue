@@ -72,6 +72,7 @@ const { formatTime } = useTimeFormat(props.articleInfo.createdAt)
 </script>
 
 <style scoped lang="scss">
+@import '@/styles/animations.scss';
 .article-list {
   width: 100%;
   height: 100%;
@@ -80,6 +81,7 @@ const { formatTime } = useTimeFormat(props.articleInfo.createdAt)
   box-sizing: border-box;
   border-radius: 10px;
   overflow: hidden;
+  animation: articleList .5s;
   &:hover {
     .list-header {
       &-img {

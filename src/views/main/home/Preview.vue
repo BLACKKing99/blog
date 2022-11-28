@@ -17,6 +17,12 @@
             class="article-list"
           />
         </template>
+        <div
+          v-if="isBottom"
+          class="text-center w-full text-gray-500 text-sm"
+        >
+          啊哦~ 到底啦！！！
+        </div>
       </div>
       <div class="home-body-right">
         <Right class="right" />
@@ -31,19 +37,37 @@ import Left from './comps/preview/Left.vue'
 import Right from './comps/preview/Right.vue'
 
 import { getArticle } from '@/api/module/article'
-import { IArticleInfo } from '@/api/types/article'
+import { IArticleInfo, IArticleList } from '@/api/types/article'
+import { useEventBus } from '@/hooks/useEventBus'
+
+const { Buson } = useEventBus()
 
 // 文章列表
 const list = ref<IArticleInfo[]>([])
 
+const isBottom = ref<boolean>(false)
+
+const articleParam = {
+  pageSize: 2,
+  page: 1
+}
+
 onMounted(() => {
-  getArticleList()
+  getArticleList(articleParam)
 })
 
-const getArticleList = async () => {
-  const { data, code } = await getArticle()
+Buson('scroll-bottom', () => {
+  articleParam.page += 1
+  getArticleList(articleParam)
+})
+
+const getArticleList = async (params:IArticleList) => {
+  const { data, code } = await getArticle(params)
   if (code === 0) {
-    list.value = data
+    if (data.length === 0) {
+      isBottom.value = true
+    }
+    list.value.push(...data)
   }
 }
 
