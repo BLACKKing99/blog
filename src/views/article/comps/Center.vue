@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="center"
-  >
+  <div class="center">
     <!-- 文章头部 -->
     <div class="center-top">
       <div class="title text-ellipsis-1">
@@ -34,23 +32,34 @@
       class="center-comment"
       id="comment"
     >
-      <div class="comment-publish">
-        <div class="comment">
-          <el-input
-            placeholder="请输入评论内容"
-            type="textarea"
-            resize="none"
-            v-model="commentText"
-          />
+      <div class="">
+        <div class="comment-publish">
+          <div class="comment">
+            <el-input
+              placeholder="请输入评论内容"
+              type="textarea"
+              resize="none"
+              v-model="commentText"
+            />
+          </div>
+          <div class="publish">
+            <button
+              class="l-button publish-btn"
+              @click="publishComment(null)"
+            >
+              发表评论
+            </button>
+          </div>
         </div>
-        <div class="publish">
-          <button
-            class="l-button publish-btn"
-            @click="publishComment(null)"
-          >
-            发表评论
-          </button>
-        </div>
+        <Emoji
+          title=""
+          placement="bottom"
+          trigger="click"
+          :width="400"
+          @pick-emoji="pickCommentEmoji"
+        >
+          <span class="look"><i class="iconfont icon-biaoqing" /> 表情</span>
+        </Emoji>
       </div>
       <template v-if="commentList.length === 0">
         <div class="no-comment">
@@ -118,7 +127,7 @@
                   </div>
                   <div class="back-comment-item-right">
                     <div class="back-comment-item-time">
-                      <span>{{ formatTime(backComment.createdAt as string,'YYYY-MM-DD HH:mm:ss').value }}</span>
+                      <span>{{ formatTime(backComment.createdAt as string, 'YYYY-MM-DD HH:mm:ss').value }}</span>
                     </div>
                   </div>
                 </div>
@@ -128,7 +137,16 @@
         </div>
       </template>
     </div>
-    <Dialog v-model:visiable="backCommentDialogVisible">
+    <Dialog
+      v-model:visiable="backCommentDialogVisible"
+      :dialog-style="{
+        bottom: '100px',
+        width: '500px',
+        height: '200px',
+        left: '50%',
+        zIndex:999
+      }"
+    >
       <template #title>
         <div class="back-comment-dialog-title">
           <span class="back">回复</span>
@@ -148,7 +166,15 @@
               resize="none"
               v-model="backCommentText"
             />
-            <span class="look"><i class="iconfont icon-biaoqing" /> 表情</span>
+            <Emoji
+              title=""
+              placement="top"
+              trigger="click"
+              :width="400"
+              @pick-emoji="pickBackCommentEmoji"
+            >
+              <span class="look"><i class="iconfont icon-biaoqing" /> 表情</span>
+            </Emoji>
           </div>
           <div class="back-comment-dialog-content-btn">
             <button
@@ -181,6 +207,7 @@ import useTimeFormat from '@/hooks/useTimeFormat'
 import { useUser } from '@/hooks/useUser'
 import { useArticleStore } from '@/sotre/module/article'
 import { useComment } from '@/hooks/useComment'
+import Emoji from './Emoji.vue'
 
 // 定义高亮语法
 marked.setOptions({
@@ -251,6 +278,17 @@ const handleBackComment = (value: IComment) => {
   backCommentText.value = ''
 }
 
+// 选择表情
+
+const pickCommentEmoji = (emoji:string) => {
+  commentText.value = commentText.value + emoji
+}
+
+// 回复评论表情
+const pickBackCommentEmoji = (emoji:string) => {
+  backCommentText.value = backCommentText.value + emoji
+}
+
 onMounted(() => {
   // 挂载完成后获取菜单
   menuContext.value = getContextMenu()
@@ -267,20 +305,35 @@ watch(
 
 <style scoped lang="scss">
 @import '@/styles/animations.scss';
+
 .center {
   width: 100%;
   min-height: calc(100vh - 40px);
   background-color: #fff;
   padding: 20px;
   box-sizing: border-box;
+
+  .look {
+    margin-top: 10px;
+    display: inline-block;
+    cursor: pointer;
+    border: solid 1px #f2f2f2;
+    // box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+    font-size: $font-mini;
+    padding: 2px 5px;
+    border-radius: 10px;
+  }
+
   &-top {
     border-bottom: solid 1px #ccc;
     padding-bottom: 20px;
+
     .title {
       font-size: $font-larget;
       font-weight: bold;
       margin-bottom: 20px;
     }
+
     .synopsis {
       li {
         margin-right: 10px;
@@ -288,46 +341,56 @@ watch(
         color: rgb(160, 160, 160);
         display: flex;
         align-items: center;
+
         i {
           margin-right: 5px;
         }
       }
     }
+
     .tips {
       margin: 20px 0 10px 0;
       font-size: 14px;
       color: rgb(160, 160, 160);
     }
   }
+
   &-preview-content {
     margin-top: 20px;
     box-sizing: border-box;
   }
+
   &-comment {
     margin-top: 20px;
     padding-top: 20px;
     border-top: solid 1px #ccc;
     display: flex;
     flex-direction: column;
+
     .comment-publish {
       display: flex;
     }
+
     .comment {
       flex: 1;
     }
+
     .el-input {
       margin-bottom: 20px;
     }
+
     .publish {
       display: flex;
       justify-content: flex-end;
       width: 100px;
+
       .l-button {
         width: 100%;
         margin-left: 10px;
         background-color: $pink-color;
       }
     }
+
     .no-comment {
       margin-top: 20px;
       width: 100%;
@@ -338,14 +401,18 @@ watch(
       font-size: $font-mini;
       color: #000;
     }
+
     .comment-list {
       margin-top: 20px;
+
       .comment-item {
         display: flex;
         padding: 10px 0;
         border-bottom: 2px #f5f5f5 solid;
+
         &-left {
           margin-right: 20px;
+
           img {
             width: 40px;
             height: 40px;
@@ -353,64 +420,79 @@ watch(
             cursor: pointer;
           }
         }
+
         &-right {
           flex: 1;
+
           .comment-item-name {
             font-size: 18px;
             font-weight: bold;
             margin-bottom: 5px;
           }
+
           .comment-item-content {
             font-size: 14px;
             margin-bottom: 5px;
           }
+
           .comment-item-time {
             font-size: $font-mini;
             color: rgb(160, 160, 160);
+
             .back-comment {
               margin-left: 10px;
               cursor: pointer;
               color: #000;
             }
           }
+
           .comment-item-backcomment {
             margin-top: 10px;
             margin-left: 20px;
+
             .back-comment-item {
               display: flex;
               flex-direction: column;
               margin-bottom: 5px;
+
               &-left {
                 display: flex;
                 align-items: center;
+
                 img {
                   width: 20px;
                   height: 20px;
                   border-radius: 50%;
                   cursor: pointer;
                 }
+
                 .back {
                   font-size: 12px;
                 }
+
                 .back-comment-item-backname {
                   font-size: 12px;
                   color: #333;
                   font-weight: bold;
                   margin: 0 5px;
                   cursor: pointer;
-                  &:hover{
+
+                  &:hover {
                     color: $pink-color;
                   }
                 }
+
                 .back-comment-item-name {
                   font-size: 13px;
                   font-weight: bold;
                   margin: 0 10px;
                 }
+
                 .back-comment-item-content {
                   font-size: 13px;
                 }
               }
+
               &-right {
                 .back-comment-item-time {
                   font-size: $font-mini;
@@ -423,6 +505,7 @@ watch(
       }
     }
   }
+
   .back-comment-dialog {
     position: fixed;
     display: flex;
@@ -436,17 +519,21 @@ watch(
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     left: 50%;
     transform: translateX(-50%);
+
     &-title {
       font-size: $font-small;
       font-weight: bold;
       margin-bottom: 20px;
       display: flex;
+
       .back {
         margin-right: 10px;
       }
+
       .name {
         flex: 1;
       }
+
       .close {
         width: 30px;
         height: 30px;
@@ -457,6 +544,7 @@ watch(
         color: #333;
         cursor: pointer;
         display: inline-block;
+
         &:hover {
           transform: rotate(180deg);
           color: $pink-color;
@@ -464,28 +552,23 @@ watch(
         }
       }
     }
+
     &-content {
       flex: 1;
       display: flex;
       flex-direction: column;
+
       &-content {
         flex: 1;
-        .look {
-          margin-top: 10px;
-          display: inline-block;
-          cursor: pointer;
-          border: solid 1px #f2f2f2;
-          // box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
-          font-size: $font-mini;
-          padding: 2px 5px;
-          border-radius: 10px;
-        }
       }
+
       &-btn {
         text-align: right;
+
         &-cancel {
           margin-right: 20px;
         }
+
         .l-button {
           background-color: $pink-color;
           font-size: $font-mini;
