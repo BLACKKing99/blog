@@ -11,7 +11,7 @@
       <ul class="synopsis flex">
         <li><i>#</i>{{ articleStore.getCurrentCategory(articleInfo.categoryId) }}</li>
         <li><i class="iconfont icon-shijian" />{{ formatTime(articleInfo.createdAt).value }}</li>
-        <li><i class="iconfont icon-yueduliang" />34次浏览</li>
+        <li><i class="iconfont icon-yueduliang" />{{ articleInfo.priview }}次浏览</li>
         <li>
           <i class="iconfont icon-pinglun1" />{{
             false

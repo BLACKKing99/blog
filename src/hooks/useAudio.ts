@@ -8,8 +8,20 @@ const isAudioPlay = ref<boolean>(false)
 const audioTime = ref<number>(0)
 // 视频播放更新的时间
 const updateTime = ref<string>('00:00')
+
+const activeLrc = ref<number>(0)
+
 export const useAudio = () => {
   const musicStore = useMusicStore()
+
+  const setActiveLrc = ():number => {
+    for (const key in musicStore.currentLyric) {
+      if ((audioRef.value?.currentTime as number) <= musicStore.currentLyric[key].time) {
+        return +key - 1
+      }
+    }
+    return musicStore.currentLyric.length - 1
+  }
 
   const { formatTimeTodo } = useTimeFormat()
   watch(() => musicStore.currentUrl, () => {
@@ -25,7 +37,8 @@ export const useAudio = () => {
     audioRef.value?.addEventListener('timeupdate', () => {
       updateTime.value = formatTimeTodo((audioRef.value?.currentTime as number) * 1000, 'mm:ss')
       audioTime.value = Number(((audioRef.value?.currentTime || 0) / (audioRef.value?.duration || 1) * 100).toFixed(2))
-      // musicStore.currentMusicTime = (audioRef.value?.currentTime as number) * 1000
+
+      activeLrc.value = setActiveLrc()
     })
   })
 
@@ -38,19 +51,25 @@ export const useAudio = () => {
     audioRef.value?.addEventListener('play', () => {
       isAudioPlay.value = true
     })
+    audioRef.value?.addEventListener('error', () => {
+      musicStore.getMusicUrlData(musicStore.currentMusicInfo.id)
+    })
     // 视频播放时间更新
     audioRef.value?.addEventListener('timeupdate', () => {
       // 计算变化时间
       updateTime.value = formatTimeTodo((audioRef.value?.currentTime as number) * 1000, 'mm:ss')
       // 计算百分比
       audioTime.value = Number(((audioRef.value?.currentTime || 0) / (audioRef.value?.duration || 1) * 100).toFixed(2))
-      // musicStore.currentMusicTime = (audioRef.value?.currentTime as number) * 1000
+
+      // 获取当前播放的歌词
+      activeLrc.value = setActiveLrc()
     })
   })
   return {
     audioRef,
     isAudioPlay,
     audioTime,
-    updateTime
+    updateTime,
+    activeLrc
   }
 }

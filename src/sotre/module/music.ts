@@ -39,9 +39,6 @@ export const useMusicStore = defineStore('music', {
         this.currentLyric = handleLyric(lyric)
       }
     },
-    setCurrentMusicToList () {
-
-    },
     async addMusicList (obj:IMusicDetailInfo) {
       this.palyList.push(obj)
     },
@@ -62,12 +59,12 @@ export const useMusicStore = defineStore('music', {
     async getMusicUrlData (id:number) {
       const { code, data } = await getMusicUrl(id)
       if (code === 0) {
+        if (data[0].url === null) {
+          ElMessage.error('暂无音乐源')
+        }
         this.currentUrl = data[0].url
         LocalCatch.setItem('currentUrl', data[0].url)
       }
-    },
-    setMusicList (id:number, obj:IMusicDetailInfo) {
-      // 设置播放列表
     },
     setMusicHistoryList (id:number, obj:IMusicDetailInfo) {
       // 历史播放列表

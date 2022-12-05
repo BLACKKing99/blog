@@ -189,10 +189,7 @@ export interface ISingerAllList {
 }
 
 export interface IMusicLyric {
-    lrc: string
-    mill: string
-    min: string
-    sec: string
+    word: string
     time: number
     active: boolean
 }

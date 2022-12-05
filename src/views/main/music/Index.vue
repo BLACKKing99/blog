@@ -87,10 +87,10 @@ const isAudioList = ref<boolean>(false)
 
 // 控制音乐播放器显示隐藏
 const handleMouseMove = debounce((event: MouseEvent) => {
-  if (event.clientY > 900) {
-  // if (event.clientY > 800) {
+  // if (event.clientY > 900) {
+  if (event.clientY > 800) {
     isAudioPlay.value = true
-  } else if (event.clientY < 900) {
+  } else if (event.clientY < 800) {
     isAudioPlay.value = false
   }
 }, 300)
