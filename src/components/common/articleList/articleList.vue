@@ -128,7 +128,10 @@ const { formatTime } = useTimeFormat(props.articleInfo.createdAt)
         font-size: $font-small;
         opacity: 0;
         transition: 0.4s;
-        width: 100%;
+        width: 80%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-spacing: nowrap;
         filter: blur(3px);
         transform: translateX(-50%);
         left: 50%;

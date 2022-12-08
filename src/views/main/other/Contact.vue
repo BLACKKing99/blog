@@ -60,7 +60,7 @@ const handlePublish = () => {
       }
       .contact-envelope-content{
         transform: translateY(-70px);
-        height: 300px !important;
+        height: 400px !important;
         padding: 20px 20px 100px 20px;
       }
     }
@@ -89,7 +89,7 @@ const handlePublish = () => {
       z-index: 3;
     }
     .contact-envelope-content {
-      width: 530px;
+      width: 580px;
       height: 110px;
       transition: 0.8s;
       border-radius: 5px;
