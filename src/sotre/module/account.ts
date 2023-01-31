@@ -24,6 +24,7 @@ export const useAccountStore = defineStore('account', {
         } else {
           res = await register(userInfo)
         }
+        console.log(res, '3433333333')
 
         if (res.code === 0) {
           this.$patch((state) => {

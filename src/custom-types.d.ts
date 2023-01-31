@@ -19,6 +19,6 @@ declare module '@wangeditor/editor' {
 declare module '@vue/runtime-core' {
     export interface ComponentCustomProperties {
       $imgUrl:string
-      AuthHeader:()=>string
+      AuthHeader:() => string | undefined
     }
 }

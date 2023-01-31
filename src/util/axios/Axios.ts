@@ -23,7 +23,7 @@ class LHttp {
       try {
         this.instance.request<IResponse<T>>(config).then((res:AxiosResponse) => {
           this.isLoading = this.isLoading === true
-          resolve(res.data)
+          resolve(res?.data)
         })
       } catch (error) {
         reject(error)
@@ -76,8 +76,12 @@ class LHttp {
       // 超出 2xx 范围的状态码都会触发该函数。
       // 对响应错误做点什么
         if (error.response.status === 400) {
+          if (error.response.data.statusCode) {
+            ElMessage.error(error.response.data.message)
+            return
+          }
           let str:string = ''
-          for (const value of error.response.data.data) {
+          for (const value of error.response.data?.data) {
             str === ''
               ? str = Object.values(value).join('')
               : str = `${str},${Object.values(value).join('')}`

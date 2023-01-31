@@ -10,7 +10,7 @@
         </div>
         <div class="info">
           <span class="info-title">{{ musicStore.currentMusicInfo?.songName }}</span>
-          <span class="info-author">{{ musicStore.currentMusicInfo?.singerInfo.name }}</span>
+          <span class="info-author">{{ musicStore.currentMusicInfo?.singerInfo?.name }}</span>
         </div>
       </li>
       <li class="audio-play-container-todo">

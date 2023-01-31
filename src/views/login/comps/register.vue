@@ -33,7 +33,7 @@
       <i class="iconfont icon-suo icon-inp" />
       <input
         class="login-container-item-inp"
-        type="text"
+        type="password"
         placeholder="请输入密码"
         @keydown="enterRegister"
         v-model="userInfo.password"
