@@ -1,5 +1,8 @@
 <template>
-  <div class="home">
+  <div
+    class="home"
+    @mouseover="bottomMovement"
+  >
     <!-- 轮播图头部 -->
     <Banner />
     <!-- 列表 -->
@@ -28,6 +31,9 @@
         <Right class="right" />
       </div>
     </div>
+    <transition name="audio-play">
+      <tabbar-bottom v-show="isAppened" />
+    </transition>
   </div>
 </template>
 
@@ -39,13 +45,18 @@ import Right from './comps/preview/Right.vue'
 import { getArticle } from '@/api/module/article'
 import { IArticleInfo, IArticleList } from '@/api/types/article'
 import { useEventBus } from '@/hooks/useEventBus'
+import { debounce } from 'lodash'
 
 const { Buson } = useEventBus()
 
 // 文章列表
 const list = ref<IArticleInfo[]>([])
 
+// 是否到达底部
 const isBottom = ref<boolean>(false)
+
+// 是否显示底部导航栏
+const isAppened = ref<boolean>(false)
 
 const articleParam = {
   pageSize: 2,
@@ -61,6 +72,15 @@ Buson('scroll-bottom', () => {
   getArticleList(articleParam)
 })
 
+const bottomMovement = debounce((event: MouseEvent) => {
+  // if (event.clientY > 900) {
+  if (event.clientY > 800) {
+    isAppened.value = true
+  } else if (event.clientY < 800) {
+    isAppened.value = false
+  }
+}, 300)
+
 const getArticleList = async (params:IArticleList) => {
   const { data, code } = await getArticle(params)
   if (code === 0) {
@@ -73,6 +93,7 @@ const getArticleList = async (params:IArticleList) => {
 
 </script>
 <style scoped lang="scss">
+@import '@/styles/animations.scss';
 .home {
   padding: 20px;
   width: 100%;

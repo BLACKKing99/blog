@@ -54,10 +54,15 @@
       @click="$router.push({name:'photos'})"
     >
       <div
-        class="top"
+        class="top-banner"
         :style="{ background: `url(${$imgUrl + randomUrl})` }"
       />
-      <div class="bottom" />
+      <!-- <div class="bottom" /> -->
+      <img-over
+        @img-click="$router.push({name:'photos'})"
+        :form-list="formList"
+        :img-style="{width:'380px',height:'156px',borderRadius:'10px',marginTop:'20px'}"
+      />
     </div>
   </div>
 </template>
@@ -67,6 +72,7 @@ import { getSwiper, getBanner } from '@/api/module/preview'
 import { Navigation, Pagination, A11y, Autoplay, EffectFade } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import type { Swiper as ISwiper } from 'swiper/types'
+import { formList } from './config'
 import 'swiper/css/bundle'
 import 'swiper/css'
 
@@ -129,7 +135,7 @@ const handlePaginationChange = (index:number) => {
       overflow: hidden;
       margin-left: 20px;
       cursor: pointer;
-      .top {
+      .top-banner {
         flex: 1;
         border-radius: 10px;
         width: 100%;

@@ -1,3 +1,9 @@
+import { imgOverType } from '@/types'
+import down from '@/assets/img/banner/1.jpg'
+import top from '@/assets/img/banner/2.jpg'
+import left from '@/assets/img/banner/3.jpg'
+import right from '@/assets/img/banner/4.jpg'
+import center from '@/assets/img/swiper/banner.png'
 
 export const skillsArr = [
   {
@@ -58,5 +64,33 @@ export const infoArr = [
     content: 'UID:415531321',
     icon: 'icon-bilibili',
     id: 3
+  }
+]
+
+export const formList:imgOverType[] = [
+  {
+    id: 1,
+    url: center,
+    position: 'center'
+  },
+  {
+    id: 2,
+    url: down,
+    position: 'down'
+  },
+  {
+    id: 3,
+    url: left,
+    position: 'left'
+  },
+  {
+    id: 4,
+    url: right,
+    position: 'right'
+  },
+  {
+    id: 5,
+    url: top,
+    position: 'top'
   }
 ]

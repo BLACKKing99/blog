@@ -1,20 +1,38 @@
 <template>
-  <div class="time flex-r">
+  <div class="time flex-r overflow-hidden">
     <div class="time-clock">
       <img
         src="@/assets/img/avatar/avatar.jpg"
         :style="{borderRadius:isRadius?'10px':'10px 10px 0 0'}"
       >
     </div>
-    <div class="time-hour time-tips flex-c">
+    <div
+      class="time-hour time-tips flex-c"
+      v-motion
+      :initial="{ opacity: 0, y: 3000 }"
+      :enter="{ opacity: 1, y: 0, scale: 1 }"
+      :delay="300"
+    >
       <span class="tips">{{ time.hour }}</span>
       <span class="title">hour</span>
     </div>
-    <div class="time-minutes time-tips flex-c">
+    <div
+      class="time-minutes time-tips flex-c"
+      v-motion
+      :initial="{ opacity: 0, y: 3000 }"
+      :enter="{ opacity: 1, y: 0, scale: 1 }"
+      :delay="600"
+    >
       <span class="tips">{{ time.minutes }}</span>
       <span class="title">minutes</span>
     </div>
-    <div class="time-seconds time-tips flex-c">
+    <div
+      class="time-seconds time-tips flex-c"
+      v-motion
+      :initial="{ opacity: 0, y: 3000 }"
+      :enter="{ opacity: 1, y: 0, scale: 1 }"
+      :delay="900"
+    >
       <span class="tips">{{ time.seconds }}</span>
       <span class="title">seconds</span>
     </div>

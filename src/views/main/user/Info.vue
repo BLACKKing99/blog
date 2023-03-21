@@ -4,14 +4,22 @@
       class="info-avatar"
       @click="handleOpenAvatar"
     >
-      <img :src="$imgUrl + userInfo?.avatar">
+      <Starport
+        port="my-id"
+        class="info-avatar-img"
+      >
+        <img
+          class="info-avatar-img"
+          :src="$imgUrl + userInfo?.avatar"
+        >
+      </Starport>
     </div>
     <div class="info-edit">
       <button
         class="info-edit-btn"
         @click="handleInfoEdit"
       >
-        {{ isEdit?'保存':'编辑' }}
+        {{ isEdit ? '保存' : '编辑' }}
       </button>
     </div>
     <info-layout
@@ -77,7 +85,7 @@ type IUserInfo = typeof userInfo.value
 const handleInfoEdit = async () => {
   isEdit.value = !isEdit.value
   if (!isEdit.value) {
-    const updateNewUserInfo:Partial<IUserInfo> = {}
+    const updateNewUserInfo: Partial<IUserInfo> = {}
     linkInfo.forEach((item) => {
       (updateNewUserInfo[item.pid!] as string) = item.content
     })
@@ -94,7 +102,7 @@ const handleInfoEdit = async () => {
 // 控制修改弹窗打开
 const isView = ref(false)
 // 处理弹窗相关事件
-const handleChangeAvatar = async (value:string) => {
+const handleChangeAvatar = async (value: string) => {
   // 修改头像
   updateUsersInfo({
     avatar: value
@@ -112,9 +120,11 @@ const handleOpenAvatar = () => {
   width: 100%;
   padding-bottom: 20px;
   position: relative;
+
   &-edit {
     width: 100%;
     text-align: right;
+
     &-btn {
       outline: none;
       background-color: $pink-color;
@@ -126,44 +136,48 @@ const handleOpenAvatar = () => {
       cursor: pointer;
     }
   }
-  &-avatar {
-    display: inline-block;
-    width: 200px;
-    height: 200px;
-    left: calc(50% - 100px);
-    top: -200px;
-    z-index: 999;
-    position: absolute;
-    border-radius: 50%;
-    img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-    }
-    &:hover {
-      &::after {
-        opacity: 1;
-      }
-    }
-    &::after {
-      content: '点击修改';
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      position: absolute;
-      transition: 0.3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: rgba(0, 0, 0, 0.3);
-      left: 0;
-      top: 0;
-      opacity: 0;
-      cursor: pointer;
-    }
-  }
+
   &-layout {
     margin: 10px 0 20px 0;
+  }
+}
+
+.info-avatar {
+  display: inline-block;
+  width: 200px;
+  height: 200px;
+  left: calc(50% - 100px);
+  top: -200px;
+  z-index: 999;
+  position: absolute;
+  border-radius: 50%;
+  &-img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+  }
+
+  &:hover {
+    &::after {
+      opacity: 1;
+    }
+  }
+
+  &::after {
+    content: '点击修改';
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: absolute;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.3);
+    left: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
   }
 }
 </style>

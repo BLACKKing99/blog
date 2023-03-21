@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-container">
+  <div class="layout-container relative overflow-hidden">
     <el-container>
       <el-aside width="150px">
         <tabbar-aside />
@@ -9,13 +9,6 @@
           ref="elScrollRef"
           @scroll="handleScroll"
         >
-          <!-- <router-view
-          v-slot="{Component}"
-        >
-          <transition name="el-fade-in">
-            <component :is="Component" />
-          </transition>
-        </router-view> -->
           <router-view />
         </el-scrollbar>
       </el-main>

@@ -1,54 +1,52 @@
 <template>
-  <template>
-    <el-scrollbar
-      ref="scrollRef"
-      @scroll="handleScroll"
+  <el-scrollbar
+    ref="scrollRef"
+    @scroll="handleScroll"
+  >
+    <div
+      class="article"
+      id="article"
     >
+      <div class="article-bg">
+        <img :src="$imgUrl + articleInfo?.cover">
+      </div>
+      <div class="article-bottom">
+        <img
+          src="@/assets/img/article/1.png"
+          alt=""
+        >
+      </div>
       <div
-        class="article"
-        id="article"
-      >
-        <div class="article-bg">
-          <img :src="$imgUrl + articleInfo?.cover">
+        class="article-backtop"
+        @click="handleBackTop"
+        :class="isTop?'':'article-is-top'"
+      />
+      <div class="article-info flex">
+        <div class="article-info-recommend">
+          <Left
+            class="left"
+            :article-info="articleInfo"
+          />
         </div>
-        <div class="article-bottom">
-          <img
-            src="@/assets/img/article/1.png"
-            alt=""
-          >
+        <div class="article-info-content">
+          <Center
+            v-if="articleInfo?.content"
+            class="center"
+            :article-info="articleInfo"
+            @update-menus="updateMenus"
+            @update-article="updateArticle"
+          />
         </div>
-        <div
-          class="article-backtop"
-          @click="handleBackTop"
-          :class="isTop?'':'article-is-top'"
-        />
-        <div class="article-info flex">
-          <div class="article-info-recommend">
-            <Left
-              class="left"
-              :article-info="articleInfo"
-            />
-          </div>
-          <div class="article-info-content">
-            <Center
-              v-if="articleInfo?.content"
-              class="center"
-              :article-info="articleInfo"
-              @update-menus="updateMenus"
-              @update-article="updateArticle"
-            />
-          </div>
-          <div class="article-info-list">
-            <Right
-              class="right"
-              :top-gap="topGap"
-              :context-menu="contextMenu"
-            />
-          </div>
+        <div class="article-info-list">
+          <Right
+            class="right"
+            :top-gap="topGap"
+            :context-menu="contextMenu"
+          />
         </div>
       </div>
-    </el-scrollbar>
-  </template>
+    </div>
+  </el-scrollbar>
 </template>
 
 <script lang="ts" setup>

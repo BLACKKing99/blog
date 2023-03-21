@@ -13,6 +13,12 @@
   >
     <template #title />
     <template #content>
+      <div
+        class="sing-close"
+        @click="dialogVisiable = false"
+      >
+        <i class="iconfont icon-close text-white" />
+      </div>
       <div class="h-full flex flex-col">
         <div
           class="relative h-[50%] flex flex-col justify-end singer-cover bg-center bg-cover"
@@ -397,10 +403,28 @@ watch(() => activeTab.value, (val) => {
 </script>
 
 <style scoped lang="scss">
+  .sing-close {
+    @apply absolute right-[-20px] top-[-10px] rounded-full flex items-center justify-center -z-0 cursor-pointer bg-white;
+    width: 40px;
+    height: 40px;
+    transition: .3s;
+    .icon-close {
+      display: inline-block;
+      transition: .3s;
+    }
+    &:hover {
+      right: -40px;
+      top: -20px;
+      .icon-close{
+        color: $pink-color;
+      }
+    }
+  }
 .aduio-singer {
   padding: 0 !important;
   ::v-deep(.back-comment-dialog-content) {
     height: 100%;
+    position: relative;
   }
   .singer-list-title{
     @apply text-sm text-zinc-400;

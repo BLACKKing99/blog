@@ -12,6 +12,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^1.1.4",
     "@vueuse/core": "^9.4.0",
+    "@vueuse/motion": "^2.0.0-beta.12",
     "@wangeditor/editor": "^5.0.1",
     "@wangeditor/editor-for-vue": "^5.1.11",
     "aplayer": "^1.10.1",
