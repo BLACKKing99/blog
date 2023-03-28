@@ -77,7 +77,7 @@ onMounted(() => {
 Buson('scroll-event', (event:any) => {
   if (event.scrollTop >= (articleTab.value?.tabBody?.offsetTop as number) && isAddClass === false) {
     isAddClass = true
-    addClass<HTMLDivElement>(tabContent)
+    addClass(tabContent)
   }
 })
 

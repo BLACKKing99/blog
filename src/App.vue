@@ -1,7 +1,5 @@
 <template>
-  <StarportCarrier>
-    <router-view />
-  </StarportCarrier>
+  <router-view />
   <audio
     :src="musicStore.currentUrl"
     autoplay

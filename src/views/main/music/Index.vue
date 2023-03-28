@@ -87,10 +87,11 @@ const isAudioList = ref<boolean>(false)
 
 // 控制音乐播放器显示隐藏
 const handleMouseMove = debounce((event: MouseEvent) => {
-  // if (event.clientY > 900) {
-  if (event.clientY > 800) {
+  // 根据浏览器显示的高度来计算鼠标是否移到了底部
+  const sH = window.innerHeight < 200 ? 100 : window.innerHeight - 200
+  if (event.clientY > sH) {
     isAudioPlay.value = true
-  } else if (event.clientY < 800) {
+  } else if (event.clientY < sH) {
     isAudioPlay.value = false
   }
 }, 300)

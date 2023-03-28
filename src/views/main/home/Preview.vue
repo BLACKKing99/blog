@@ -73,10 +73,11 @@ Buson('scroll-bottom', () => {
 })
 
 const bottomMovement = debounce((event: MouseEvent) => {
-  // if (event.clientY > 900) {
-  if (event.clientY > 800) {
+  // 根据浏览器显示的高度来计算鼠标是否移到了底部
+  const sH = window.innerHeight < 200 ? 100 : window.innerHeight - 200
+  if (event.clientY > sH) {
     isAppened.value = true
-  } else if (event.clientY < 800) {
+  } else if (event.clientY < sH) {
     isAppened.value = false
   }
 }, 300)

@@ -31,8 +31,8 @@
     <div class="login-container-item">
       <button
         class="login-container-item-btn l-button"
-        @click="login"
-        v-loading="accountSotre.isLoading"
+        @click="goLogin"
+        v-loading="accountStore.isLoading"
       >
         登录
       </button>
@@ -46,35 +46,25 @@
 </template>
 
 <script lang="ts" setup>
+import { IRegisterType } from '@/api/types/user'
+import { useLogin } from '@/hooks/useLogin'
 import { useAccountStore } from '@/sotre/module/account'
-const userInfo = reactive<{
-  password: string,
-  account: number | string
-}>({
+
+const userInfo = reactive<IRegisterType>({
   password: '',
   account: ''
 })
-const accountSotre = useAccountStore()
+
+const accountStore = useAccountStore()
+
+const { login } = useLogin()
+
 const keyLogin = (e:KeyboardEvent) => {
-  if (e.keyCode === 13) login()
+  if (e.keyCode === 13) login(userInfo)
 }
 
-const login = () => {
-  if (userInfo.account === '') {
-    ElMessage({
-      type: 'error',
-      message: '账号不能为空'
-    })
-    return
-  } else if (userInfo.password === '') {
-    ElMessage({
-      type: 'error',
-      message: '密码不能为空'
-    })
-    return
-  }
-  accountSotre.isLoading = true
-  accountSotre.loginTodo(userInfo, 'login')
+const goLogin = () => {
+  login(userInfo)
 }
 
 </script>

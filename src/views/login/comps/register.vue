@@ -58,8 +58,9 @@
 </template>
 
 <script lang="ts" setup>
+import { useLogin } from '@/hooks/useLogin'
 import { useAccountStore } from '@/sotre/module/account'
-import { ElMessage } from 'element-plus'
+
 const userInfo = reactive({
   password: '',
   email: '',
@@ -68,32 +69,14 @@ const userInfo = reactive({
 
 const accountSotre = useAccountStore()
 
+const { register } = useLogin()
+
 const enterRegister = (event:KeyboardEvent) => {
   if (event.keyCode === 13) handleRegister()
 }
 
 const handleRegister = () => {
-  if (userInfo.email === '') {
-    ElMessage({
-      type: 'error',
-      message: '邮箱不能为空'
-    })
-    return
-  } else if (userInfo.name === '') {
-    ElMessage({
-      type: 'error',
-      message: '用户名不能为空'
-    })
-    return
-  } else if (userInfo.password === '') {
-    ElMessage({
-      type: 'error',
-      message: '密码不能为空'
-    })
-    return
-  }
-  accountSotre.isLoading = true
-  accountSotre.loginTodo(userInfo, 'register')
+  register(userInfo)
 }
 
 </script>

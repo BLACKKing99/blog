@@ -78,15 +78,13 @@
 </template>
 
 <script lang="ts" setup>
-import LocalCatch from '@/util/LocalCatch'
-import { useAccountStore } from '@/sotre/module/account'
 import { tabbarListAdmin, tabbarListCommon } from './config/index'
 import { useUser } from '@/hooks/useUser'
 import { useUserInfo } from '@/hooks/useUserInfo'
+import { useLogin } from '@/hooks/useLogin'
 // tabbarList里面元素的类型
 type LTabbarList = typeof tabbarListAdmin[number]
 const router = useRouter()
-const accountStore = useAccountStore()
 const activeBar = ref<string>('main')
 const tabbarList = ref<LTabbarList[]>([])
 const activeChildrenBar = ref<string>('')
@@ -98,6 +96,8 @@ const match = router.currentRoute.value.matched
 const { isLogin } = useUser()
 
 const { userInfo } = useUserInfo(isLogin.value)
+
+const { loginOut } = useLogin()
 
 onMounted(() => {
   if (userInfo.value && userInfo.value.identity === 'admin') {
@@ -123,36 +123,6 @@ const changeTabBar = (tab: LTabbarList) => {
       name: tab.name
     })
   }
-}
-
-const loginOut = () => {
-  ElMessageBox.confirm(
-    '确定要退出吗',
-    '退出',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }
-  )
-    .then(() => {
-      LocalCatch.removeItem('lzf_blog')
-      accountStore.$patch((state) => {
-        state.userInfo = null
-        state.token = undefined
-      })
-      router.push('/login')
-      ElMessage({
-        type: 'success',
-        message: '退出成功'
-      })
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '取消成功'
-      })
-    })
 }
 
 // 点击tabbarItem 时触发的事件
